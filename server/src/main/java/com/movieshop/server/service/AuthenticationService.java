@@ -36,6 +36,7 @@ public class AuthenticationService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.CUSTOMER)
+                .name(request.getName())
                 .pictureUrl(request.getPictureUrl())
                 .accountNonExpired(true)
                 .accountNonLocked(true)

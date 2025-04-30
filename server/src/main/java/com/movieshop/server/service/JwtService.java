@@ -1,6 +1,8 @@
 package com.movieshop.server.service;
 
+import com.movieshop.server.exception.InvalidAuthException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,8 +28,12 @@ public class JwtService {
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsTFunction){
-        final Claims claims = extractAllClaims(token);
-        return claimsTFunction.apply(claims);
+        try {
+            Claims claims = extractAllClaims(token);
+            return claimsTFunction.apply(claims);
+        } catch (JwtException e){
+            throw new InvalidAuthException("JWT token is invalid: {" + e.getMessage() + "}");
+        }
     }
 
     public String generateToken(UserDetails userDetails){

@@ -37,6 +37,8 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Role role;
 
+    private String name;
+
     @Column(name="picture_url")
     private String pictureUrl;
 

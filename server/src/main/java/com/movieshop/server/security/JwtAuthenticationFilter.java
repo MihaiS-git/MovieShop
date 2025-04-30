@@ -1,4 +1,4 @@
-package com.movieshop.server.config;
+package com.movieshop.server.security;
 
 import com.movieshop.server.exception.InvalidAuthException;
 import com.movieshop.server.service.JwtService;
