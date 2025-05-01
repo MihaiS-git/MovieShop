@@ -1,14 +1,27 @@
-import './App.css'
+import "./App.css";
+import HomePage from "./pages/HomePage";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import RootLayout from "./components/Root";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <RootLayout />,
+    children: [
+      {
+        index: true,
+        element: <HomePage />,
+      },
+      {
+        path: "home",
+        element: <HomePage />,
+      },
+    ]
+  }
+]);
 
 function App() {
-
-  return (
-    <>
-      <header className='bg-gray-800 text-fuchsia-600 text-2xl font-bold px-8 py-4'>
-        <h1>Movie Shop</h1>
-      </header>
-    </>
-  )
+  return <RouterProvider router={router} />;
 }
 
-export default App
+export default App;

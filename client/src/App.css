@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* REDS */
+  --color-red-500: oklch(0.703 0.238 29);     /* FF4C4C - Cinematic Red */
+  --color-red-600: oklch(0.631 0.228 29);     /* D14444 - Darker Red */
+  --color-red-hover: oklch(0.76 0.15 29);     /* FF6B6B - Hover Red */
+  --color-brown-950: oklch(0.080 0.070 10); /* 7A4B3A - Brown */
+
+  /* CHARCOAL / GRAY */
+  --color-charcoal-800: oklch(0.224 0.005 262);  /* 1A1A1A - Dark Gray */
+  --color-gray-200: oklch(0.924 0.007 262);      /* E0E0E0 - Light Gray */
+  --color-gray-100: oklch(0.9 0.005 262);        /* DCDCDC - Neutral Light Gray */
+  --color-gray-900: oklch(0.24 0.007 262);       /* 333333 - Neutral Dark Gray */
+
+  /* GOLD / ACCENT */
+  --color-gold-300: oklch(0.963 0.137 100);      /* FFD700 - Gold */
+  --color-gold-500: oklch(0.89 0.13 98);         /* FFB900 - Darker Gold */
+
+  /* BACKGROUND / TEXT */
+  --color-white: oklch(1 0 0);                   /* FFFFFF */
+  --color-black: oklch(0.2 0.01 262);            /* 121212 */
+  --color-text-light: oklch(0.97 0.005 262);     /* F5F5F5 */
+}
+
