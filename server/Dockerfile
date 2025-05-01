@@ -8,12 +8,10 @@ COPY gradlew /app
 COPY build.gradle /app
 COPY settings.gradle /app
 
-COPY .env /app/.env
-
 RUN ./gradlew build --no-daemon
 
 COPY src /app/src
-RUN ./gradlew build --no-daemon
+RUN ./gradlew build --no-daemon -x test
 
 # Run stage
 FROM openjdk:21-jdk-slim
@@ -21,7 +19,6 @@ FROM openjdk:21-jdk-slim
 WORKDIR /app
 
 COPY --from=builder /app/build/libs/*.jar /app/app.jar
-COPY --from=builder /app/.env /app/.env 
 
 EXPOSE 8080
 

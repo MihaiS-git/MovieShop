@@ -24,4 +24,12 @@ public class RegisterRequest {
     private String name;
 
     private String pictureUrl;
+
+    public RegisterRequest(String mail, String password123, String testUser, String url) {
+        this.email = mail;
+        this.password = password123;
+        this.role = Role.CUSTOMER;
+        this.name = testUser;
+        this.pictureUrl = url;
+    }
 }
