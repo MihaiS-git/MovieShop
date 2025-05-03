@@ -4,7 +4,6 @@ import com.movieshop.server.domain.Role;
 import com.movieshop.server.domain.User;
 import com.movieshop.server.exception.InvalidAuthException;
 import com.movieshop.server.model.AuthenticationRequest;
-import com.movieshop.server.model.AuthenticationResponse;
 import com.movieshop.server.model.RegisterRequest;
 import com.movieshop.server.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,7 +52,7 @@ public class AuthenticationServiceTest {
                 .password("passwordEncoded")
                 .role(Role.CUSTOMER)
                 .name(registerRequest.getName())
-                .pictureUrl(registerRequest.getPictureUrl())
+                .picture(registerRequest.getPicture())
                 .accountNonExpired(true)
                 .accountNonLocked(true)
                 .credentialsNonExpired(true)
@@ -70,11 +69,11 @@ public class AuthenticationServiceTest {
         when(jwtService.generateToken(any(User.class))).thenReturn("mockedJwtToken");
 
         // Call the register method
-        AuthenticationResponse response = authenticationService.register(registerRequest);
+        String token = authenticationService.register(registerRequest);
 
         // Verify the result
-        assertNotNull(response);
-        assertEquals("mockedJwtToken", response.getToken());
+        assertNotNull(token);
+        assertEquals("mockedJwtToken", token);
 
         // Verify that methods were called
         verify(userRepository).save(any(User.class));
@@ -90,7 +89,7 @@ public class AuthenticationServiceTest {
                 .password("passwordEncoded")
                 .role(Role.CUSTOMER)
                 .name("Test User")
-                .pictureUrl("http://example.com/picture.jpg")
+                .picture("http://example.com/picture.jpg")
                 .accountNonExpired(true)
                 .accountNonLocked(true)
                 .credentialsNonExpired(true)
@@ -100,24 +99,23 @@ public class AuthenticationServiceTest {
         // Mock the behaviour of the authentication manager
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(null);
 
-        // Mock the behaviour iof the userRepository
+        // Mock the behaviour of the userRepository
         when(userRepository.findByEmail(request.getEmail())).thenReturn(java.util.Optional.of(user));
 
         // Mock the behaviour of the JWT service
         when(jwtService.generateToken(any(User.class))).thenReturn("mockedJwtToken");
 
         // Call the authenticate method
-        AuthenticationResponse response = authenticationService.authenticate(request);
+        String token = authenticationService.authenticate(request);
 
         // Verify the result
-        assertNotNull(response);
-        assertEquals("mockedJwtToken", response.getToken());
+        assertNotNull(token);
+        assertEquals("mockedJwtToken", token);
 
         // Verify that methods were called
         verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
         verify(userRepository).findByEmail(request.getEmail());
         verify(jwtService).generateToken(any(User.class));
-
     }
 
     @Test
@@ -129,7 +127,6 @@ public class AuthenticationServiceTest {
 
         // Call the authenticate method and expect an exception
         assertThrows(InvalidAuthException.class, () -> authenticationService.authenticate(request));
-
     }
 
     @Test

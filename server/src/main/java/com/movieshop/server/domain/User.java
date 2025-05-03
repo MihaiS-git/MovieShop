@@ -39,8 +39,8 @@ public class User implements UserDetails {
 
     private String name;
 
-    @Column(name="picture_url")
-    private String pictureUrl;
+    @Column(name="picture")
+    private String picture;
 
     @Column(name="account_non_expired")
     private boolean accountNonExpired;

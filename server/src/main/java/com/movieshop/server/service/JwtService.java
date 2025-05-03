@@ -47,6 +47,7 @@ public class JwtService {
                 .orElse(null);
 
         extraClaims.put("role", userRole);
+        extraClaims.put("email", userDetails.getUsername());
 
         return Jwts.builder()
                 .claims(extraClaims)
@@ -68,6 +69,14 @@ public class JwtService {
 
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
+    }
+
+    private String extractRole(String token) {
+        return extractClaim(token, claims -> claims.get("role", String.class));
+    }
+
+    private String extractEmail(String token) {
+        return extractClaim(token, claims -> claims.get("email", String.class));
     }
 
     private Claims extractAllClaims(String token) {

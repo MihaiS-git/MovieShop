@@ -40,6 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain) throws ServletException, IOException {
+
         final String requestURI = request.getRequestURI();
         if(requestURI.startsWith("/api/auth/reset-password") || requestURI.startsWith("/api/auth/recover-password")){
             filterChain.doFilter(request, response);
@@ -47,18 +48,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         final String authHeader = request.getHeader("Authorization");
-        final String jwt;
-        final String userEmail;
 
-        if(authHeader == null || !authHeader.startsWith("Bearer")){
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        jwt = authHeader.substring(7);
-        userEmail = jwtService.extractUsername(jwt);
-        if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null){
-            try {
+        final String jwt = authHeader.substring(7);  // Extract JWT from Bearer token
+
+        try {
+            String userEmail = jwtService.extractUsername(jwt);
+            if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null){
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
                 if (jwtService.isTokenValid(jwt, userDetails)) {
                     String role = jwtService.extractClaim(jwt, claims -> claims.get("role", String.class));
@@ -68,16 +68,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
-            } catch (ExpiredJwtException e) {
-                throw new InvalidAuthException("JWT token has expired");
-            } catch (MalformedJwtException e) {
-                throw new InvalidAuthException("JWT token is malformed");
-            } catch (SignatureException e) {
-                throw new InvalidAuthException("JWT token signature is invalid");
-            } catch (AuthenticationException e) {
-                throw new InvalidAuthException("Authentication failed: " + e.getMessage());
             }
+        } catch (ExpiredJwtException e) {
+            throw new InvalidAuthException("JWT token has expired");
+        } catch (MalformedJwtException e) {
+            throw new InvalidAuthException("JWT token is malformed");
+        } catch (SignatureException e) {
+            throw new InvalidAuthException("JWT token signature is invalid");
+        } catch (AuthenticationException e) {
+            throw new InvalidAuthException("Authentication failed: " + e.getMessage());
         }
+
         filterChain.doFilter(request, response);
     }
 }

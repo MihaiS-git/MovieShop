@@ -23,13 +23,13 @@ public class RegisterRequest {
 
     private String name;
 
-    private String pictureUrl;
+    private String picture;
 
-    public RegisterRequest(String mail, String password123, String testUser, String url) {
-        this.email = mail;
-        this.password = password123;
+    public RegisterRequest(String email, String password, String name, String picture) {
+        this.email = email;
+        this.password = password;
         this.role = Role.CUSTOMER;
-        this.name = testUser;
-        this.pictureUrl = url;
+        this.name = name;
+        this.picture = picture;
     }
 }

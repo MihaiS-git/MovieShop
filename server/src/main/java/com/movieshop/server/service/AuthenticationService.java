@@ -4,9 +4,9 @@ import com.movieshop.server.domain.Role;
 import com.movieshop.server.domain.User;
 import com.movieshop.server.exception.InvalidAuthException;
 import com.movieshop.server.model.AuthenticationRequest;
-import com.movieshop.server.model.AuthenticationResponse;
 import com.movieshop.server.model.RegisterRequest;
 import com.movieshop.server.repository.UserRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,27 +31,30 @@ public class AuthenticationService {
         this.authenticationManager = authenticationManager;
     }
 
-    public AuthenticationResponse register(RegisterRequest request) {
-        User user = User.builder()
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.CUSTOMER)
-                .name(request.getName())
-                .pictureUrl(request.getPictureUrl())
-                .accountNonExpired(true)
-                .accountNonLocked(true)
-                .credentialsNonExpired(true)
-                .enabled(true)
-                .build();
-        User savedUser = userRepository.save(user);
+    public String register(RegisterRequest request) {
+        try {
+            User user = User.builder()
+                    .email(request.getEmail())
+                    .password(passwordEncoder.encode(request.getPassword()))
+                    .role(Role.CUSTOMER)
+                    .name(request.getName())
+                    .picture(request.getPicture())
+                    .accountNonExpired(true)
+                    .accountNonLocked(true)
+                    .credentialsNonExpired(true)
+                    .enabled(true)
+                    .build();
+            User savedUser = userRepository.save(user);
 
-        String jwtToken = jwtService.generateToken(savedUser);
-        return AuthenticationResponse.builder()
-                .token(jwtToken)
-                .build();
+            return jwtService.generateToken(savedUser);
+        } catch (DataIntegrityViolationException e) {
+            throw new InvalidAuthException("Email is already taken.");
+        } catch (Exception e) {
+            throw new InvalidAuthException("An error occurred during registration: " + e.getMessage());
+        }
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public String authenticate(AuthenticationRequest request) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         } catch (BadCredentialsException e) {
@@ -65,10 +68,10 @@ public class AuthenticationService {
         }
 
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(InvalidAuthException::new);
-        String jwtToken = jwtService.generateToken(user);
+        if (!user.isEnabled()) {
+            throw new InvalidAuthException("Account is disabled");
+        }
 
-        return AuthenticationResponse.builder()
-                .token(jwtToken)
-                .build();
+        return jwtService.generateToken(user);
     }
 }
