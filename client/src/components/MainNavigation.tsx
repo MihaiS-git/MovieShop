@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
+import useLogout from "../features/auth/useAuth";
 
 const MainNavigation = () => {
+  const handleLogout = useLogout();
+  
   return (
     <>
       <nav className="hidden xl:flex items-center justify-center w-full p-4 text-red-500 dark:text-red-500 text-md">
@@ -19,6 +22,9 @@ const MainNavigation = () => {
           </li>
           <li>
             <Link to="/signin" className="hover:text-red-hover active:text-red-hover">SignIn</Link>
+          </li>
+          <li>
+            <button onClick={handleLogout}>Logout</button>
           </li>
         </ul>
       </nav>

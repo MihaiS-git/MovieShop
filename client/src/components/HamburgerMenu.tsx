@@ -26,7 +26,7 @@ const HamburgerMenu: React.FC<{
               <NavLink to="#">Dashboard</NavLink>
             </li>
             <li>
-              <NavLink to="#">Sign in</NavLink>
+              <NavLink to="signin">Sign in</NavLink>
             </li>
           </ul>
           <div className="col-span-1"></div>
