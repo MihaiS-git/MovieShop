@@ -12,7 +12,7 @@ const SigninPage = () => {
 
   const handleGoogleLogin = () => {
     setLoading(true);
-    window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+    window.location.href = "http://localhost:8080/oauth2/authorization/google";
   };
 
   const handleEmailLogin = async (e: React.FormEvent) => {
@@ -37,7 +37,7 @@ const SigninPage = () => {
       const data = await response.json();
 
       if (response.ok) {
-        dispatch(login({ user: data.user, token: data.token}));
+        dispatch(login({ user: data.user, token: data.token }));
         navigate("/home");
       } else {
         alert("Invalid credentials");
@@ -51,16 +51,32 @@ const SigninPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-      <h1 className="text-2xl font-bold mb-6">Login</h1>
+    <div className="flex flex-col items-center justify-center h-screen bg-red-500 dark:bg-brown-950 px-4">
+      <h1 className="text-2xl font-bold mb-6 text-gold-500 dark:text-red-500">
+        Login
+      </h1>
 
       <button
         onClick={handleGoogleLogin}
-        className="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition mb-4"
+        className="bg-gray-200 text-charcoal-800 px-6 py-3 rounded-lg
+         hover:bg-gray-300 transition mb-4 w-full max-w-sm flex items-center justify-center"
         disabled={loading}
       >
-        {loading ? "Loading..." : "Sign in with Google"}
+        {loading ? (
+          "Loading..."
+        ) : (
+          <div className="flex items-center justify-between space-x-2">
+            <img src="google-logo.svg" alt="google logo" className="w-5 h-5" />
+            <span>Sign in with Google</span>
+          </div>
+        )}
       </button>
+
+      <div className="flex items-center gap-4 my-6 w-full max-w-sm">
+        <div className="w-full border-t border-gold-500 dark:border-red-500 h-px"></div>
+        <span className="text-base text-gold-500 dark:text-red-500">OR</span>
+        <div className="w-full border-t border-gold-500 dark:border-red-500 h-px"></div>
+      </div>
 
       <form onSubmit={handleEmailLogin} className="w-full max-w-sm space-y-4">
         <input
@@ -68,7 +84,7 @@ const SigninPage = () => {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+          className="w-full px-4 py-2 border border-charcoal-800 rounded-lg bg-gray-100"
           disabled={loading}
         />
         <input
@@ -76,23 +92,23 @@ const SigninPage = () => {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+          className="w-full px-4 py-2 border border-charcoal-800 rounded-lg bg-gray-100"
           disabled={loading}
         />
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition"
+          className="w-full bg-gray-200 text-charcoal-800 px-6 py-3 rounded-lg hover:bg-gray-300 transition"
           disabled={loading}
         >
           {loading ? "Logging in..." : "Log in"}
         </button>
       </form>
 
-      <div className="mt-4">
+      <div className="mt-4 text-charcoal-800 dark:text-red-500">
         <span>Don't have an account?</span>
         <button
           onClick={() => navigate("/register")}
-          className="text-blue-500 hover:underline ml-1"
+          className="text-gold-500 hover:underline ml-1"
         >
           Register here
         </button>
@@ -100,6 +116,5 @@ const SigninPage = () => {
     </div>
   );
 };
-
 
 export default SigninPage;

@@ -36,15 +36,15 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-      <h1 className="text-2xl font-bold mb-6">Register</h1>
+    <div className="flex flex-col items-center justify-center h-screen bg-red-500 dark:bg-brown-950 px-4">
+      <h1 className="text-2xl font-bold mb-6 text-gold-500 dark:text-red-500">Register</h1>
       <form onSubmit={handleRegister} className="w-full max-w-sm space-y-4">
         <input
           type="text"
           placeholder="Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+          className="w-full px-4 py-2 border border-charcoal-800 rounded-lg bg-gray-100"
           disabled={loading}
         />
         <input
@@ -52,7 +52,7 @@ const RegisterPage = () => {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+          className="w-full px-4 py-2 border border-charcoal-800 rounded-lg bg-gray-100"
           disabled={loading}
         />
         <input
@@ -60,12 +60,12 @@ const RegisterPage = () => {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+          className="w-full px-4 py-2 border border-charcoal-800 rounded-lg bg-gray-100"
           disabled={loading}
         />
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition"
+          className="w-full bg-gray-200 text-charcoal-800 px-6 py-3 rounded-lg hover:bg-gray-300 transition"
           disabled={loading}
         >
           {loading ? "Registering..." : "Register"}
