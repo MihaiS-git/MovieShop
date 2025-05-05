@@ -1,8 +1,10 @@
-import { Link } from "react-router-dom";
-import useLogout from "../features/auth/useAuth";
+import { Link, NavLink } from "react-router-dom";
+import LogoutButton from "./LogoutButton";
+import { useSelector } from "react-redux";
+import { RootState } from "../app/store";
 
 const MainNavigation = () => {
-  const handleLogout = useLogout();
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   
   return (
     <>
@@ -20,12 +22,17 @@ const MainNavigation = () => {
           <li>
             <Link to="/dashboard" className="hover:text-red-hover active:text-red-hover">Dashboard</Link>
           </li>
-          <li>
-            <Link to="/signin" className="hover:text-red-hover active:text-red-hover">SignIn</Link>
-          </li>
-          <li>
-            <button onClick={handleLogout}>Logout</button>
-          </li>
+          {!isAuthenticated ? (
+              <li>
+                <NavLink to="signin" className="hover:text-red-hover active:text-red-hover">
+                  SignIn
+                </NavLink>
+              </li>
+            ) : (
+              <li>
+                <LogoutButton />
+              </li>
+            )}
         </ul>
       </nav>
     </>

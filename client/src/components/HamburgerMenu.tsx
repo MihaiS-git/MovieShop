@@ -1,9 +1,14 @@
 import { NavLink } from "react-router-dom";
+import LogoutButton from "./LogoutButton";
+import { useSelector } from "react-redux";
+import { RootState } from "../app/store";
 
 const HamburgerMenu: React.FC<{
   openState: boolean;
   handleClose: () => void;
 }> = ({ openState, handleClose }) => {
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+
   return (
     <>
       <div
@@ -14,20 +19,41 @@ const HamburgerMenu: React.FC<{
         <div className="grid grid-cols-12">
           <ul className="col-start-3 col-end-11 flex flex-col items-center space-y-8 overflow-auto mt-32 mb-32">
             <li>
-              <NavLink to="#">Movies</NavLink>
+              <NavLink to="/" onClick={handleClose}>
+                Home
+              </NavLink>
             </li>
             <li>
-              <NavLink to="#">Cart</NavLink>
+              <NavLink to="#" onClick={handleClose}>
+                Movies
+              </NavLink>
             </li>
             <li>
-              <NavLink to="#">Account</NavLink>
+              <NavLink to="#" onClick={handleClose}>
+                Cart
+              </NavLink>
             </li>
             <li>
-              <NavLink to="#">Dashboard</NavLink>
+              <NavLink to="#" onClick={handleClose}>
+                Account
+              </NavLink>
             </li>
             <li>
-              <NavLink to="signin">Sign in</NavLink>
+              <NavLink to="#" onClick={handleClose}>
+                Dashboard
+              </NavLink>
             </li>
+            {!isAuthenticated ? (
+              <li>
+                <NavLink to="signin" onClick={handleClose}>
+                  SignIn
+                </NavLink>
+              </li>
+            ) : (
+              <li onClick={handleClose}>
+                <LogoutButton />
+              </li>
+            )}
           </ul>
           <div className="col-span-1"></div>
           <div className="col-start-12">
