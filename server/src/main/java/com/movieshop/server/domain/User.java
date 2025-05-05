@@ -54,6 +54,8 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private boolean enabled;
 
+    @Enumerated(EnumType.STRING)
+    private AuthProvider provider;
 
     @Override
     @JsonIgnore
