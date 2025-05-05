@@ -62,6 +62,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
                 if (jwtService.isTokenValid(jwt, userDetails)) {
                     String role = jwtService.extractClaim(jwt, claims -> claims.get("role", String.class));
+                    if (role == null || role.isEmpty()) {
+                        throw new InvalidAuthException("Role not found in JWT token. ");
+                    }
                     Collection<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList("ROLE_" + role);
 
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
