@@ -1,7 +1,6 @@
 package com.movieshop.server.domain;
 
 import lombok.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Getter
 @ToString

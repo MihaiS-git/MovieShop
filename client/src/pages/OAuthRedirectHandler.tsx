@@ -4,6 +4,8 @@ import { login } from "../features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
 import { User } from "../types/User";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api/v0";
+
 const OAuthRedirectHandler = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -16,7 +18,7 @@ const OAuthRedirectHandler = () => {
     const refreshToken = params.get("refreshToken");
 
     if (token && refreshToken) {
-      fetch("http://localhost:8080/api/v0/auth/me", {
+      fetch(`${API_URL}/auth/me`, {
         headers: {
           "Authorization": `Bearer ${token}`,
         },

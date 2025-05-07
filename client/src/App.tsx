@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { login } from "./features/auth/authSlice";
 import RegisterPage from "./pages/RegisterPage";
+import MovieListPage from "./pages/MovieListPage";
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
       {
         path: "register",
         element: <RegisterPage />,
+      },
+      {
+        path: "movies",
+        element: <MovieListPage />
       }
     ]
   }

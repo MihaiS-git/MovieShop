@@ -20,11 +20,10 @@ public class Film {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "film_id")
     @EqualsAndHashCode.Include
-    private Integer filmId;
+    private Integer id;
 
     private String title;
 
-    @Column(name="description", columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "release_year")

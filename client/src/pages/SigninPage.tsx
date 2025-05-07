@@ -3,6 +3,9 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { login } from "../features/auth/authSlice";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api/v0";
+const API_ROOT_URL = import.meta.env.VITE_API_ROOT_URL || "http://localhost:8080";
+
 const SigninPage = () => {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
@@ -12,7 +15,7 @@ const SigninPage = () => {
 
   const handleGoogleLogin = () => {
     setLoading(true);
-    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+    window.location.href = `${API_ROOT_URL}/oauth2/authorization/google`;
   };
 
   const handleEmailLogin = async (e: React.FormEvent) => {
@@ -20,7 +23,7 @@ const SigninPage = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:8080/api/v0/auth/login", {
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
