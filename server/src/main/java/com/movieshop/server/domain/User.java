@@ -24,7 +24,7 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    private Long id;
+    private Integer id;
 
     @Column(unique = true, nullable = false)
     @EqualsAndHashCode.Include
@@ -53,9 +53,6 @@ public class User implements UserDetails {
 
     @Column(nullable = false)
     private boolean enabled;
-
-    @Enumerated(EnumType.STRING)
-    private AuthProvider provider;
 
     @Override
     @JsonIgnore

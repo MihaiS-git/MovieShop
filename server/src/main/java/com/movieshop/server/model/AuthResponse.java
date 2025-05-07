@@ -1,5 +1,6 @@
 package com.movieshop.server.model;
 
+import com.movieshop.server.domain.RefreshToken;
 import lombok.*;
 
 @Getter
@@ -9,5 +10,6 @@ import lombok.*;
 @Builder
 public class AuthResponse {
     private String token;
+    private String refreshToken;
     private UserDTO user;
 }

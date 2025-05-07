@@ -6,11 +6,12 @@ import com.movieshop.server.exception.InvalidAuthException;
 import com.movieshop.server.model.AuthenticationRequest;
 import com.movieshop.server.model.RegisterRequest;
 import com.movieshop.server.repository.UserRepository;
-import org.springframework.dao.DataIntegrityViolationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class AuthenticationService {
 
@@ -32,6 +33,7 @@ public class AuthenticationService {
     }
 
     public String register(RegisterRequest request) {
+        log.info("User {} is attempting to register.", request.getEmail());
         try {
             User user = User.builder()
                     .email(request.getEmail())
@@ -46,15 +48,17 @@ public class AuthenticationService {
                     .build();
             User savedUser = userRepository.save(user);
 
+            log.info("User {} registered successfully with role {}", savedUser.getEmail(), savedUser.getRole());
+
             return jwtService.generateToken(savedUser);
-        } catch (DataIntegrityViolationException e) {
-            throw new InvalidAuthException("Email is already taken.");
         } catch (Exception e) {
+            log.error("Error during registration: {}", e.getMessage());
             throw new InvalidAuthException("An error occurred during registration: " + e.getMessage());
         }
     }
 
     public String authenticate(AuthenticationRequest request) {
+        log.info("User {} is attempting to authenticate.", request.getEmail());
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         } catch (BadCredentialsException e) {
@@ -64,13 +68,16 @@ public class AuthenticationService {
         } catch (LockedException e) {
             throw new InvalidAuthException("Account is locked");
         } catch (Exception e) {
+            log.error("Authentication error: {}", e.getMessage());
             throw new InvalidAuthException("Authentication failed: " + e.getMessage());
         }
 
-        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(InvalidAuthException::new);
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new InvalidAuthException("Invalid email or password"));
         if (!user.isEnabled()) {
             throw new InvalidAuthException("Account is disabled");
         }
+
+        log.info("User {} authenticated successfully with role {}", user.getEmail(), user.getRole());
 
         return jwtService.generateToken(user);
     }

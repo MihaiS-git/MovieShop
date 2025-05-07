@@ -2,9 +2,7 @@ package com.movieshop.server.service;
 
 import com.movieshop.server.domain.User;
 
-import java.util.List;
-
-public interface IUSerService {
+public interface IUserService {
     User getUserByEmail(String email);
 
 

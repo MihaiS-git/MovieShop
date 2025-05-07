@@ -1,8 +1,10 @@
 package com.movieshop.server.security;
 
+import com.movieshop.server.domain.RefreshToken;
 import com.movieshop.server.domain.Role;
 import com.movieshop.server.domain.User;
 import com.movieshop.server.repository.UserRepository;
+import com.movieshop.server.service.IRefreshTokenService;
 import com.movieshop.server.service.JwtService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -20,15 +22,18 @@ import java.util.UUID;
 
 @Component
 public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler {
-    private final JwtService jwtService;
-    private final UserRepository userRepository;
 
     @Value("${frontend.base-url}")
     private String FRONTEND_BASE_URL;
 
-    public CustomOAuth2SuccessHandler(JwtService jwtService, UserRepository userRepository) {
+    private final JwtService jwtService;
+    private final UserRepository userRepository;
+    private final IRefreshTokenService refreshTokenService;
+
+    public CustomOAuth2SuccessHandler(JwtService jwtService, UserRepository userRepository, IRefreshTokenService refreshTokenService) {
         this.jwtService = jwtService;
         this.userRepository = userRepository;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @Override
@@ -37,15 +42,9 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
         DefaultOAuth2User oauthUser = (DefaultOAuth2User) authentication.getPrincipal();
 
-        String email;
-        try {
-            email = Optional.ofNullable(oauthUser.getAttribute("email"))
-                    .map(String.class::cast)
-                    .orElseThrow(() -> new IllegalArgumentException("Email not found in OAuth2 response"));
-        } catch (IllegalArgumentException e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid OAuth2 response: " + e.getMessage());
-            return;
-        }
+        String email = Optional.ofNullable(oauthUser.getAttribute("email"))
+                .map(String.class::cast)
+                .orElseThrow(() -> new IllegalArgumentException("Email not found in OAuth2 response"));
 
         User user = userRepository.findByEmail(email).orElseGet(() -> {
             User newUser = new User();
@@ -62,9 +61,11 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         });
 
         String jwtToken = jwtService.generateToken(user);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
 
         String redirectUri = UriComponentsBuilder.fromUriString(FRONTEND_BASE_URL + "/oauth2/redirect")
                 .queryParam("token", jwtToken)
+                .queryParam("refreshToken", refreshToken.getToken())
                 .build()
                 .toUriString();
         response.sendRedirect(redirectUri);

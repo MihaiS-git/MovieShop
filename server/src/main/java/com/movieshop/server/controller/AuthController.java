@@ -1,11 +1,13 @@
 package com.movieshop.server.controller;
 
+import com.movieshop.server.domain.RefreshToken;
 import com.movieshop.server.domain.User;
 import com.movieshop.server.exception.InvalidAuthException;
 import com.movieshop.server.model.*;
 import com.movieshop.server.service.AuthenticationService;
-import com.movieshop.server.service.IUSerService;
-import org.springframework.http.HttpStatus;
+import com.movieshop.server.service.IRefreshTokenService;
+import com.movieshop.server.service.IUserService;
+import com.movieshop.server.service.JwtService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -16,74 +18,92 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthenticationService authenticationService;
-    private final IUSerService userService;
+    private final IUserService userService;
+    private final JwtService jwtService;
+    private final IRefreshTokenService refreshTokenService;
 
-    public AuthController(AuthenticationService authenticationService, IUSerService userService) {
+    public AuthController(AuthenticationService authenticationService,
+                          IUserService userService,
+                          JwtService jwtService,
+                          IRefreshTokenService refreshTokenService) {
         this.authenticationService = authenticationService;
         this.userService = userService;
+        this.jwtService = jwtService;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
-        try {
-            String token = authenticationService.register(request);
-            return ResponseEntity.ok(token);
-        } catch (InvalidAuthException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid registration details: " + e.getMessage());
-        }
+        String token = authenticationService.register(request);
+        return ResponseEntity.ok(token);
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthenticationRequest authenticationRequest) {
-        try {
-            String jwtToken = authenticationService.authenticate(authenticationRequest);
+        String jwtToken = authenticationService.authenticate(authenticationRequest);
 
-            User user = userService.getUserByEmail(authenticationRequest.getEmail());
+        User user = userService.getUserByEmail(authenticationRequest.getEmail());
 
-            UserDTO userDTO = UserDTO.builder()
-                    .email(user.getEmail())
-                    .name(user.getName())
-                    .role(user.getRole().name())
-                    .picture(user.getPicture())
-                    .build();
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
 
-            return ResponseEntity.ok(new AuthResponse(jwtToken, userDTO));
-        } catch (InvalidAuthException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new SimpleErrorResponse("Invalid credentials: " + e.getMessage()));
-        }
+        UserDTO userDTO = UserDTO.builder()
+                .email(user.getEmail())
+                .name(user.getName())
+                .role(user.getRole().name())
+                .picture(user.getPicture())
+                .build();
+
+        return ResponseEntity.ok(new AuthResponse(jwtToken, refreshToken.getToken(), userDTO));
     }
 
     @GetMapping("/me")
     public ResponseEntity<UserDTO> getCurrentUser(@AuthenticationPrincipal Object principal) {
         if (principal == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            throw new InvalidAuthException("User not authenticated");
         }
 
-        if (principal instanceof OAuth2User) {
-            OAuth2User oAuth2User = (OAuth2User) principal;
-            UserDTO userDto = UserDTO.builder()
+        UserDTO userDTO = switch (principal) {
+            case OAuth2User oAuth2User -> UserDTO.builder()
                     .email(oAuth2User.getAttribute("email"))
                     .name(oAuth2User.getAttribute("name"))
                     .role("ROLE_USER")
                     .picture(oAuth2User.getAttribute("picture"))
                     .build();
-
-            return ResponseEntity.ok(userDto);
-        }
-
-        if (principal instanceof User) {
-            User user = (User) principal;
-            UserDTO userDto = UserDTO.builder()
+            case User user -> UserDTO.builder()
                     .email(user.getEmail())
                     .name(user.getName())
                     .role(user.getRole().name())
                     .picture(user.getPicture())
                     .build();
+            default -> throw new InvalidAuthException("Unsupported authentication type");
+        };
 
-            return ResponseEntity.ok(userDto);
+        return ResponseEntity.ok(userDTO);
+    }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<AuthResponse> refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+        if (!refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken())) {
+            throw new InvalidAuthException("Invalid or expired refresh token");
         }
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        RefreshToken refreshToken = refreshTokenService.findByToken(refreshTokenRequest.getRefreshToken())
+                .orElseThrow(() -> new InvalidAuthException("Refresh token not found"));
+
+        User user = refreshToken.getUser();
+
+        UserDTO userDTO = UserDTO.builder()
+                .email(user.getEmail())
+                .name(user.getName())
+                .role(user.getRole().name())
+                .picture(user.getPicture())
+                .build();
+
+        String newAccessToken = jwtService.generateToken(user);
+        RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(user);
+
+        refreshTokenService.deleteRefreshToken(refreshTokenRequest.getRefreshToken());
+
+        return ResponseEntity.ok(new AuthResponse(newAccessToken, newRefreshToken.getToken(), userDTO));
     }
 }
