@@ -16,8 +16,11 @@ export const movieApi = createApi({
   },
   endpoints: (builder) => ({
     // Define a query to get movies
-    getMovies: builder.query<Movie[], void>({
-      query: () => ({ url: "/films" }),
+    getMovies: builder.query<{movies: Movie[], totalCount: number}, {page: number, limit: number}>({
+      query: ({page, limit}) => ({
+         url: "/films", 
+         params: { page, limit }, // Pass the page and limit as query parameters
+        }),
       keepUnusedDataFor: 300, // Cache the data for 5 minutes
     }),
   }),

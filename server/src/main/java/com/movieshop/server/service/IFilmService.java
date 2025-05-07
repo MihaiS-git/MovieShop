@@ -1,13 +1,16 @@
 package com.movieshop.server.service;
 
 import com.movieshop.server.domain.Film;
+import com.movieshop.server.model.MoviePageResponse;
 
 import java.util.List;
 
 public interface IFilmService {
 //    public Film getFilmById(Long id);
 
-    public List<Film> getAllFilms();
+    List<Film> getAllFilms();
+
+    MoviePageResponse findAll(int page, int limit);
 
 //    public Film createFilm(Film film);
 //

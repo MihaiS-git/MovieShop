@@ -1,10 +1,29 @@
+import { useState } from "react";
 import { useGetMoviesQuery } from "../features/movies/movieApi";
 
 const MovieListPage = () => {
-  const { data: movies, error, isLoading } = useGetMoviesQuery();
+  const [page, setPage] = useState(1);
+  const limit = 10;
+  const { data, error, isLoading } = useGetMoviesQuery({page, limit});
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error loading movies</p>;
+
+  const {movies, totalCount} = data || { movies: [], totalCount: 0 };
+  const totalPages = Math.ceil(totalCount / limit);
+
+  const handleNextPage = () => {
+    if( page < totalPages) {
+      setPage(prev => prev + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if(page > 1){
+      setPage(prev => prev - 1);
+    }
+  };
+
 
   return (
     <div className="p-4">
@@ -18,6 +37,24 @@ const MovieListPage = () => {
           </li>
         ))}
       </ul>
+
+      <div className="flex justify-between mt-4">
+        <button
+          className="px-4 py-2 bg-gray-200 rounded"
+          onClick={handlePrevPage}
+          disabled={page === 1}
+        >
+          Previous
+        </button>
+        <span>{`Page ${page} of ${totalPages}`}</span>
+        <button
+          className="px-4 py-2 bg-gray-200 rounded"
+          onClick={handleNextPage}
+          disabled={page === totalPages}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 };
