@@ -24,7 +24,15 @@
 
     /* Additional settings for improved compatibility */
     "resolveJsonModule": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+
+    /* For shadcn/ui */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    }
   },
   "include": ["src"]
 }
