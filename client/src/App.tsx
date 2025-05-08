@@ -37,10 +37,10 @@ const router = createBrowserRouter([
       },
       {
         path: "movies",
-        element: <MovieListPage />
-      }
-    ]
-  }
+        element: <MovieListPage />,
+      },
+    ],
+  },
 ]);
 
 function App() {
@@ -49,9 +49,16 @@ function App() {
   useEffect(() => {
     const storedAuth = localStorage.getItem("auth");
     if (storedAuth) {
-      const authState = JSON.parse(storedAuth);
-      if (authState?.user && authState?.token) {
-        dispatch(login(authState));
+      try {
+        const authState = JSON.parse(storedAuth);
+        if (authState?.user && authState?.token && !authState?.isAuthenticated) {
+          dispatch(login(authState));
+        } else {
+          localStorage.removeItem("auth");
+        }
+      } catch (error: unknown) {
+        console.error("Failed to parse auth state from localStorage", error);
+        localStorage.removeItem("auth");
       }
     }
   }, [dispatch]);
