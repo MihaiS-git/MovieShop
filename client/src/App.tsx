@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { login } from "./features/auth/authSlice";
 import RegisterPage from "./pages/RegisterPage";
 import MovieListPage from "./pages/MovieListPage";
+import MovieDetailsPage from "./pages/MovieDetailsPage";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
       {
         path: "movies",
         element: <MovieListPage />,
+      },
+      {
+        path: "movies/:id",
+        element: <MovieDetailsPage/>
       },
     ],
   },

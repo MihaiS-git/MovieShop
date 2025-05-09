@@ -4,7 +4,7 @@ import { useGetMoviesQuery } from "../features/movies/movieApi";
 import PageContent from "../PageContent";
 
 const MovieListPage = () => {
-  const limit = 10;
+  const limit = 16;
   const [page, setPage] = useState(1);
   const { data, error, isLoading } = useGetMoviesQuery({ page: page - 1, limit });
   const { movies, totalCount } = data || { movies: [], totalCount: 0 };

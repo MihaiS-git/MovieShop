@@ -23,7 +23,7 @@ const MovieList: React.FC<{
       <h1 className="font-bold text-2xl mb-4 text-charcoal-800 dark:text-gold-500">
         Available Movies
       </h1>
-      <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+      <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
         {movies?.map((movie) => (
           <li key={movie.id} className="px-0">
             <MovieCard movie={movie} />

@@ -22,6 +22,12 @@ public class FilmServiceImpl implements IFilmService {
     }
 
     @Override
+    public Film getFilmById(Long id) {
+        return filmRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Film not found with id: " + id));
+    }
+
+    @Override
     public List<Film> getAllFilms() {
         return filmRepository.findAll();
     }

@@ -6,7 +6,7 @@ import com.movieshop.server.model.MoviePageResponse;
 import java.util.List;
 
 public interface IFilmService {
-//    public Film getFilmById(Long id);
+    public Film getFilmById(Long id);
 
     List<Film> getAllFilms();
 
