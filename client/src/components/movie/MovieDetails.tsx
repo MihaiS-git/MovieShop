@@ -17,35 +17,35 @@ const MovieDetails: React.FC<MovieDetailProps> = ({ movie }) => {
       />
       <h1 className="text-gold-500 text-2xl font-bold mt-2">{movie.title}</h1>
       <p className="text-lg">{movie.description}</p>
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab totam aliquid, accusamus veniam hic dolorem quasi deleniti dolores dolorum alias iure quam reiciendis rem quos rerum quis, excepturi necessitatibus saepe!</p>
+      <p className="text-center">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab totam aliquid, accusamus veniam hic dolorem quasi deleniti dolores dolorum alias iure quam reiciendis rem quos rerum quis, excepturi necessitatibus saepe!</p>
       <div className="grid grid-cols-5 gap-1 text-charcoal-800">
         <div>
-          <p className="text-center bg-gold-300 p-1 rounded-md text-md">
-            Rating: {movie.rating}
+          <p className="text-center bg-gold-300 p-1 rounded-md text-xs sm:text-base">
+            Rating <br /> {movie.rating}
           </p>
         </div>
         <div>
-          <p className="text-center bg-gold-300 p-1 rounded-md text-md">
-            Year: {movie.releaseYear}
+          <p className="text-center bg-gold-300 p-1 rounded-md text-xs sm:text-base">
+            Year <br /> {movie.releaseYear}
           </p>
         </div>
         <div>
-          <p className="text-center bg-gold-300 p-1 rounded-md text-md">
-            Language: {movie.languageId}
+          <p className="text-center bg-gold-300 p-1 rounded-md text-xs sm:text-base">
+            Language <br /> {movie.languageId}
           </p>
         </div>
         <div>
-          <p className="text-center bg-gold-300 p-1 rounded-md text-md">
-            Length: {movie.length} min
+          <p className="text-center bg-gold-300 p-1 rounded-md text-xs sm:text-base">
+            Length <br /> {movie.length} min
           </p>
         </div>
         <div>
-          <p className="text-center bg-gold-300 p-1 rounded-md text-md">
-            Rental rate: {formatCurrency(movie.rentalRate)}
+          <p className="text-center bg-gold-300 p-1 rounded-md text-xs sm:text-base">
+            Rate <br /> {formatCurrency(movie.rentalRate)}
           </p>
         </div>
       </div>
-      <div className="flex flex-col items-left mt-2">
+      <div className="flex flex-col items-left mt-2 text-xs sm:text-base">
         {movie.originalLanguageId && (
           <p>Original language: {movie.originalLanguageId}</p>
         )}

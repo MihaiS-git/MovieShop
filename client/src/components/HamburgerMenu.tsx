@@ -24,7 +24,7 @@ const HamburgerMenu: React.FC<{
               </NavLink>
             </li>
             <li>
-              <NavLink to="#" onClick={handleClose}>
+              <NavLink to="/movies" onClick={handleClose}>
                 Movies
               </NavLink>
             </li>
