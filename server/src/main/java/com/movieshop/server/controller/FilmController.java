@@ -1,7 +1,7 @@
 package com.movieshop.server.controller;
 
 import com.movieshop.server.domain.Film;
-import com.movieshop.server.domain.Rating;
+import com.movieshop.server.mapper.FilmMapper;
 import com.movieshop.server.model.FilmDTO;
 import com.movieshop.server.model.MoviePageResponse;
 import com.movieshop.server.service.IFilmService;
@@ -15,9 +15,11 @@ import java.util.List;
 public class FilmController {
 
     private final IFilmService filmService;
+    private final FilmMapper filmMapper;
 
-    public FilmController(IFilmService filmService) {
+    public FilmController(IFilmService filmService, FilmMapper filmMapper) {
         this.filmService = filmService;
+        this.filmMapper = filmMapper;
     }
 
     @GetMapping("/all")
@@ -37,20 +39,27 @@ public class FilmController {
     @GetMapping("/{id}")
     public ResponseEntity<FilmDTO> getFilmById(@PathVariable Long id) {
         Film film = filmService.getFilmById(id);
-        FilmDTO filmDTO = FilmDTO.builder()
-                .id(film.getId())
-                .title(film.getTitle())
-                .description(film.getDescription())
-                .releaseYear(film.getReleaseYear())
-                .languageId(film.getLanguageId())
-                .originalLanguageId(film.getOriginalLanguageId())
-                .rentalDuration(film.getRentalDuration())
-                .rentalRate(film.getRentalRate())
-                .length(film.getLength())
-                .replacementCost(film.getReplacementCost())
-                .rating(Rating.valueOf(film.getRating().name()))
-                .lastUpdate(film.getLastUpdate())
-                .build();
+        FilmDTO filmDTO = filmMapper.toDto(film);
         return ResponseEntity.ok(filmDTO);
+    }
+
+    @PostMapping
+    public ResponseEntity<FilmDTO> createFilm(@RequestBody FilmDTO filmDTO) {
+        Film film = filmService.createFilm(filmDTO);
+        FilmDTO savedFilmDTO = filmMapper.toDto(film);
+        return ResponseEntity.ok(savedFilmDTO);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<FilmDTO> updateFilm(@RequestParam Long id, @RequestBody FilmDTO filmDTO) {
+        Film updatedFilm = filmService.updateFilm(id, filmDTO);
+        FilmDTO updatedFilmDTO = filmMapper.toDto(updatedFilm);
+        return ResponseEntity.ok(updatedFilmDTO);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteFilm(@RequestParam Long id) {
+        filmService.deleteFilm(id);
+        return ResponseEntity.noContent().build();
     }
 }
