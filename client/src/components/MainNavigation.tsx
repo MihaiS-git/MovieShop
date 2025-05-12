@@ -20,7 +20,7 @@ const MainNavigation = () => {
             <Link to="/account" className="hover:text-red-hover active:text-red-hover">Account</Link>
           </li>
           <li>
-            <Link to="/dashboard" className="hover:text-red-hover active:text-red-hover">Dashboard</Link>
+            <Link to="/admin" className="hover:text-red-hover active:text-red-hover">Admin</Link>
           </li>
           {!isAuthenticated ? (
               <li>
