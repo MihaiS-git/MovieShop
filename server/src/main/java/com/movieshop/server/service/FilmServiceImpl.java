@@ -2,6 +2,8 @@ package com.movieshop.server.service;
 
 import com.movieshop.server.domain.Film;
 import com.movieshop.server.exception.ResourceNotFoundException;
+import com.movieshop.server.mapper.FilmMapper;
+import com.movieshop.server.model.FilmDTO;
 import com.movieshop.server.model.MoviePageResponse;
 import com.movieshop.server.repository.FilmRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -16,9 +18,11 @@ import java.util.List;
 public class FilmServiceImpl implements IFilmService {
 
     private final FilmRepository filmRepository;
+    private final FilmMapper filmMapper;
 
-    public FilmServiceImpl(FilmRepository filmRepository) {
+    public FilmServiceImpl(FilmRepository filmRepository, FilmMapper filmMapper) {
         this.filmRepository = filmRepository;
+        this.filmMapper = filmMapper;
     }
 
     @Override
@@ -45,4 +49,36 @@ public class FilmServiceImpl implements IFilmService {
             throw new ResourceNotFoundException("Error fetching paginated films: " + e.getMessage());
         }
     }
+
+    @Override
+    public Film createFilm(FilmDTO filmDTO) {
+        return filmRepository.save(filmMapper.toEntity(filmDTO));
+    }
+
+    @Override
+    public Film updateFilm(Long id, FilmDTO filmDTO){
+        Film existentFilm = filmRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Film not found with id: " + id));
+        existentFilm.setTitle(filmDTO.getTitle());
+        existentFilm.setDescription(filmDTO.getDescription());
+        existentFilm.setReleaseYear(filmDTO.getReleaseYear());
+        existentFilm.setLanguageId(filmDTO.getLanguageId());
+        existentFilm.setOriginalLanguageId(filmDTO.getOriginalLanguageId());
+        existentFilm.setRentalDuration(filmDTO.getRentalDuration());
+        existentFilm.setRentalRate(filmDTO.getRentalRate());
+        existentFilm.setLength(filmDTO.getLength());
+        existentFilm.setReplacementCost(filmDTO.getReplacementCost());
+        existentFilm.setRating(filmDTO.getRating());
+        existentFilm.setLastUpdate(filmDTO.getLastUpdate());
+
+        return filmRepository.save(existentFilm);
+    }
+
+    @Override
+    public void deleteFilm(Long id) {
+        Film existentFilm = filmRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Film not found with id: " + id));
+        filmRepository.delete(existentFilm);
+    }
 }
+
