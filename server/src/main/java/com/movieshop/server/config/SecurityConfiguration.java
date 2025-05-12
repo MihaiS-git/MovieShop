@@ -44,7 +44,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/v0/auth/**").permitAll()
                         .requestMatchers("/api/v0/oauth2/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
-//                        .requestMatchers("/api/v0/movies/**").permitAll()
+                        .requestMatchers("/api/v0/films/**").permitAll()
                         .requestMatchers("/loginSuccess").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated())
