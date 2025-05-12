@@ -13,10 +13,12 @@ import MovieListPage from "./pages/MovieListPage";
 import MovieDetailsPage from "./pages/MovieDetailsPage";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/dashboard/AdminDashboard";
-import AdminReviews from "./pages/admin/reviews/AdminReviews";
 import AdminOrders from "./pages/admin/orders/AdminOrders";
 import AdminUsers from "./pages/admin/users/AdminUsers";
-import AdminMovies from "./pages/admin/movies/AdminMovies";
+import EditMovies from "./pages/admin/movies/EditMovies";
+import AddMovie from "./pages/admin/movies/AddMovie";
+import EditReviews from "./pages/admin/reviews/EditReviews";
+import AddReview from "./pages/admin/reviews/AddReview";
 
 const router = createBrowserRouter([
   {
@@ -49,19 +51,47 @@ const router = createBrowserRouter([
         children: [
           {
             path: "movies",
-            element: <AdminMovies />,
+            children: [
+              {
+                path: "edit",
+                element: <EditMovies/>
+              },
+              {
+                path: "add",
+                element: <AddMovie/>
+              }
+            ],
           },
           {
             path: "users",
-            element: <AdminUsers />,
+            children: [
+              {
+                path: "edit",
+                element: <AdminUsers/>
+              },
+            ],
           },
           {
             path: "orders",
-            element: <AdminOrders />,
+                        children: [
+              {
+                path: "edit",
+                element: <AdminOrders/>
+              },
+            ],
           },
           {
             path: "reviews",
-            element: <AdminReviews />,
+                        children: [
+              {
+                path: "edit",
+                element: <EditReviews/>
+              },
+              {
+                path: "add",
+                element: <AddReview/>
+              }
+            ],
           },
           {
             path: "dashboard",
