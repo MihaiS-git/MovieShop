@@ -49,7 +49,7 @@ const MovieDetails: React.FC<MovieDetailProps> = ({ movie }) => {
         {movie.originalLanguageId && (
           <p>Original language: {movie.originalLanguageId}</p>
         )}
-        <p>Rental duration: {movie.rentalDuration}</p>
+        <p>Rental duration: {movie.rentalDuration} days</p>
         <p>Replacement cost: {formatCurrency(movie.replacementCost)}</p>
         <p>Last update: {formatDate(movie.lastUpdate)}</p>
       </div>

@@ -90,7 +90,7 @@ const MovieList: React.FC<Props> = ({
             </div>
           </div>
         ) : (
-          <div className="mt-6 text-gray-400 text-sm">No more movies.</div>
+          <div className="mt-6 text-charcoal-800 text-sm">No more movies.</div>
         )
       ) : (
         <MoviesPagination
