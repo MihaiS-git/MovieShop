@@ -59,7 +59,9 @@ const AdminLayout = () => {
           {/* Sliding Drawer */}
           <div
             className={`fixed top-0 left-0 h-full w-full bg-charcoal-800 p-4 pt-16 overflow-y-auto z-50
-      transform transition-transform duration-500 ease-in-out ${isAdminMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
+      transform transition-transform duration-500 ease-in-out ${
+        isAdminMenuOpen ? "translate-x-0" : "-translate-x-full"
+      }`}
           >
             <AdminNavbarDrawer toggleAdminMenu={toggleAdminMenu} />
           </div>

@@ -17,7 +17,12 @@ const MovieDetails: React.FC<MovieDetailProps> = ({ movie }) => {
       />
       <h1 className="text-gold-500 text-2xl font-bold mt-2">{movie.title}</h1>
       <p className="text-lg">{movie.description}</p>
-      <p className="text-center">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab totam aliquid, accusamus veniam hic dolorem quasi deleniti dolores dolorum alias iure quam reiciendis rem quos rerum quis, excepturi necessitatibus saepe!</p>
+      <p className="text-center">
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab totam
+        aliquid, accusamus veniam hic dolorem quasi deleniti dolores dolorum
+        alias iure quam reiciendis rem quos rerum quis, excepturi necessitatibus
+        saepe!
+      </p>
       <div className="grid grid-cols-5 gap-1 text-charcoal-800">
         <div>
           <p className="text-center bg-gold-300 p-1 rounded-md text-xs sm:text-base">
@@ -46,9 +51,11 @@ const MovieDetails: React.FC<MovieDetailProps> = ({ movie }) => {
         </div>
       </div>
       <div className="flex flex-col items-left mt-2 text-xs sm:text-base">
-        {movie.originalLanguageId && (
-          <p>Original language: {movie.originalLanguageId}</p>
-        )}
+        {movie.originalLanguageId !== null &&
+          movie.originalLanguageId !== undefined && 
+          movie.originalLanguageId > 0 && (
+            <p>Original language: {movie.originalLanguageId}</p>
+          )}
         <p>Rental duration: {movie.rentalDuration} days</p>
         <p>Replacement cost: {formatCurrency(movie.replacementCost)}</p>
         <p>Last update: {formatDate(movie.lastUpdate)}</p>

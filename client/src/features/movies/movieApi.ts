@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import fetchApi from "../../util/api";
-import { Movie } from "../../types/Movie";
+import { MovieDto, Movie } from "../../types/Movie";
 
 export const movieApi = createApi({
   reducerPath: "movieApi",
@@ -11,21 +11,66 @@ export const movieApi = createApi({
     if (result.error) return { error: result.error };
     return { data: result.data };
   },
+  tagTypes: ["Movie"],
   endpoints: (builder) => ({
-    getMovies: builder.query<{movies: Movie[], totalCount: number}, {page: number, limit: number}>({
-      query: ({page, limit}) => ({
-         url: "/films", 
-         params: { page, limit },
-        }),
+    getMovies: builder.query<
+      { movies: Movie[]; totalCount: number },
+      { page: number; limit: number }
+    >({
+      query: ({ page, limit }) => ({
+        url: "/films",
+        params: { page, limit },
+      }),
+      providesTags: (result) =>
+        result?.movies
+          ? [
+              ...result.movies.map((m) => ({
+                type: "Movie" as const,
+                id: m.id,
+              })),
+              { type: "Movie", id: "LIST" },
+            ]
+          : [{ type: "Movie", id: "LIST" }],
       keepUnusedDataFor: 300,
     }),
     getMovieById: builder.query<Movie, number>({
       query: (id) => ({
         url: `/films/${id}`,
       }),
+      providesTags: (_result, _error, id) => [{ type: "Movie", id }],
       keepUnusedDataFor: 300,
+    }),
+    createMovie: builder.mutation<Movie, MovieDto>({
+      query: (data: MovieDto) => ({
+        url: "/films",
+        method: "POST",
+        data,
+      }),
+    }),
+    updateMovie: builder.mutation<Movie, { id: number; data: MovieDto }>({
+      query: ({ id, data }) => ({
+        url: `/films/${id}`,
+        method: "PUT",
+        data,
+      }),
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: "Movie", id },
+        { type: "Movie", id: "LIST" },
+      ],
+    }),
+    deleteMovieById: builder.mutation<void, number>({
+      query: (id) => ({
+        url: `/films/${id}`,
+        method: "DELETE",
+      }),
     }),
   }),
 });
 
-export const { useGetMoviesQuery, useGetMovieByIdQuery } = movieApi;
+export const {
+  useGetMoviesQuery,
+  useGetMovieByIdQuery,
+  useCreateMovieMutation,
+  useUpdateMovieMutation,
+  useDeleteMovieByIdMutation,
+} = movieApi;

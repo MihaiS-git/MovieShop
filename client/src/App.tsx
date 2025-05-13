@@ -19,6 +19,7 @@ import EditMovies from "./pages/admin/movies/EditMovies";
 import AddMovie from "./pages/admin/movies/AddMovie";
 import EditReviews from "./pages/admin/reviews/EditReviews";
 import AddReview from "./pages/admin/reviews/AddReview";
+import EditMoviePage from "./pages/admin/movies/EditMoviePage";
 
 const router = createBrowserRouter([
   {
@@ -54,7 +55,11 @@ const router = createBrowserRouter([
             children: [
               {
                 path: "edit",
-                element: <EditMovies/>
+                element: <EditMovies/>,
+              },
+              {
+                path: "edit/:id",
+                element: <EditMoviePage />
               },
               {
                 path: "add",
