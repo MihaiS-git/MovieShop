@@ -1,4 +1,7 @@
-import { useGetMoviesQuery } from "@/features/movies/movieApi";
+import {
+  useDeleteMovieByIdMutation,
+  useGetMoviesQuery,
+} from "@/features/movies/movieApi";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { Movie } from "@/types/Movie";
 import { useCallback, useEffect, useState } from "react";
@@ -9,6 +12,7 @@ import AdminMovieList from "@/components/movies/AdminMovieList";
 const EditMovies = () => {
   const limit = 16;
   const isMobile = useIsMobile();
+  const [deleteMovie] = useDeleteMovieByIdMutation();
 
   const [page, setPage] = useState(1);
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -26,11 +30,17 @@ const EditMovies = () => {
     if (!data) return;
 
     if (isMobile) {
-      setMovies((prev) => [...prev, ...(data.movies || [])]);
+      setMovies((prev) => {
+        const existingIds = new Set(prev.map((m) => m.id));
+        const newUniqueMovies = (data.movies || []).filter(
+          (m) => !existingIds.has(m.id)
+        );
+        return [...prev, ...newUniqueMovies];
+      });
     } else {
       setMovies(data.movies || []);
     }
-  }, [data, isMobile]);
+  }, [data, isMobile, page]);
 
   const handleNextPage = () => {
     if (page < totalPages) {
@@ -54,22 +64,32 @@ const EditMovies = () => {
     }
   }, [isFetching, hasMore]);
 
+  const handleDeleteClick = async (movieId: number) => {
+    try {
+      await deleteMovie(movieId);
+      setMovies((prev) => prev.filter((m) => m.id !== movieId));
+    } catch (err) {
+      console.error("Failed to delete movie: ", err);
+    }
+  };
+
   if (isLoading && page === 1) return <p>Loading...</p>;
   if (error) return <p>Error loading movies.</p>;
 
   return (
-      <PageContent className="flex flex-col items-center justify-center pt-4 pb-24 w-full">
-        <AdminMovieList
-          movies={movies}
-          totalPages={totalPages}
-          page={page}
-          handleNextPage={handleNextPage}
-          handlePrevPage={handlePrevPage}
-          onPageChange={onPageChange}
-          hasMore={hasMore}
-          loadMore={loadMore}
-        />
-      </PageContent>
+    <PageContent className="flex flex-col items-center justify-center pt-4 pb-24 w-full">
+      <AdminMovieList
+        movies={movies}
+        totalPages={totalPages}
+        page={page}
+        handleNextPage={handleNextPage}
+        handlePrevPage={handlePrevPage}
+        onPageChange={onPageChange}
+        hasMore={hasMore}
+        loadMore={loadMore}
+        handleDeleteClick={handleDeleteClick}
+      />
+    </PageContent>
   );
 };
 

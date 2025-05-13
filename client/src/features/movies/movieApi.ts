@@ -46,6 +46,7 @@ export const movieApi = createApi({
         method: "POST",
         data,
       }),
+      invalidatesTags: [{ type: "Movie", id: "LIST" }],
     }),
     updateMovie: builder.mutation<Movie, { id: number; data: MovieDto }>({
       query: ({ id, data }) => ({
@@ -63,6 +64,7 @@ export const movieApi = createApi({
         url: `/films/${id}`,
         method: "DELETE",
       }),
+      invalidatesTags: [{ type: "Movie", id: "LIST" }],
     }),
   }),
 });

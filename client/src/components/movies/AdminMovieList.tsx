@@ -14,6 +14,7 @@ type Props = {
   onPageChange: (pageNo: number) => void;
   hasMore: boolean;
   loadMore: () => void;
+  handleDeleteClick: (id: number) => void;
 };
 
 const MovieList: React.FC<Props> = ({
@@ -25,9 +26,11 @@ const MovieList: React.FC<Props> = ({
   onPageChange,
   hasMore,
   loadMore,
+  handleDeleteClick,
 }) => {
   const isMobile = useIsMobile();
   const loaderRef = useRef<HTMLDivElement>(null);
+
 
   useEffect(() => {
     if (!isMobile || !hasMore) return;
@@ -49,6 +52,8 @@ const MovieList: React.FC<Props> = ({
     };
   }, [isMobile, hasMore, loadMore]);
 
+
+
   return (
     <div className="flex flex-col align-middle text-center">
       <div className="w-full h-full text-red-500 dark:text-charcoal-800 flex flex-col pb-4 items-center">
@@ -59,7 +64,10 @@ const MovieList: React.FC<Props> = ({
       <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
         {movies?.map((movie) => (
           <li key={movie.id} className="px-0">
-            <AdminMovieCard movie={movie} />
+            <AdminMovieCard
+              movie={movie}
+              handleDeleteClick={() => handleDeleteClick(movie.id)}
+            />
           </li>
         ))}
       </ul>
