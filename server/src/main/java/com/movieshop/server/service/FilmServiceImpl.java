@@ -9,6 +9,7 @@ import com.movieshop.server.repository.FilmRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,7 +39,7 @@ public class FilmServiceImpl implements IFilmService {
 
     @Override
     public MoviePageResponse findAll(int page, int limit) {
-        Pageable pageable = PageRequest.of(page, limit);
+        Pageable pageable = PageRequest.of(page, limit, Sort.by(Sort.Direction.ASC, "id"));
         try {
             List<Film> films = filmRepository.findAll(pageable).getContent();
             long totalCount = filmRepository.count();

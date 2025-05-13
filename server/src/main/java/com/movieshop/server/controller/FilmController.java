@@ -50,15 +50,15 @@ public class FilmController {
         return ResponseEntity.ok(savedFilmDTO);
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<FilmDTO> updateFilm(@RequestParam Long id, @RequestBody FilmDTO filmDTO) {
+    @PutMapping("/{id}")
+    public ResponseEntity<FilmDTO> updateFilm(@PathVariable Long id, @RequestBody FilmDTO filmDTO) {
         Film updatedFilm = filmService.updateFilm(id, filmDTO);
         FilmDTO updatedFilmDTO = filmMapper.toDto(updatedFilm);
         return ResponseEntity.ok(updatedFilmDTO);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteFilm(@RequestParam Long id) {
+    public ResponseEntity<Void> deleteFilm(@PathVariable Long id) {
         filmService.deleteFilm(id);
         return ResponseEntity.noContent().build();
     }
