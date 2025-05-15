@@ -20,16 +20,24 @@ public class FilmServiceImpl implements IFilmService {
 
     private final FilmRepository filmRepository;
     private final FilmMapper filmMapper;
+    private final ILanguageService languageService;
 
-    public FilmServiceImpl(FilmRepository filmRepository, FilmMapper filmMapper) {
+    public FilmServiceImpl(FilmRepository filmRepository, FilmMapper filmMapper, ILanguageService languageService) {
         this.filmRepository = filmRepository;
         this.filmMapper = filmMapper;
+        this.languageService = languageService;
     }
 
     @Override
-    public Film getFilmById(Long id) {
+    public Film getFilmById(Integer id) {
         return filmRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Film not found with id: " + id));
+    }
+
+    @Override
+    public Film getFilmByTitle(String title) {
+        return filmRepository.findByTitle(title).orElseThrow(() ->
+                new ResourceNotFoundException("Film not found with title: " + title));
     }
 
     @Override
@@ -38,7 +46,7 @@ public class FilmServiceImpl implements IFilmService {
     }
 
     @Override
-    public MoviePageResponse findAll(int page, int limit) {
+    public MoviePageResponse findAll(Integer page, Integer limit) {
         Pageable pageable = PageRequest.of(page, limit, Sort.by(Sort.Direction.ASC, "id"));
         try {
             List<Film> films = filmRepository.findAll(pageable).getContent();
@@ -57,14 +65,14 @@ public class FilmServiceImpl implements IFilmService {
     }
 
     @Override
-    public Film updateFilm(Long id, FilmDTO filmDTO){
+    public Film updateFilm(Integer id, FilmDTO filmDTO){
         Film existentFilm = filmRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Film not found with id: " + id));
         existentFilm.setTitle(filmDTO.getTitle());
         existentFilm.setDescription(filmDTO.getDescription());
         existentFilm.setReleaseYear(filmDTO.getReleaseYear());
-        existentFilm.setLanguageId(filmDTO.getLanguageId());
-        existentFilm.setOriginalLanguageId(filmDTO.getOriginalLanguageId());
+        existentFilm.setLanguage(languageService.getLanguageByName(filmDTO.getLanguage()));
+        existentFilm.setOriginalLanguage(languageService.getLanguageByName(filmDTO.getOriginalLanguage()));
         existentFilm.setRentalDuration(filmDTO.getRentalDuration());
         existentFilm.setRentalRate(filmDTO.getRentalRate());
         existentFilm.setLength(filmDTO.getLength());
@@ -76,7 +84,7 @@ public class FilmServiceImpl implements IFilmService {
     }
 
     @Override
-    public void deleteFilm(Long id) {
+    public void deleteFilm(Integer id) {
         Film existentFilm = filmRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Film not found with id: " + id));
         filmRepository.delete(existentFilm);

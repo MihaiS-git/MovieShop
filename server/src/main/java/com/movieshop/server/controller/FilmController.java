@@ -37,7 +37,7 @@ public class FilmController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FilmDTO> getFilmById(@PathVariable Long id) {
+    public ResponseEntity<FilmDTO> getFilmById(@PathVariable Integer id) {
         Film film = filmService.getFilmById(id);
         FilmDTO filmDTO = filmMapper.toDto(film);
         return ResponseEntity.ok(filmDTO);
@@ -51,14 +51,14 @@ public class FilmController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<FilmDTO> updateFilm(@PathVariable Long id, @RequestBody FilmDTO filmDTO) {
+    public ResponseEntity<FilmDTO> updateFilm(@PathVariable Integer id, @RequestBody FilmDTO filmDTO) {
         Film updatedFilm = filmService.updateFilm(id, filmDTO);
         FilmDTO updatedFilmDTO = filmMapper.toDto(updatedFilm);
         return ResponseEntity.ok(updatedFilmDTO);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteFilm(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteFilm(@PathVariable Integer id) {
         filmService.deleteFilm(id);
         return ResponseEntity.noContent().build();
     }

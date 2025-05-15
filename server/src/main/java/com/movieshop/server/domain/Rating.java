@@ -1,32 +1,13 @@
 package com.movieshop.server.domain;
 
-import lombok.*;
-
-@Getter
-@ToString
 public enum Rating {
-    G,
-    PG,
-    PG13("PG-13"),
-    R,
-    NC17("NC-17");
+    G, PG, PG_13, R, NC_17;
 
-    private final String displayName;
-
-    Rating() {
-        this.displayName = name();
-    }
-
-    Rating(String displayName) {
-        this.displayName = displayName;
-    }
-
-    public static Rating fromString(String s) {
-        for (Rating rating : Rating.values()) {
-            if (rating.displayName.equalsIgnoreCase(s)) {
-                return rating;
-            }
-        }
-        throw new IllegalArgumentException("Unknown rating: " + s);
+    public static Rating fromString(String value) {
+        return switch (value) {
+            case "PG-13" -> PG_13;
+            case "NC-17" -> NC_17;
+            default -> Rating.valueOf(value);
+        };
     }
 }
