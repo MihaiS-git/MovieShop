@@ -9,6 +9,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class MoviePageResponse {
-    private List<Film> movies;
+    private List<Film> films;
     private long totalCount;
+
 }

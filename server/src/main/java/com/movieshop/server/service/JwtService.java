@@ -62,11 +62,16 @@ public class JwtService {
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails){
-        String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        try {
+            final String username = extractUsername(token);
+            return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        } catch (InvalidAuthException e) {
+            // Token invalid or expired
+            return false;
+        }
     }
 
-    private boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
@@ -78,8 +83,16 @@ public class JwtService {
         return extractClaim(token, claims -> claims.get("role", String.class));
     }
 
+    public String extractRoleFromToken(String token) {
+        return extractRole(token);
+    }
+
     private String extractEmail(String token) {
         return extractClaim(token, claims -> claims.get("email", String.class));
+    }
+
+    public String extractEmailFromToken(String token) {
+        return extractEmail(token);
     }
 
     private Claims extractAllClaims(String token) {
