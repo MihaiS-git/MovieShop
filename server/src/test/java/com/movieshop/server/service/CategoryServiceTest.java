@@ -32,7 +32,7 @@ public class CategoryServiceTest {
     private AutoCloseable closeable;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
     }
 
@@ -42,7 +42,7 @@ public class CategoryServiceTest {
     }
 
     @Test
-    void getAllCategories_ShouldReturnAllCategories(){
+    void getAllCategories_ShouldReturnAllCategories() {
         List<Category> categories = List.of(new Category(), new Category());
         when(categoryRepository.findAll()).thenReturn(categories);
 
@@ -53,7 +53,7 @@ public class CategoryServiceTest {
     }
 
     @Test
-    void getCategoryById_ShouldReturnCategory(){
+    void getCategoryById_ShouldReturnCategory() {
         Integer id = 1;
         Category category = new Category();
 
@@ -66,7 +66,7 @@ public class CategoryServiceTest {
     }
 
     @Test
-    void getCategoryById_WhenNotFound_ShouldThrowException(){
+    void getCategoryById_WhenNotFound_ShouldThrowException() {
         Integer id = 1;
 
         when(categoryRepository.findById(id)).thenReturn(Optional.empty());
@@ -80,7 +80,7 @@ public class CategoryServiceTest {
     }
 
     @Test
-    void getCategoryByName_ShouldReturnCategory(){
+    void getCategoryByName_ShouldReturnCategory() {
         String name = "Action";
         Category category = new Category("Action");
 
@@ -94,7 +94,7 @@ public class CategoryServiceTest {
     }
 
     @Test
-    void getCategoryByName_WhenNotFound_ShouldThrowException(){
+    void getCategoryByName_WhenNotFound_ShouldThrowException() {
         String name = "Action";
 
         when(categoryRepository.findByName(name)).thenReturn(Optional.empty());
@@ -108,15 +108,13 @@ public class CategoryServiceTest {
     }
 
     @Test
-    void createCategory_SavesAndReturnsCategory(){
+    void createCategory_SavesAndReturnsCategory() {
         CategoryDTO dto = new CategoryDTO(10, "Adventure");
-        Category category = Category.builder()
-                .name(dto.getName())
-                .build();
-        Category expected = Category.builder()
-                .id(10)
-                .name("Adventure")
-                .build();
+        Category category = new Category();
+        category.setName(dto.getName());
+        Category expected = new Category();
+        expected.setId(10);
+        expected.setName("Adventure");
 
         when(categoryRepository.save(category)).thenReturn(expected);
 
@@ -129,13 +127,14 @@ public class CategoryServiceTest {
     }
 
     @Test
-    void updateCategory_UpdatesAndReturnsCategory(){
-        Category existing = Category.builder()
-                .id(3)
-                .name("OldName")
-                .build();
+    void updateCategory_UpdatesAndReturnsCategory() {
+        Category existing = new Category();
+        existing.setId(3);
+        existing.setName("OldName");
         Integer id = 3;
-        CategoryDTO dto = new CategoryDTO("NewName");
+        CategoryDTO dto = CategoryDTO.builder()
+                .name("NewName")
+                .build();
 
         when(categoryRepository.findById(3)).thenReturn(Optional.of(existing));
         when(categoryRepository.save(existing)).thenReturn(existing);
@@ -163,10 +162,9 @@ public class CategoryServiceTest {
 
     @Test
     void deleteCategory_DeletesCategory() {
-        Category category = Category.builder()
-                .id(3)
-                .name("Action")
-                .build();
+        Category category = new Category();
+        category.setId(3);
+        category.setName("Action");
 
         when(categoryRepository.findById(3)).thenReturn(Optional.of(category));
         doNothing().when(categoryRepository).deleteById(3);
@@ -188,6 +186,4 @@ public class CategoryServiceTest {
         verify(categoryRepository, times(1)).findById(3);
         verify(categoryRepository, never()).deleteById(any());
     }
-
-
 }

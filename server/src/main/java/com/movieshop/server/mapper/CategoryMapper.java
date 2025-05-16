@@ -17,9 +17,8 @@ public class CategoryMapper {
 
     public Category toEntity(CategoryDTO categoryDTO){
         if (categoryDTO == null) return null;
-        return Category.builder()
-                .id(categoryDTO.getId())
-                .name(categoryDTO.getName())
-                .build();
+        Category category = new Category();
+        category.setName(categoryDTO.getName());
+        return category;
     }
 }

@@ -30,16 +30,16 @@ public class FilmDataLoader implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         log.info("Loading initial data...");
-        if(languageRepository.count() == 0) {
+        if (languageRepository.count() == 0) {
             loadInitialLanguageData();
         }
-        if(actorRepository.count() == 0) {
+        if (actorRepository.count() == 0) {
             loadInitialActorData();
         }
-        if(categoryRepository.count() == 0) {
+        if (categoryRepository.count() == 0) {
             loadInitialCategoryData();
         }
-        if(filmRepository.count() == 0) {
+        if (filmRepository.count() == 0) {
             loadInitialFilmData();
             filmCategoryService.loadFilmCategoryData();
             actorFilmService.loadActorFilmData();
@@ -57,7 +57,7 @@ public class FilmDataLoader implements CommandLineRunner {
         languageRepository.save(new Language("Spanish"));
     }
 
-    private void loadInitialCategoryData(){
+    private void loadInitialCategoryData() {
         categoryRepository.save(new Category("Action"));
         categoryRepository.save(new Category("Animation"));
         categoryRepository.save(new Category("Children"));
@@ -81,10 +81,10 @@ public class FilmDataLoader implements CommandLineRunner {
         boolean inQuotes = false;
         StringBuilder sb = new StringBuilder();
 
-        for (char c : line.toCharArray()){
-            if(c == '"'){
+        for (char c : line.toCharArray()) {
+            if (c == '"') {
                 inQuotes = !inQuotes;
-            } else if(c == ',' && !inQuotes){
+            } else if (c == ',' && !inQuotes) {
                 tokens.add(sb.toString());
                 sb.setLength(0);
             } else {
@@ -96,11 +96,11 @@ public class FilmDataLoader implements CommandLineRunner {
         return tokens.toArray(new String[0]);
     }
 
-    private void loadInitialFilmData(){
-        try(BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/data/film_data_cleaned.csv"))) {
+    private void loadInitialFilmData() {
+        try (BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/data/film_data_cleaned.csv"))) {
             String line = reader.readLine();
 
-            while((line = reader.readLine()) != null){
+            while ((line = reader.readLine()) != null) {
                 String[] fields = parseCsvLine(line);
 
                 Language originalLanguage = null;
@@ -108,18 +108,17 @@ public class FilmDataLoader implements CommandLineRunner {
                     originalLanguage = languageRepository.findById(Integer.parseInt(fields[4])).orElse(null);
                 }
 
-                Film film = Film.builder()
-                        .title(fields[0])
-                        .description(fields[1])
-                        .releaseYear(Integer.parseInt(fields[2]))
-                        .language(languageRepository.findById(Integer.parseInt(fields[3])).orElse(null))
-                        .originalLanguage(originalLanguage)
-                        .rentalDuration(Integer.parseInt(fields[5]))
-                        .rentalRate(Double.parseDouble(fields[6]))
-                        .length(Integer.parseInt(fields[7]))
-                        .replacementCost(Double.parseDouble(fields[8]))
-                        .rating(Rating.fromString(fields[9].replaceAll("\"", "").toUpperCase()))
-                        .build();
+                Film film = new Film();
+                film.setTitle(fields[0]);
+                film.setDescription(fields[1]);
+                film.setReleaseYear(Integer.parseInt(fields[2]));
+                film.setLanguage(languageRepository.findById(Integer.parseInt(fields[3])).orElse(null));
+                film.setOriginalLanguage(originalLanguage);
+                film.setRentalDuration(Integer.parseInt(fields[5]));
+                film.setRentalRate(Double.parseDouble(fields[6]));
+                film.setLength(Integer.parseInt(fields[7]));
+                film.setReplacementCost(Double.parseDouble(fields[8]));
+                film.setRating(Rating.fromString(fields[9].replaceAll("\"", "").toUpperCase()));
 
                 filmRepository.save(film);
             }
@@ -129,23 +128,21 @@ public class FilmDataLoader implements CommandLineRunner {
     }
 
     private void loadInitialActorData() {
-        try(BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/data/actor_data_cleaned.csv"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/data/actor_data_cleaned.csv"))) {
             String line = reader.readLine();
 
-            while((line = reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null) {
                 String[] fields = parseCsvLine(line);
                 String firstName = fields[0];
                 String lastName = fields[1];
 
-                Actor actor = Actor.builder()
-                        .firstName(firstName)
-                        .lastName(lastName)
-                        .build();
+                Actor actor = new Actor();
+                        actor.setFirstName(firstName);
+                        actor.setLastName(lastName);
 
                 actorRepository.save(actor);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

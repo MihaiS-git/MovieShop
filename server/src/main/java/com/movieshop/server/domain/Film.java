@@ -1,9 +1,12 @@
 package com.movieshop.server.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -13,22 +16,25 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-@ToString(exclude = {"categories"})
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(exclude = {"categories", "actors"})
+@EqualsAndHashCode(exclude = {"actors", "categories", "lastUpdate"})
 public class Film {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "film_id")
-    @EqualsAndHashCode.Include
     private Integer id;
 
+    @NotNull
     private String title;
 
+    @NotNull
     private String description;
 
     @Column(name = "release_year")
+    @Min(1930)
+    @Max(2050)
+    @NotNull
     private Integer releaseYear;
 
     @ManyToOne
@@ -40,26 +46,31 @@ public class Film {
     private Language originalLanguage;
 
     @Column(name = "rental_duration")
+    @Min(1)
     private Integer rentalDuration;
 
     @Column(name = "rental_rate")
+    @Min(0)
     private Double rentalRate;
 
+    @Min(1)
     private Integer length;
 
     @Column(name = "replacement_cost")
+    @Min(0)
     private Double replacementCost;
 
     @Enumerated(EnumType.STRING)
     private Rating rating;
 
     @Column(name = "last_update", nullable = false)
-    private LocalDateTime lastUpdate;
+    @PastOrPresent
+    private OffsetDateTime lastUpdate;
 
     @PrePersist
     @PreUpdate
     public void updateTimestamp() {
-        this.lastUpdate = LocalDateTime.now();
+        this.lastUpdate = OffsetDateTime.now();
     }
 
     @ManyToMany
@@ -68,7 +79,6 @@ public class Film {
             joinColumns = @JoinColumn(name = "film_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
-    @Builder.Default
     private Set<Category> categories = new HashSet<>();
 
     @ManyToMany
@@ -77,12 +87,11 @@ public class Film {
             joinColumns = @JoinColumn(name = "film_id"),
             inverseJoinColumns = @JoinColumn(name = "actor_id")
     )
-    @Builder.Default
     private Set<Actor> actors = new HashSet<>();
 
-    public Film(String title,
-                String description,
-                Integer releaseYear,
+    public Film(@NotNull String title,
+                @NotNull String description,
+                @NotNull Integer releaseYear,
                 Language language,
                 Language originalLanguage,
                 Integer rentalDuration,

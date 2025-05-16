@@ -1,6 +1,7 @@
 package com.movieshop.server.service;
 
 import com.movieshop.server.domain.Actor;
+import com.movieshop.server.domain.Film;
 import com.movieshop.server.exception.ResourceNotFoundException;
 import com.movieshop.server.mapper.ActorMapper;
 import com.movieshop.server.model.ActorDTO;
@@ -78,33 +79,34 @@ public class ActorServiceTest {
         Actor actorEntity = new Actor();
         Actor savedActor = new Actor();
 
-        when(actorMapper.toEntity(actorDTO)).thenReturn(actorEntity);
+        Set<Film> films = new HashSet<>();
+
+        when(actorMapper.toEntity(actorDTO, films)).thenReturn(actorEntity);
         when(actorRepository.save(actorEntity)).thenReturn(savedActor);
 
         Actor result = actorService.createActor(actorDTO);
 
         assertNotNull(result);
 //        assertEquals(savedActor, result);
-        verify(actorMapper, times(1)).toEntity(actorDTO);
+        verify(actorMapper, times(1)).toEntity(actorDTO, films);
         verify(actorRepository, times(1)).save(actorEntity);
     }
 
     @Test
     void updateActor_WhenFound_ShouldUpdateAndReturnActor() {
         Integer id = 1;
-        ActorDTO dto = new ActorDTO();
-        dto.setFirstName("John");
-        dto.setLastName("Doe");
-
-        Actor existingActor = Actor.builder()
-                .firstName("OldFirstName")
-                .lastName("OldLastName")
-                .build();
-
-        Actor savedActor = Actor.builder()
+        ActorDTO dto = ActorDTO.builder()
                 .firstName("John")
                 .lastName("Doe")
                 .build();
+
+        Actor existingActor = new Actor();
+                existingActor.setFirstName("OldFirstName");
+                existingActor.setLastName("OldLastName");
+
+        Actor savedActor = new Actor();
+                savedActor.setFirstName("John");
+                savedActor.setLastName("Doe");
 
         when(actorRepository.findById(id)).thenReturn(Optional.of(existingActor));
         when(actorRepository.save(existingActor)).thenReturn(savedActor);

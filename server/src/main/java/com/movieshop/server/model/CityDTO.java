@@ -10,19 +10,20 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 @Builder
-public class ActorDTO {
+public class CityDTO {
 
     private Integer id;
 
     @NotNull
     @Size(min = 2, max = 50)
-    private String firstName;
+    private String name;
 
     @NotNull
     @Size(min = 2, max = 50)
-    private String lastName;
+    private String country;
 
     @Builder.Default
-    private List<Integer> filmIds = new ArrayList<>();
+    private List<Integer> addressIds = new ArrayList<>();
 }

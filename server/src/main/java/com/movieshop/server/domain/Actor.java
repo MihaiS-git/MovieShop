@@ -1,9 +1,10 @@
 package com.movieshop.server.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,9 +14,8 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(exclude = {"films", "lastUpdate"})
 @Table(name = "actors")
-@Builder
 public class Actor {
 
     @Id
@@ -23,21 +23,22 @@ public class Actor {
     private Integer id;
 
     @Column(name = "first_name", nullable = false)
+    @NotNull
     private String firstName;
 
     @Column(name = "last_name", nullable = false)
+    @NotNull
     private String lastName;
 
     @Column(name = "last_update", nullable = false)
-    private LocalDateTime lastUpdate;
+    private OffsetDateTime lastUpdate;
 
     @PrePersist
     @PreUpdate
     public void updateTimestamp() {
-        this.lastUpdate = LocalDateTime.now();
+        this.lastUpdate = OffsetDateTime.now();
     }
 
     @ManyToMany(mappedBy = "actors")
-    @Builder.Default
     private Set<Film> films = new HashSet<>();
 }

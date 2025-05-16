@@ -39,9 +39,9 @@ public class CategoryServiceImpl implements ICategoryService {
 
     @Override
     public Category createCategory(CategoryDTO categoryDTO) {
-        Category newCategory = Category.builder()
-                .name(categoryDTO.getName())
-                .build();
+        Category newCategory = new Category();
+        newCategory.setId(null);
+        newCategory.setName(categoryDTO.getName());
         return categoryRepository.save(newCategory);
     }
 

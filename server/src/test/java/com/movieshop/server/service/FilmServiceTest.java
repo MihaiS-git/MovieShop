@@ -1,8 +1,6 @@
 package com.movieshop.server.service;
 
-import com.movieshop.server.domain.Film;
-import com.movieshop.server.domain.Language;
-import com.movieshop.server.domain.Rating;
+import com.movieshop.server.domain.*;
 import com.movieshop.server.exception.ResourceNotFoundException;
 import com.movieshop.server.mapper.FilmMapper;
 import com.movieshop.server.model.FilmDTO;
@@ -22,10 +20,12 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -39,6 +39,12 @@ public class FilmServiceTest {
 
     @Mock
     private LanguageServiceImpl languageService;
+
+    @Mock
+    private CategoryServiceImpl categoryService;
+
+    @Mock
+    private ActorServiceImpl actorService;
 
     @InjectMocks
     private FilmServiceImpl filmService;
@@ -57,7 +63,9 @@ public class FilmServiceTest {
 
     @Test
     void getFilmById_WhenExists_ReturnsFilm() {
-        Film film = Film.builder().id(1).title("Test Movie").build();
+        Film film = new Film();
+        film.setId(1);
+        film.setTitle("Test Movie");
         when(filmRepository.findById(1)).thenReturn(Optional.of(film));
 
         Film result = filmService.getFilmById(1);
@@ -74,7 +82,9 @@ public class FilmServiceTest {
 
     @Test
     void getFilmByTitle_WhenExists_ReturnsFilm() {
-        Film film = Film.builder().id(2).title("Avatar").build();
+        Film film = new Film();
+        film.setId(2);
+        film.setTitle("Avatar");
         when(filmRepository.findByTitle("Avatar")).thenReturn(Optional.of(film));
 
         Film result = filmService.getFilmByTitle("Avatar");
@@ -91,10 +101,13 @@ public class FilmServiceTest {
 
     @Test
     void getAllFilms_ReturnsList() {
-        List<Film> mockFilms = Arrays.asList(
-                Film.builder().id(1).title("A").build(),
-                Film.builder().id(2).title("B").build()
-        );
+        Film film1 = new Film();
+        film1.setId(1);
+        film1.setTitle("A");
+        Film film2 = new Film();
+        film2.setId(2);
+
+        List<Film> mockFilms = Arrays.asList(film1, film2);
 
         when(filmRepository.findAll()).thenReturn(mockFilms);
 
@@ -105,7 +118,10 @@ public class FilmServiceTest {
 
     @Test
     void findAll_ReturnsPaginatedFilms() {
-        List<Film> content = Arrays.asList(Film.builder().id(1).title("X").build());
+        Film film1 = new Film();
+        film1.setId(1);
+        film1.setTitle("X");
+        List<Film> content = Arrays.asList(film1);
         Page<Film> page = new PageImpl<>(content);
         when(filmRepository.findAll(any(Pageable.class))).thenReturn(page);
         when(filmRepository.count()).thenReturn(1L);
@@ -126,9 +142,52 @@ public class FilmServiceTest {
     @Test
     void createFilm_SavesAndReturnsFilm() {
         FilmDTO dto = buildFilmDTO();
-        Film film = Film.builder().id(5).title("New Film").build();
 
-        when(filmMapper.toEntity(dto)).thenReturn(film);
+        Language language = new Language();
+        Language originalLanguage = new Language();
+
+        // Create unique categories with distinct IDs and names
+        Category category1 = new Category();
+        category1.setId(1);
+        category1.setName("Category One");
+
+        Category category2 = new Category();
+        category2.setId(2);
+        category2.setName("Category Two");
+
+        // Create unique actors with distinct IDs and names
+        Actor actor1 = new Actor();
+        actor1.setId(1);
+        actor1.setFirstName("FOne");
+        actor1.setLastName("LOne");
+
+        Actor actor2 = new Actor();
+        actor2.setId(2);
+        actor2.setFirstName("FTwo");
+        actor2.setLastName("LTwo");
+
+        Set<Category> categories = Set.of(category1, category2);
+        Set<Actor> actors = Set.of(actor1, actor2);
+
+        Film film = new Film();
+        film.setId(5);
+        film.setTitle("New Film");
+        film.setLanguage(language);
+        film.setOriginalLanguage(originalLanguage);
+        film.setCategories(categories);
+        film.setActors(actors);
+
+        // Mock dependencies
+        when(languageService.getLanguageByName(dto.getLanguage())).thenReturn(language);
+        when(languageService.getLanguageByName(dto.getOriginalLanguage())).thenReturn(originalLanguage);
+
+        when(categoryService.getCategoryById(1)).thenReturn(category1);
+        when(categoryService.getCategoryById(2)).thenReturn(category2);
+
+        when(actorService.getActorById(1)).thenReturn(actor1);
+        when(actorService.getActorById(2)).thenReturn(actor2);
+
+        when(filmMapper.toEntity(dto, language, originalLanguage, categories, actors)).thenReturn(film);
         when(filmRepository.save(film)).thenReturn(film);
 
         Film result = filmService.createFilm(dto);
@@ -136,9 +195,14 @@ public class FilmServiceTest {
         assertEquals("New Film", result.getTitle());
     }
 
+
+
+
     @Test
     void updateFilm_WhenExists_UpdatesAndReturnsFilm() {
-        Film existing = Film.builder().id(10).title("Old").build();
+        Film existing = new Film();
+        existing.setId(10);
+        existing.setTitle("Old");
         FilmDTO dto = buildFilmDTO();
 
         Language language = Language.builder().id(1).name("English").build();
@@ -155,30 +219,6 @@ public class FilmServiceTest {
         verify(filmRepository).save(existing);
     }
 
-    @Test
-    void updateFilm_WhenNotFound_ThrowsException() {
-        when(filmRepository.findById(200)).thenReturn(Optional.empty());
-
-        assertThrows(ResourceNotFoundException.class, () -> filmService.updateFilm(200, buildFilmDTO()));
-    }
-
-    @Test
-    void deleteFilm_WhenExists_DeletesSuccessfully() {
-        Film film = Film.builder().id(30).build();
-        when(filmRepository.findById(30)).thenReturn(Optional.of(film));
-
-        filmService.deleteFilm(30);
-
-        verify(filmRepository).delete(film);
-    }
-
-    @Test
-    void deleteFilm_WhenNotFound_ThrowsException() {
-        when(filmRepository.findById(300)).thenReturn(Optional.empty());
-
-        assertThrows(ResourceNotFoundException.class, () -> filmService.deleteFilm(300));
-    }
-
     private FilmDTO buildFilmDTO() {
         return FilmDTO.builder()
                 .title("Updated Title")
@@ -191,7 +231,33 @@ public class FilmServiceTest {
                 .length(120)
                 .replacementCost(Double.parseDouble("20.00"))
                 .rating(Rating.fromString("PG"))
-                .lastUpdate(LocalDateTime.now())
+                .categoryIds(List.of(1, 2))
+                .actorIds(List.of(1, 2))
                 .build();
+    }
+
+    @Test
+    void updateFilm_WhenNotFound_ThrowsException() {
+        when(filmRepository.findById(200)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> filmService.updateFilm(200, buildFilmDTO()));
+    }
+
+    @Test
+    void deleteFilm_WhenExists_DeletesSuccessfully() {
+        Film film = new Film();
+        film.setId(30);
+        when(filmRepository.findById(30)).thenReturn(Optional.of(film));
+
+        filmService.deleteFilm(30);
+
+        verify(filmRepository).delete(film);
+    }
+
+    @Test
+    void deleteFilm_WhenNotFound_ThrowsException() {
+        when(filmRepository.findById(300)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> filmService.deleteFilm(300));
     }
 }

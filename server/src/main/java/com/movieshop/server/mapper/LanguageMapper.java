@@ -21,9 +21,9 @@ public class LanguageMapper {
         if (languageDTO == null) {
             return null;
         }
-        return Language.builder()
-                .id(languageDTO.getId())
-                .name(languageDTO.getName())
-                .build();
+        Language language = new Language();
+        language.setName(languageDTO.getName());
+
+        return language;
     }
 }

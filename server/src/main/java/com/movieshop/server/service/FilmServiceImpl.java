@@ -1,6 +1,9 @@
 package com.movieshop.server.service;
 
+import com.movieshop.server.domain.Actor;
+import com.movieshop.server.domain.Category;
 import com.movieshop.server.domain.Film;
+import com.movieshop.server.domain.Language;
 import com.movieshop.server.exception.ResourceNotFoundException;
 import com.movieshop.server.mapper.FilmMapper;
 import com.movieshop.server.model.FilmDTO;
@@ -12,7 +15,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -21,11 +27,21 @@ public class FilmServiceImpl implements IFilmService {
     private final FilmRepository filmRepository;
     private final FilmMapper filmMapper;
     private final ILanguageService languageService;
+    private final ICategoryService categoryService;
+    private final IActorService actorService;
 
-    public FilmServiceImpl(FilmRepository filmRepository, FilmMapper filmMapper, ILanguageService languageService) {
+    public FilmServiceImpl(
+            FilmRepository filmRepository,
+            FilmMapper filmMapper,
+            ILanguageService languageService,
+            ICategoryService categoryService,
+            IActorService actorService
+    ) {
         this.filmRepository = filmRepository;
         this.filmMapper = filmMapper;
         this.languageService = languageService;
+        this.categoryService = categoryService;
+        this.actorService = actorService;
     }
 
     @Override
@@ -61,11 +77,29 @@ public class FilmServiceImpl implements IFilmService {
 
     @Override
     public Film createFilm(FilmDTO filmDTO) {
-        return filmRepository.save(filmMapper.toEntity(filmDTO));
+        Language language = languageService.getLanguageByName(filmDTO.getLanguage());
+        Language originalLanguage = languageService.getLanguageByName(filmDTO.getOriginalLanguage());
+        List<Integer> categoryIds = filmDTO.getCategoryIds();
+        Set<Category> categories = null;
+        if (categoryIds != null && !categoryIds.isEmpty()) {
+            categories = categoryIds.stream().map(categoryService::getCategoryById).collect(Collectors.toSet());
+        } else {
+            categories = new HashSet<>();
+        }
+        List<Integer> actorIds = filmDTO.getActorIds();
+        Set<Actor> actors = null;
+        if (actorIds != null && !actorIds.isEmpty()) {
+            actors = actorIds.stream().map(actorService::getActorById).collect(Collectors.toSet());
+        } else {
+            actors = new HashSet<>();
+        }
+
+        Film film = filmMapper.toEntity(filmDTO, language, originalLanguage, categories, actors);
+        return filmRepository.save(film);
     }
 
     @Override
-    public Film updateFilm(Integer id, FilmDTO filmDTO){
+    public Film updateFilm(Integer id, FilmDTO filmDTO) {
         Film existentFilm = filmRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Film not found with id: " + id));
         existentFilm.setTitle(filmDTO.getTitle());
@@ -78,7 +112,6 @@ public class FilmServiceImpl implements IFilmService {
         existentFilm.setLength(filmDTO.getLength());
         existentFilm.setReplacementCost(filmDTO.getReplacementCost());
         existentFilm.setRating(filmDTO.getRating());
-        existentFilm.setLastUpdate(filmDTO.getLastUpdate());
 
         return filmRepository.save(existentFilm);
     }
