@@ -3,7 +3,7 @@ package com.movieshop.server.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Set;
 
 @Entity
@@ -12,7 +12,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(exclude = {"films", "originalLanguageFilms", "lastUpdate"})
 @Builder
 @Table(name="languages")
 public class Language {
@@ -24,12 +24,12 @@ public class Language {
     private String name;
 
     @Column(name = "last_update", nullable = false)
-    private LocalDateTime lastUpdate;
+    private OffsetDateTime lastUpdate;
 
     @PrePersist
     @PreUpdate
     public void updateTimestamp() {
-        this.lastUpdate = LocalDateTime.now();
+        this.lastUpdate = OffsetDateTime.now();
     }
 
     @OneToMany(mappedBy = "language")
