@@ -1,10 +1,8 @@
 package com.movieshop.server.controller;
 
 import com.movieshop.server.domain.Category;
-import com.movieshop.server.mapper.CategoryMapper;
 import com.movieshop.server.model.CategoryDTO;
 import com.movieshop.server.service.ICategoryService;
-import jakarta.websocket.server.PathParam;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

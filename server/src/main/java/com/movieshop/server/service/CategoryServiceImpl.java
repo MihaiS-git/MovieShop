@@ -4,7 +4,6 @@ import com.movieshop.server.domain.Category;
 import com.movieshop.server.exception.ResourceNotFoundException;
 import com.movieshop.server.model.CategoryDTO;
 import com.movieshop.server.repository.CategoryRepository;
-import com.movieshop.server.repository.FilmRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,11 +12,9 @@ import java.util.List;
 public class CategoryServiceImpl implements ICategoryService {
 
     private final CategoryRepository categoryRepository;
-    private final FilmRepository filmRepository;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository, FilmRepository filmRepository) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
-        this.filmRepository = filmRepository;
     }
 
     @Override
@@ -27,8 +24,7 @@ public class CategoryServiceImpl implements ICategoryService {
 
     @Override
     public Category getCategoryById(Integer id) {
-        return categoryRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException("Category not found with id: " + id));
+        return getCategoryByIdOrElseThrow(id);
     }
 
     @Override
@@ -47,16 +43,19 @@ public class CategoryServiceImpl implements ICategoryService {
 
     @Override
     public Category updateCategory(Integer id, CategoryDTO categoryDTO) {
-        Category existentCategory = categoryRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException("Category not found with id: " + id));
+        Category existentCategory = getCategoryByIdOrElseThrow(id);
         existentCategory.setName(categoryDTO.getName());
         return categoryRepository.save(existentCategory);
     }
 
     @Override
     public void deleteCategory(Integer id) {
-        Category category = categoryRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException("Category not found with id: " + id));
+        Category category = getCategoryByIdOrElseThrow(id);
         categoryRepository.deleteById(id);
+    }
+
+    private Category getCategoryByIdOrElseThrow(Integer id) {
+        return categoryRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("Category not found with id: " + id));
     }
 }

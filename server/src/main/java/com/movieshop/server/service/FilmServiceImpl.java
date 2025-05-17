@@ -46,8 +46,7 @@ public class FilmServiceImpl implements IFilmService {
 
     @Override
     public Film getFilmById(Integer id) {
-        return filmRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Film not found with id: " + id));
+        return getFilmByIdOrElseThrow(id);
     }
 
     @Override
@@ -80,14 +79,14 @@ public class FilmServiceImpl implements IFilmService {
         Language language = languageService.getLanguageByName(filmDTO.getLanguage());
         Language originalLanguage = languageService.getLanguageByName(filmDTO.getOriginalLanguage());
         List<Integer> categoryIds = filmDTO.getCategoryIds();
-        Set<Category> categories = null;
+        Set<Category> categories;
         if (categoryIds != null && !categoryIds.isEmpty()) {
             categories = categoryIds.stream().map(categoryService::getCategoryById).collect(Collectors.toSet());
         } else {
             categories = new HashSet<>();
         }
         List<Integer> actorIds = filmDTO.getActorIds();
-        Set<Actor> actors = null;
+        Set<Actor> actors;
         if (actorIds != null && !actorIds.isEmpty()) {
             actors = actorIds.stream().map(actorService::getActorById).collect(Collectors.toSet());
         } else {
@@ -100,8 +99,7 @@ public class FilmServiceImpl implements IFilmService {
 
     @Override
     public Film updateFilm(Integer id, FilmDTO filmDTO) {
-        Film existentFilm = filmRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Film not found with id: " + id));
+        Film existentFilm = getFilmByIdOrElseThrow(id);
         existentFilm.setTitle(filmDTO.getTitle());
         existentFilm.setDescription(filmDTO.getDescription());
         existentFilm.setReleaseYear(filmDTO.getReleaseYear());
@@ -118,9 +116,13 @@ public class FilmServiceImpl implements IFilmService {
 
     @Override
     public void deleteFilm(Integer id) {
-        Film existentFilm = filmRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Film not found with id: " + id));
+        Film existentFilm = getFilmByIdOrElseThrow(id);
         filmRepository.delete(existentFilm);
+    }
+
+    private Film getFilmByIdOrElseThrow(Integer id) {
+        return filmRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Film not found with id: " + id));
     }
 }
 

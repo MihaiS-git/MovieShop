@@ -26,14 +26,13 @@ public class CountryMapper {
                 .build();
     }
 
-    public Country toEntity(CountryDTO countryDTO, Set<City> cities) {
+    public Country toEntity(CountryDTO countryDTO) {
         if (countryDTO == null) {
             return null;
         }
 
         Country country = new Country();
         country.setName(countryDTO.getName());
-        country.setCities(cities != null ? cities : Collections.emptySet());
         return country;
     }
 }
