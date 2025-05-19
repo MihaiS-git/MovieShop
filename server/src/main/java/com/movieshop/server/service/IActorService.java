@@ -7,13 +7,13 @@ import java.util.List;
 
 public interface IActorService {
 
-    List<Actor> getAllActors();
+    List<ActorDTO> getAllActors();
 
-    Actor getActorById(Integer id);
+    ActorDTO getActorById(Integer id);
 
-    Actor createActor(ActorDTO actorDTO);
+    ActorDTO createActor(ActorDTO actorDTO);
 
-    Actor updateActor(Integer id, ActorDTO actorDTO);
+    ActorDTO updateActor(Integer id, ActorDTO actorDTO);
 
     void deleteActor(Integer id);
 

@@ -26,6 +26,11 @@ public class Language {
     @Column(name = "last_update", nullable = false)
     private OffsetDateTime lastUpdate;
 
+    public Language(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     @PrePersist
     @PreUpdate
     public void updateTimestamp() {

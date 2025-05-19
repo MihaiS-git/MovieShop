@@ -6,12 +6,11 @@ import com.movieshop.server.model.CountryDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
-import java.util.Set;
 
 @Component
 public class CountryMapper {
 
-    public CountryDTO toDTO(Country country) {
+    public CountryDTO toDto(Country country) {
         if (country == null) {
             return null;
         }

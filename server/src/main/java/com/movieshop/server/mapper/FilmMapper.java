@@ -56,8 +56,8 @@ public class FilmMapper {
         film.setRating(filmDTO.getRating());
         film.setLanguage(language);
         film.setOriginalLanguage(originalLanguage);
-        film.setCategories(categories);
-        film.setActors(actors);
+        categories.forEach(film::addCategory);
+        actors.forEach(film::addActor);
         return film;
     }
 }

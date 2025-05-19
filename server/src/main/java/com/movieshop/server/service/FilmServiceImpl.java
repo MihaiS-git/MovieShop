@@ -8,7 +8,10 @@ import com.movieshop.server.exception.ResourceNotFoundException;
 import com.movieshop.server.mapper.FilmMapper;
 import com.movieshop.server.model.FilmDTO;
 import com.movieshop.server.model.MoviePageResponse;
+import com.movieshop.server.repository.ActorRepository;
+import com.movieshop.server.repository.CategoryRepository;
 import com.movieshop.server.repository.FilmRepository;
+import com.movieshop.server.repository.LanguageRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,42 +29,48 @@ public class FilmServiceImpl implements IFilmService {
 
     private final FilmRepository filmRepository;
     private final FilmMapper filmMapper;
-    private final ILanguageService languageService;
-    private final ICategoryService categoryService;
-    private final IActorService actorService;
+    private final LanguageRepository languageRepository;
+    private final CategoryRepository categoryRepository;
+    private final ActorRepository actorRepository;
 
     public FilmServiceImpl(
             FilmRepository filmRepository,
             FilmMapper filmMapper,
-            ILanguageService languageService,
-            ICategoryService categoryService,
-            IActorService actorService
+            LanguageRepository languageRepository,
+            CategoryRepository categoryRepository,
+            ActorRepository actorRepository
     ) {
         this.filmRepository = filmRepository;
         this.filmMapper = filmMapper;
-        this.languageService = languageService;
-        this.categoryService = categoryService;
-        this.actorService = actorService;
+        this.languageRepository = languageRepository;
+        this.categoryRepository = categoryRepository;
+        this.actorRepository = actorRepository;
     }
 
     @Override
-    public Film getFilmById(Integer id) {
-        return getFilmByIdOrElseThrow(id);
+    public FilmDTO getFilmById(Integer id) {
+        Film film = filmRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Film not found with id: " + id));
+        return filmMapper.toDto(film);
     }
 
     @Override
-    public Film getFilmByTitle(String title) {
-        return filmRepository.findByTitle(title).orElseThrow(() ->
-                new ResourceNotFoundException("Film not found with title: " + title));
+    public FilmDTO getFilmByTitle(String title) {
+        Film film = filmRepository.findByTitle(title)
+                .orElseThrow(() -> new ResourceNotFoundException("Film not found with title: " + title));
+
+        return filmMapper.toDto(film);
     }
 
     @Override
-    public List<Film> getAllFilms() {
-        return filmRepository.findAll();
+    public List<FilmDTO> getAllFilms() {
+        List<Film> films = filmRepository.findAll();
+        return films.stream().map(filmMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public MoviePageResponse findAll(Integer page, Integer limit) {
+    public MoviePageResponse getAllFilmsPaginated(Integer page, Integer limit) {
         Pageable pageable = PageRequest.of(page, limit, Sort.by(Sort.Direction.ASC, "id"));
         try {
             List<Film> films = filmRepository.findAll(pageable).getContent();
@@ -75,54 +84,81 @@ public class FilmServiceImpl implements IFilmService {
     }
 
     @Override
-    public Film createFilm(FilmDTO filmDTO) {
-        Language language = languageService.getLanguageByName(filmDTO.getLanguage());
-        Language originalLanguage = languageService.getLanguageByName(filmDTO.getOriginalLanguage());
+    public FilmDTO createFilm(FilmDTO filmDTO) {
+        Language language = languageRepository.findByName(filmDTO.getLanguage()).orElseThrow(() ->
+                new ResourceNotFoundException("Language not found with name: " + filmDTO.getLanguage()));
+        Language originalLanguage = languageRepository.findByName(filmDTO.getOriginalLanguage()).orElseThrow(() ->
+                new ResourceNotFoundException("Language not found with name: " + filmDTO.getLanguage()));
+
         List<Integer> categoryIds = filmDTO.getCategoryIds();
         Set<Category> categories;
         if (categoryIds != null && !categoryIds.isEmpty()) {
-            categories = categoryIds.stream().map(categoryService::getCategoryById).collect(Collectors.toSet());
+            categories = categoryIds.stream().map(id -> categoryRepository.findById(id)
+                            .orElseThrow(() -> new ResourceNotFoundException("Category not found by id: " + id)))
+                    .collect(Collectors.toSet());
         } else {
             categories = new HashSet<>();
         }
+
         List<Integer> actorIds = filmDTO.getActorIds();
         Set<Actor> actors;
         if (actorIds != null && !actorIds.isEmpty()) {
-            actors = actorIds.stream().map(actorService::getActorById).collect(Collectors.toSet());
+            actors = actorIds.stream().map(actorId -> actorRepository.findById(actorId)
+                            .orElseThrow(() -> new ResourceNotFoundException("Actor not found by id: " + actorId)))
+                    .collect(Collectors.toSet());
         } else {
             actors = new HashSet<>();
         }
 
         Film film = filmMapper.toEntity(filmDTO, language, originalLanguage, categories, actors);
-        return filmRepository.save(film);
+        Film savedFilm = filmRepository.save(film);
+
+        return filmMapper.toDto(savedFilm);
     }
 
     @Override
-    public Film updateFilm(Integer id, FilmDTO filmDTO) {
-        Film existentFilm = getFilmByIdOrElseThrow(id);
+    public FilmDTO updateFilm(Integer id, FilmDTO filmDTO) {
+        Film existentFilm = filmRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Film not found with id: " + id));
         existentFilm.setTitle(filmDTO.getTitle());
         existentFilm.setDescription(filmDTO.getDescription());
         existentFilm.setReleaseYear(filmDTO.getReleaseYear());
-        existentFilm.setLanguage(languageService.getLanguageByName(filmDTO.getLanguage()));
-        existentFilm.setOriginalLanguage(languageService.getLanguageByName(filmDTO.getOriginalLanguage()));
+        existentFilm.setLanguage(languageRepository.findByName(filmDTO.getLanguage())
+                .orElseThrow(() -> new ResourceNotFoundException("Language not found with name: " + filmDTO.getLanguage())));
+        existentFilm.setOriginalLanguage(languageRepository.findByName(filmDTO.getOriginalLanguage())
+                .orElseThrow(() -> new ResourceNotFoundException("Language not found with name: " + filmDTO.getLanguage())));
         existentFilm.setRentalDuration(filmDTO.getRentalDuration());
         existentFilm.setRentalRate(filmDTO.getRentalRate());
         existentFilm.setLength(filmDTO.getLength());
         existentFilm.setReplacementCost(filmDTO.getReplacementCost());
         existentFilm.setRating(filmDTO.getRating());
 
-        return filmRepository.save(existentFilm);
+        List<Integer> categoryIds = filmDTO.getCategoryIds();
+        if (!categoryIds.isEmpty()) {
+            Set<Category> categories = categoryIds.stream().map(categoryId -> categoryRepository.findById(categoryId)
+                            .orElseThrow(() -> new ResourceNotFoundException("Category not found by id: " + categoryId)))
+                    .collect(Collectors.toSet());
+            categories.forEach(existentFilm::addCategory);
+        }
+
+        List<Integer> actorIds = filmDTO.getActorIds();
+        if(!actorIds.isEmpty()) {
+            Set<Actor> actors = actorIds.stream().map(actorId -> actorRepository.findById(actorId)
+                            .orElseThrow(() -> new ResourceNotFoundException("Actor not found by id: " + actorId)))
+                    .collect(Collectors.toSet());
+            actors.forEach(existentFilm::addActor);
+        }
+
+        Film updatedFilm = filmRepository.save(existentFilm);
+
+        return filmMapper.toDto(updatedFilm);
     }
 
     @Override
     public void deleteFilm(Integer id) {
-        Film existentFilm = getFilmByIdOrElseThrow(id);
-        filmRepository.delete(existentFilm);
-    }
-
-    private Film getFilmByIdOrElseThrow(Integer id) {
-        return filmRepository.findById(id)
+        Film existentFilm = filmRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Film not found with id: " + id));
+        filmRepository.delete(existentFilm);
     }
 }
 

@@ -32,17 +32,20 @@ public class ActorServiceImpl implements IActorService {
     }
 
     @Override
-    public List<Actor> getAllActors() {
-        return actorRepository.findAll();
+    public List<ActorDTO> getAllActors() {
+        List<Actor> actors = actorRepository.findAll();
+        return actors.stream().map(actorMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Actor getActorById(Integer id) {
-        return getActorByIdOrElseThrow(id);
+    public ActorDTO getActorById(Integer id) {
+        Actor actor = getActorByIdOrElseThrow(id);
+        return actorMapper.toDto(actor);
     }
 
     @Override
-    public Actor createActor(ActorDTO actorDTO) {
+    public ActorDTO createActor(ActorDTO actorDTO) {
         List<Integer> filmIds = actorDTO.getFilmIds();
         Set<Film> films;
         if (filmIds != null && !filmIds.isEmpty()) {
@@ -54,18 +57,21 @@ public class ActorServiceImpl implements IActorService {
             films = new HashSet<>();
         }
         Actor actor = actorMapper.toEntity(actorDTO, films);
+        Actor savedActor = actorRepository.save(actor);
 
-        return actorRepository.save(actor);
+        return actorMapper.toDto(savedActor);
     }
 
     @Override
-    public Actor updateActor(Integer id, ActorDTO actorDTO) {
+    public ActorDTO updateActor(Integer id, ActorDTO actorDTO) {
         Actor existentActor = getActorByIdOrElseThrow(id);
 
         existentActor.setFirstName(actorDTO.getFirstName());
         existentActor.setLastName(actorDTO.getLastName());
 
-        return actorRepository.save(existentActor);
+        Actor updatedActor = actorRepository.save(existentActor);
+
+        return actorMapper.toDto(updatedActor);
     }
 
     @Override

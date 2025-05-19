@@ -7,17 +7,17 @@ import com.movieshop.server.model.MoviePageResponse;
 import java.util.List;
 
 public interface IFilmService {
-    Film getFilmById(Integer id);
+    FilmDTO getFilmById(Integer id);
 
-    Film getFilmByTitle(String title);
+    FilmDTO getFilmByTitle(String title);
 
-    List<Film> getAllFilms();
+    List<FilmDTO> getAllFilms();
 
-    MoviePageResponse findAll(Integer page, Integer limit);
+    MoviePageResponse getAllFilmsPaginated(Integer page, Integer limit);
 
-    Film createFilm(FilmDTO film);
+    FilmDTO createFilm(FilmDTO film);
 
-    Film updateFilm(Integer id, FilmDTO filmDTO);
+    FilmDTO updateFilm(Integer id, FilmDTO filmDTO);
 
     void deleteFilm(Integer id);
 }

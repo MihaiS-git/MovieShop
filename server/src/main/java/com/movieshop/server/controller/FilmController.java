@@ -1,13 +1,12 @@
 package com.movieshop.server.controller;
 
-import com.movieshop.server.domain.Film;
-import com.movieshop.server.mapper.FilmMapper;
 import com.movieshop.server.model.FilmDTO;
 import com.movieshop.server.model.MoviePageResponse;
 import com.movieshop.server.service.IFilmService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -15,17 +14,14 @@ import java.util.List;
 public class FilmController {
 
     private final IFilmService filmService;
-    private final FilmMapper filmMapper;
 
-    public FilmController(IFilmService filmService, FilmMapper filmMapper) {
+    public FilmController(IFilmService filmService) {
         this.filmService = filmService;
-        this.filmMapper = filmMapper;
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Film>> getAllFilms() {
-        List<Film> films = filmService.getAllFilms();
-        return ResponseEntity.ok(films);
+    public ResponseEntity<List<FilmDTO>> getAllFilms() {
+        return ResponseEntity.ok(filmService.getAllFilms());
     }
 
     @GetMapping
@@ -33,28 +29,24 @@ public class FilmController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "16") int limit) {
 
-        return ResponseEntity.ok(filmService.findAll(page, limit));
+        return ResponseEntity.ok(filmService.getAllFilmsPaginated(page, limit));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<FilmDTO> getFilmById(@PathVariable Integer id) {
-        Film film = filmService.getFilmById(id);
-        FilmDTO filmDTO = filmMapper.toDto(film);
-        return ResponseEntity.ok(filmDTO);
+        return ResponseEntity.ok(filmService.getFilmById(id));
     }
 
     @PostMapping
     public ResponseEntity<FilmDTO> createFilm(@RequestBody FilmDTO filmDTO) {
-        Film film = filmService.createFilm(filmDTO);
-        FilmDTO savedFilmDTO = filmMapper.toDto(film);
-        return ResponseEntity.ok(savedFilmDTO);
+        FilmDTO createdFilm = filmService.createFilm(filmDTO);
+        URI location = URI.create("/api/v0/films/" + createdFilm.getId());
+        return ResponseEntity.created(location).body(createdFilm);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<FilmDTO> updateFilm(@PathVariable Integer id, @RequestBody FilmDTO filmDTO) {
-        Film updatedFilm = filmService.updateFilm(id, filmDTO);
-        FilmDTO updatedFilmDTO = filmMapper.toDto(updatedFilm);
-        return ResponseEntity.ok(updatedFilmDTO);
+        return ResponseEntity.ok(filmService.updateFilm(id, filmDTO));
     }
 
     @DeleteMapping("/{id}")

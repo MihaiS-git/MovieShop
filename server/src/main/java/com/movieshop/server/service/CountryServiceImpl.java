@@ -24,33 +24,40 @@ public class CountryServiceImpl implements ICountryService {
     }
 
     @Override
-    public List<Country> getAllCountries() {
-        return countryRepository.findAll();
+    public List<CountryDTO> getAllCountries() {
+        List<Country> countries = countryRepository.findAll();
+        return countries.stream().map(countryMapper::toDto).toList();
     }
 
     @Override
-    public Country getCountryById(Integer id) {
-        return getCountryByIdOrElseThrow(id);
+    public CountryDTO getCountryById(Integer id) {
+        Country country = getCountryByIdOrElseThrow(id);
+        return countryMapper.toDto(country);
     }
 
     @Override
-    public Country getCountryByName(String name) {
-        return countryRepository.findByName(name).orElseThrow(() ->
+    public CountryDTO getCountryByName(String name) {
+        Country country = countryRepository.findByName(name).orElseThrow(() ->
                 new ResourceNotFoundException("Country not found with name: " + name));
+
+        return countryMapper.toDto(country);
     }
 
     @Override
-    public Country createCountry(CountryDTO countryDTO) {
-        return countryRepository.save(countryMapper.toEntity(countryDTO));
+    public CountryDTO createCountry(CountryDTO countryDTO) {
+        Country savedCountry = countryRepository.save(countryMapper.toEntity(countryDTO));
+        return countryMapper.toDto(savedCountry);
     }
 
     @Override
-    public Country updateCountry(Integer id, CountryDTO countryDTO) {
+    public CountryDTO updateCountry(Integer id, CountryDTO countryDTO) {
         Country existentCountry = getCountryByIdOrElseThrow(id);
 
         existentCountry.setName(countryDTO.getName());
 
-        return countryRepository.save(existentCountry);
+        Country updatedCountry = countryRepository.save(existentCountry);
+
+        return countryMapper.toDto(updatedCountry);
     }
 
     @Override

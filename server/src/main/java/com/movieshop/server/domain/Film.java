@@ -89,6 +89,26 @@ public class Film {
     )
     private Set<Actor> actors = new HashSet<>();
 
+    public void addCategory(Category category) {
+        categories.add(category);
+        category.getFilms().add(this);
+    }
+
+    public void removeCategory(Category category) {
+        categories.remove(category);
+        category.getFilms().remove(this);
+    }
+
+    public void addActor(Actor actor) {
+        actors.add(actor);
+        actor.getFilms().add(this);
+    }
+
+    public void removeActor(Actor actor) {
+        actors.remove(actor);
+        actor.getFilms().remove(this);
+    }
+
     public Film(@NotNull String title,
                 @NotNull String description,
                 @NotNull Integer releaseYear,
