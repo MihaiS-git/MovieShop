@@ -50,7 +50,8 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
             User newUser = new User();
             newUser.setEmail(email);
             newUser.setPassword(UUID.randomUUID().toString());
-            newUser.setName(oauthUser.getAttribute("name"));
+            newUser.setFirstName(oauthUser.getAttribute("first_name"));
+            newUser.setFirstName(oauthUser.getAttribute("last_name"));
             newUser.setPicture(oauthUser.getAttribute("picture"));
             newUser.setRole(Role.CUSTOMER);
             newUser.setAccountNonExpired(true);

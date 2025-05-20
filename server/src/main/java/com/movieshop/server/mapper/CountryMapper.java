@@ -2,7 +2,8 @@ package com.movieshop.server.mapper;
 
 import com.movieshop.server.domain.City;
 import com.movieshop.server.domain.Country;
-import com.movieshop.server.model.CountryDTO;
+import com.movieshop.server.model.CountryRequestDTO;
+import com.movieshop.server.model.CountryResponseDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -10,11 +11,11 @@ import java.util.Collections;
 @Component
 public class CountryMapper {
 
-    public CountryDTO toDto(Country country) {
+    public CountryResponseDTO toResponseDto(Country country) {
         if (country == null) {
             return null;
         }
-        return CountryDTO.builder()
+        return CountryResponseDTO.builder()
                 .id(country.getId())
                 .name(country.getName())
                 .cities(country.getCities() != null
@@ -22,10 +23,11 @@ public class CountryMapper {
                         .map(City::getId)
                         .toList())
                         : Collections.emptyList())
+                .lastUpdate(country.getLastUpdate())
                 .build();
     }
 
-    public Country toEntity(CountryDTO countryDTO) {
+    public Country toEntity(CountryRequestDTO countryDTO) {
         if (countryDTO == null) {
             return null;
         }

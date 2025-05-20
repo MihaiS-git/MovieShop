@@ -3,7 +3,8 @@ package com.movieshop.server.service;
 import com.movieshop.server.domain.Language;
 import com.movieshop.server.exception.ResourceNotFoundException;
 import com.movieshop.server.mapper.LanguageMapper;
-import com.movieshop.server.model.LanguageDTO;
+import com.movieshop.server.model.LanguageRequestDTO;
+import com.movieshop.server.model.LanguageResponseDTO;
 import com.movieshop.server.repository.LanguageRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,12 +17,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 public class LanguageServiceTest {
+
     @Mock
     private LanguageRepository languageRepository;
 
@@ -39,18 +39,25 @@ public class LanguageServiceTest {
     }
 
     @AfterEach
-    void teatDown() throws Exception {
+    void tearDown() throws Exception {
         closeable.close();
     }
 
     @Test
     void getLanguageById_whenExists_returnsLanguage() {
         Language lang = Language.builder().id(1).name("English").build();
-        when(languageRepository.findById(1)).thenReturn(Optional.of(lang));
+        LanguageResponseDTO dto = LanguageResponseDTO.builder()
+                .id(1)
+                .name("English")
+                .build();
 
-        Language result = languageService.getLanguageById(1);
+        when(languageRepository.findById(1)).thenReturn(Optional.of(lang));
+        when(languageMapper.toResponseDto(lang)).thenReturn(dto);
+
+        LanguageResponseDTO result = languageService.getLanguageById(1);
 
         assertEquals("English", result.getName());
+        assertEquals(1, result.getId());
     }
 
     @Test
@@ -63,10 +70,17 @@ public class LanguageServiceTest {
     @Test
     void getLanguageByName_whenExists_returnsLanguage() {
         Language lang = Language.builder().id(2).name("Spanish").build();
+        LanguageResponseDTO dto = LanguageResponseDTO.builder()
+                .id(2)
+                .name("Spanish")
+                .build();
+
         when(languageRepository.findByName("Spanish")).thenReturn(Optional.of(lang));
+        when(languageMapper.toResponseDto(lang)).thenReturn(dto);
 
-        Language result = languageService.getLanguageByName("Spanish");
+        LanguageResponseDTO result = languageService.getLanguageByName("Spanish");
 
+        assertEquals("Spanish", result.getName());
         assertEquals(2, result.getId());
     }
 
@@ -79,48 +93,69 @@ public class LanguageServiceTest {
 
     @Test
     void getAllLanguages_returnsList() {
-        List<Language> mockList = Arrays.asList(
+        List<Language> entities = Arrays.asList(
                 Language.builder().id(1).name("English").build(),
                 Language.builder().id(2).name("German").build()
         );
-        when(languageRepository.findAll()).thenReturn(mockList);
+        LanguageResponseDTO dto1 = LanguageResponseDTO.builder().id(1).name("English").build();
+        LanguageResponseDTO dto2 = LanguageResponseDTO.builder().id(2).name("German").build();
 
-        List<Language> result = languageService.getAllLanguages();
+        List<LanguageResponseDTO> dtos = Arrays.asList(dto1, dto2);
+
+        when(languageRepository.findAll()).thenReturn(entities);
+        when(languageMapper.toResponseDto(entities.get(0))).thenReturn(dtos.get(0));
+        when(languageMapper.toResponseDto(entities.get(1))).thenReturn(dtos.get(1));
+
+        List<LanguageResponseDTO> result = languageService.getAllLanguages();
 
         assertEquals(2, result.size());
+        assertEquals("English", result.get(0).getName());
+        assertEquals("German", result.get(1).getName());
     }
 
     @Test
     void createLanguage_savesAndReturnsLanguage() {
-        LanguageDTO dto = new LanguageDTO("French");
+        LanguageRequestDTO requestDto = new LanguageRequestDTO("French");
         Language entity = Language.builder().id(3).name("French").build();
+        LanguageResponseDTO responseDto = LanguageResponseDTO.builder()
+                .id(3)
+                .name("French")
+                .build();
 
-        when(languageMapper.toEntity(dto)).thenReturn(entity);
+        when(languageMapper.toEntity(requestDto)).thenReturn(entity);
         when(languageRepository.save(entity)).thenReturn(entity);
+        when(languageMapper.toResponseDto(entity)).thenReturn(responseDto);
 
-        Language result = languageService.createLanguage(dto);
+        LanguageResponseDTO result = languageService.createLanguage(requestDto);
 
         assertEquals("French", result.getName());
+        assertEquals(3, result.getId());
         verify(languageRepository).save(entity);
     }
 
     @Test
     void updateLanguage_whenExists_updatesAndReturnsLanguage() {
         Language existing = Language.builder().id(1).name("OldName").build();
-        LanguageDTO dto = new LanguageDTO("NewName");
+        LanguageRequestDTO requestDto = new LanguageRequestDTO("NewName");
+        LanguageResponseDTO responseDto = LanguageResponseDTO.builder()
+                .id(1)
+                .name("NewName")
+                .build();
 
         when(languageRepository.findById(1)).thenReturn(Optional.of(existing));
         when(languageRepository.save(existing)).thenReturn(existing);
+        when(languageMapper.toResponseDto(existing)).thenReturn(responseDto);
 
-        Language result = languageService.updateLanguage(1, dto);
+        LanguageResponseDTO result = languageService.updateLanguage(1, requestDto);
 
         assertEquals("NewName", result.getName());
+        assertEquals(1, result.getId());
         verify(languageRepository).save(existing);
     }
 
     @Test
     void updateLanguage_whenNotFound_throwsException() {
-        LanguageDTO dto = new LanguageDTO("DoesNotMatter");
+        LanguageRequestDTO dto = new LanguageRequestDTO("DoesNotMatter");
         when(languageRepository.findById(404)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> languageService.updateLanguage(404, dto));

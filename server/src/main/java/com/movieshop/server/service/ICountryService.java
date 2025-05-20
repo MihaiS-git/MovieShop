@@ -1,15 +1,15 @@
 package com.movieshop.server.service;
 
-import com.movieshop.server.domain.Country;
-import com.movieshop.server.model.CountryDTO;
+import com.movieshop.server.model.CountryRequestDTO;
+import com.movieshop.server.model.CountryResponseDTO;
 
 import java.util.List;
 
 public interface ICountryService {
-    List<CountryDTO> getAllCountries();
-    CountryDTO getCountryById(Integer id);
-    CountryDTO getCountryByName(String name);
-    CountryDTO createCountry(CountryDTO countryDTO);
-    CountryDTO updateCountry(Integer id, CountryDTO countryDTO);
+    List<CountryResponseDTO> getAllCountries();
+    CountryResponseDTO getCountryById(Integer id);
+    CountryResponseDTO getCountryByName(String name);
+    CountryResponseDTO createCountry(CountryRequestDTO countryDTO);
+    CountryResponseDTO updateCountry(Integer id, CountryRequestDTO countryDTO);
     void deleteCountry(Integer id);
 }

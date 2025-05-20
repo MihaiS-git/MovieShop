@@ -48,7 +48,8 @@ public class AuthController {
 
         UserDTO userDTO = UserDTO.builder()
                 .email(user.getEmail())
-                .name(user.getName())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
                 .role(user.getRole().name())
                 .picture(user.getPicture())
                 .build();
@@ -65,13 +66,15 @@ public class AuthController {
         UserDTO userDTO = switch (principal) {
             case OAuth2User oAuth2User -> UserDTO.builder()
                     .email(oAuth2User.getAttribute("email"))
-                    .name(oAuth2User.getAttribute("name"))
+                    .firstName(oAuth2User.getAttribute("name"))
+                    .lastName(oAuth2User.getAttribute("family_name"))
                     .role("ROLE_USER")
                     .picture(oAuth2User.getAttribute("picture"))
                     .build();
             case User user -> UserDTO.builder()
                     .email(user.getEmail())
-                    .name(user.getName())
+                    .firstName(user.getFirstName())
+                    .lastName(user.getLastName())
                     .role(user.getRole().name())
                     .picture(user.getPicture())
                     .build();
@@ -94,7 +97,8 @@ public class AuthController {
 
         UserDTO userDTO = UserDTO.builder()
                 .email(user.getEmail())
-                .name(user.getName())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
                 .role(user.getRole().name())
                 .picture(user.getPicture())
                 .build();

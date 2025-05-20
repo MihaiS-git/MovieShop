@@ -35,17 +35,17 @@ public class AuthenticationService {
     public String register(RegisterRequest request) {
         log.info("User {} is attempting to register.", request.getEmail());
         try {
-            User user = User.builder()
-                    .email(request.getEmail())
-                    .password(passwordEncoder.encode(request.getPassword()))
-                    .role(Role.CUSTOMER)
-                    .name(request.getName())
-                    .picture(request.getPicture())
-                    .accountNonExpired(true)
-                    .accountNonLocked(true)
-                    .credentialsNonExpired(true)
-                    .enabled(true)
-                    .build();
+            User user = new User();
+                    user.setEmail(request.getEmail());
+                    user.setPassword(passwordEncoder.encode(request.getPassword()));
+                    user.setRole(Role.CUSTOMER);
+                    user.setFirstName(request.getFirstName());
+                    user.setLastName(request.getLastName());
+                    user.setPicture(request.getPicture());
+                    user.setAccountNonExpired(true);
+                    user.setAccountNonLocked(true);
+                    user.setCredentialsNonExpired(true);
+                    user.setEnabled(true);
             User savedUser = userRepository.save(user);
 
             log.info("User {} registered successfully with role {}", savedUser.getEmail(), savedUser.getRole());

@@ -4,7 +4,8 @@ import com.movieshop.server.domain.Address;
 import com.movieshop.server.domain.City;
 import com.movieshop.server.exception.ResourceNotFoundException;
 import com.movieshop.server.mapper.AddressMapper;
-import com.movieshop.server.model.AddressDTO;
+import com.movieshop.server.model.AddressRequestDTO;
+import com.movieshop.server.model.AddressResponseDTO;
 import com.movieshop.server.repository.AddressRepository;
 import com.movieshop.server.repository.CityRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -15,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,20 +54,32 @@ class AddressServiceImplTest {
         List<Address> addresses = Arrays.asList(new Address(), new Address());
         when(addressRepository.findAll()).thenReturn(addresses);
 
-        List<Address> result = addressService.getAllAddresses();
+        List<AddressResponseDTO> result = addressService.getAllAddresses();
 
         assertEquals(2, result.size());
         verify(addressRepository).findAll();
     }
 
     @Test
+    void getAllAddresses_ShouldReturnEmptyList_WhenNoAddressesExist() {
+        when(addressRepository.findAll()).thenReturn(Collections.emptyList());
+
+        List<AddressResponseDTO> result = addressService.getAllAddresses();
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(addressRepository).findAll();
+    }
+
+
+    @Test
     void getAddressById_WhenFound_ShouldReturnAddress() {
         Address address = new Address();
         when(addressRepository.findById(1)).thenReturn(Optional.of(address));
 
-        Address result = addressService.getAddressById(1);
+        AddressResponseDTO result = addressService.getAddressById(1);
 
-        assertEquals(address, result);
+        assertEquals(addressMapper.toResponseDto(address), result);
         verify(addressRepository).findById(1);
     }
 
@@ -78,27 +92,50 @@ class AddressServiceImplTest {
 
     @Test
     void createAddress_ShouldSaveAndReturnAddress() {
-        AddressDTO dto = AddressDTO.builder()
+        // Arrange
+        AddressRequestDTO dto = AddressRequestDTO.builder()
                 .city("New York")
+                .address("123 Test St")
                 .build();
 
         City city = new City();
-        Address address = new Address();
+        city.setName("New York");
+
+        Address addressEntity = new Address();
+        addressEntity.setAddress("123 Test St");
+        addressEntity.setCity(city);
+
+        Address savedAddress = new Address();
+        savedAddress.setId(1);
+        savedAddress.setAddress("123 Test St");
+        savedAddress.setCity(city);
+
+        AddressResponseDTO responseDTO = AddressResponseDTO.builder()
+                .id(1)
+                .address("123 Test St")
+                .city("New York")
+                .build();
 
         when(cityRepository.findByName("New York")).thenReturn(Optional.of(city));
-        when(addressMapper.toEntity(dto, city)).thenReturn(address);
-        when(addressRepository.save(address)).thenReturn(address);
+        when(addressMapper.toEntity(dto)).thenReturn(addressEntity);
+        when(addressRepository.save(addressEntity)).thenReturn(savedAddress);
+        when(addressMapper.toResponseDto(savedAddress)).thenReturn(responseDTO);
 
-        Address result = addressService.createAddress(dto);
+        // Act
+        AddressResponseDTO result = addressService.createAddress(dto);
 
-        assertEquals(address, result);
+        // Assert
+        assertEquals(responseDTO, result);
         verify(cityRepository).findByName("New York");
-        verify(addressRepository).save(address);
+        verify(addressMapper).toEntity(dto);
+        verify(addressRepository).save(addressEntity);
+        verify(addressMapper).toResponseDto(savedAddress);
     }
+
 
     @Test
     void createAddress_WhenCityNotFound_ShouldThrowException() {
-        AddressDTO dto = AddressDTO.builder()
+        AddressRequestDTO dto = AddressRequestDTO.builder()
                 .city("New York")
                 .build();
 
@@ -109,7 +146,7 @@ class AddressServiceImplTest {
 
     @Test
     void updateAddress_ShouldUpdateAndReturnAddress() {
-        AddressDTO dto = AddressDTO.builder()
+        AddressRequestDTO dto = AddressRequestDTO.builder()
                 .address("123 Main St")
                 .address2("Suite 100")
                 .district("Central")
@@ -120,25 +157,34 @@ class AddressServiceImplTest {
 
         Address existing = new Address();
         City city = new City();
+        AddressResponseDTO responseDTO = AddressResponseDTO.builder()
+                .address("123 Main St")
+                .address2("Suite 100")
+                .district("Central")
+                .city("New York")
+                .postalCode("12345")
+                .phone("555-1234")
+                .build();
 
         when(addressRepository.findById(1)).thenReturn(Optional.of(existing));
         when(cityRepository.findByName("New York")).thenReturn(Optional.of(city));
         when(addressRepository.save(existing)).thenReturn(existing);
+        when(addressMapper.toResponseDto(existing)).thenReturn(responseDTO); // 👈 CRITICAL
 
-        Address result = addressService.updateAddress(1, dto);
+        AddressResponseDTO result = addressService.updateAddress(1, dto);
 
-        assertEquals(existing, result);
-        assertEquals("123 Main St", existing.getAddress());
-        assertEquals("Suite 100", existing.getAddress2());
-        assertEquals("Central", existing.getDistrict());
-        assertEquals("555-1234", existing.getPhone());
-        assertEquals("12345", existing.getPostalCode());
-        assertEquals(city, existing.getCity());
+        assertEquals("123 Main St", result.getAddress());
+        assertEquals("Suite 100", result.getAddress2());
+        assertEquals("Central", result.getDistrict());
+        assertEquals("555-1234", result.getPhone());
+        assertEquals("12345", result.getPostalCode());
+        assertEquals("New York", result.getCity());
     }
+
 
     @Test
     void updateAddress_WhenNotFound_ShouldThrowException() {
-        AddressDTO dto = new AddressDTO();
+        AddressRequestDTO dto = new AddressRequestDTO();
         when(addressRepository.findById(1)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> addressService.updateAddress(1, dto));
@@ -146,7 +192,7 @@ class AddressServiceImplTest {
 
     @Test
     void updateAddress_WhenCityNotFound_ShouldThrowException() {
-        AddressDTO dto = AddressDTO.builder()
+        AddressRequestDTO dto = AddressRequestDTO.builder()
                 .city("Nowhere")
                 .build();
 

@@ -7,11 +7,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class LanguageDTO {
-    private Integer id;
+public class LanguageRequestDTO {
+
     private String name;
 
-    public LanguageDTO(String name) {
-        this.name = name;
-    }
 }

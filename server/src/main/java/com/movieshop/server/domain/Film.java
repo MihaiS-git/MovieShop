@@ -16,8 +16,8 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(exclude = {"categories", "actors"})
-@EqualsAndHashCode(exclude = {"actors", "categories", "lastUpdate"})
+@ToString(exclude = {"categories", "actors", "inventories"})
+@EqualsAndHashCode(exclude = {"actors", "categories", "inventories", "lastUpdate"})
 public class Film {
 
     @Id
@@ -108,6 +108,20 @@ public class Film {
         actors.remove(actor);
         actor.getFilms().remove(this);
     }
+
+    @OneToMany(mappedBy = "film", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Inventory> inventories = new HashSet<>();
+
+    public void addInventory(Inventory inventory) {
+        inventories.add(inventory);
+        inventory.setFilm(this);
+    }
+
+    public void removeInventory(Inventory inventory) {
+        inventories.remove(inventory);
+        inventory.setFilm(null);
+    }
+
 
     public Film(@NotNull String title,
                 @NotNull String description,

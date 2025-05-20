@@ -21,7 +21,9 @@ public class RegisterRequest {
     @NotNull(message = "Role is required")
     private Role role;
 
-    private String name;
+    private String firstName;
+
+    private String lastName;
 
     private String picture;
 
@@ -29,7 +31,8 @@ public class RegisterRequest {
         this.email = email;
         this.password = password;
         this.role = Role.CUSTOMER;
-        this.name = name;
+        this.firstName = name;
+        this.lastName = name;
         this.picture = picture;
     }
 }

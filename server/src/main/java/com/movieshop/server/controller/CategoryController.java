@@ -1,7 +1,7 @@
 package com.movieshop.server.controller;
 
-import com.movieshop.server.domain.Category;
-import com.movieshop.server.model.CategoryDTO;
+import com.movieshop.server.model.CategoryRequestDTO;
+import com.movieshop.server.model.CategoryResponseDTO;
 import com.movieshop.server.service.ICategoryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,23 +19,28 @@ public class CategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Category>> getAllCategories() {
+    public ResponseEntity<List<CategoryResponseDTO>> getAllCategories() {
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable Integer id) {
+    public ResponseEntity<CategoryResponseDTO> getCategoryById(@PathVariable Integer id) {
         return ResponseEntity.ok(categoryService.getCategoryById(id));
     }
 
+    @GetMapping("/name")
+    public ResponseEntity<CategoryResponseDTO> getCategoryByName(@RequestBody CategoryRequestDTO categoryRequestDTO) {
+        return ResponseEntity.ok(categoryService.getCategoryByName(categoryRequestDTO));
+    }
+
     @PostMapping
-    public ResponseEntity<Category> createCategory(@RequestBody CategoryDTO categoryDTO) {
-        return ResponseEntity.ok(categoryService.createCategory(categoryDTO));
+    public ResponseEntity<CategoryResponseDTO> createCategory(@RequestBody CategoryRequestDTO categoryRequestDTO) {
+        return ResponseEntity.ok(categoryService.createCategory(categoryRequestDTO));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Category> updateCategory(@PathVariable Integer id, @RequestBody CategoryDTO categoryDTO) {
-        return ResponseEntity.ok(categoryService.updateCategory(id, categoryDTO));
+    public ResponseEntity<CategoryResponseDTO> updateCategory(@PathVariable Integer id, @RequestBody CategoryRequestDTO categoryRequestDTO) {
+        return ResponseEntity.ok(categoryService.updateCategory(id, categoryRequestDTO));
     }
 
     @DeleteMapping("/{id}")

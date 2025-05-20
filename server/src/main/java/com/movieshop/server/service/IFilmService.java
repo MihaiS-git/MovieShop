@@ -1,23 +1,23 @@
 package com.movieshop.server.service;
 
-import com.movieshop.server.domain.Film;
-import com.movieshop.server.model.FilmDTO;
+import com.movieshop.server.model.FilmRequestDTO;
+import com.movieshop.server.model.FilmResponseDTO;
 import com.movieshop.server.model.MoviePageResponse;
 
 import java.util.List;
 
 public interface IFilmService {
-    FilmDTO getFilmById(Integer id);
+    FilmResponseDTO getFilmById(Integer id);
 
-    FilmDTO getFilmByTitle(String title);
+    FilmResponseDTO getFilmByTitle(String title);
 
-    List<FilmDTO> getAllFilms();
+    List<FilmResponseDTO> getAllFilms();
 
     MoviePageResponse getAllFilmsPaginated(Integer page, Integer limit);
 
-    FilmDTO createFilm(FilmDTO film);
+    FilmResponseDTO createFilm(FilmRequestDTO film);
 
-    FilmDTO updateFilm(Integer id, FilmDTO filmDTO);
+    FilmResponseDTO updateFilm(Integer id, FilmRequestDTO filmRequestDTO);
 
     void deleteFilm(Integer id);
 }

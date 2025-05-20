@@ -3,7 +3,8 @@ package com.movieshop.server.service;
 import com.movieshop.server.domain.Language;
 import com.movieshop.server.exception.ResourceNotFoundException;
 import com.movieshop.server.mapper.LanguageMapper;
-import com.movieshop.server.model.LanguageDTO;
+import com.movieshop.server.model.LanguageRequestDTO;
+import com.movieshop.server.model.LanguageResponseDTO;
 import com.movieshop.server.repository.LanguageRepository;
 import org.springframework.stereotype.Service;
 
@@ -21,31 +22,36 @@ public class LanguageServiceImpl implements ILanguageService {
     }
 
     @Override
-    public Language getLanguageById(Integer id) {
-        return getLanguageByIdOrElseThrow(id);
+    public LanguageResponseDTO getLanguageById(Integer id) {
+        Language language = getLanguageByIdOrElseThrow(id);
+        return languageMapper.toResponseDto(language);
     }
 
     @Override
-    public Language getLanguageByName(String name) {
-        return languageRepository.findByName(name).orElseThrow(() ->
-                new ResourceNotFoundException("Language not found with name: " + name));
+    public LanguageResponseDTO getLanguageByName(String name) {
+        Language language = languageRepository.findByName(name)
+                .orElseThrow(() -> new ResourceNotFoundException("Language not found with name: " + name));
+        return languageMapper.toResponseDto(language);
     }
 
     @Override
-    public List<Language> getAllLanguages() {
-        return languageRepository.findAll();
+    public List<LanguageResponseDTO> getAllLanguages() {
+        List<Language> languages = languageRepository.findAll();
+        return languages.stream().map(languageMapper::toResponseDto).toList();
     }
 
     @Override
-    public Language createLanguage(LanguageDTO languageDTO) {
-        return languageRepository.save(languageMapper.toEntity(languageDTO));
+    public LanguageResponseDTO createLanguage(LanguageRequestDTO languageRequestDTO) {
+        Language language = languageRepository.save(languageMapper.toEntity(languageRequestDTO));
+        return languageMapper.toResponseDto(language);
     }
 
     @Override
-    public Language updateLanguage(Integer id, LanguageDTO languageDTO) {
+    public LanguageResponseDTO updateLanguage(Integer id, LanguageRequestDTO languageRequestDTO) {
         Language existentLanguage = getLanguageByIdOrElseThrow(id);
-        existentLanguage.setName(languageDTO.getName());
-        return languageRepository.save(existentLanguage);
+        existentLanguage.setName(languageRequestDTO.getName());
+        existentLanguage = languageRepository.save(existentLanguage);
+        return languageMapper.toResponseDto(existentLanguage);
     }
 
     @Override

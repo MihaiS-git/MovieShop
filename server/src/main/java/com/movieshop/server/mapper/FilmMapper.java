@@ -3,20 +3,18 @@ package com.movieshop.server.mapper;
 import com.movieshop.server.domain.Actor;
 import com.movieshop.server.domain.Category;
 import com.movieshop.server.domain.Film;
-import com.movieshop.server.domain.Language;
-import com.movieshop.server.model.FilmDTO;
+import com.movieshop.server.model.FilmRequestDTO;
+import com.movieshop.server.model.FilmResponseDTO;
 import org.springframework.stereotype.Component;
-
-import java.util.Set;
 
 @Component
 public class FilmMapper {
 
-    public FilmDTO toDto(Film film) {
+    public FilmResponseDTO toResponseDto(Film film) {
         if (film == null) {
             return null;
         }
-        return FilmDTO.builder()
+        return FilmResponseDTO.builder()
                 .id(film.getId())
                 .title(film.getTitle())
                 .description(film.getDescription())
@@ -31,33 +29,23 @@ public class FilmMapper {
                 .replacementCost(film.getReplacementCost())
                 .rating(film.getRating())
                 .actorIds(film.getActors().stream().map(Actor::getId).toList())
-                .categoryIds(film.getCategories().stream().map(Category::getId).toList())
+                .categories(film.getCategories().stream().map(Category::getName).toList())
                 .build();
     }
 
-    public Film toEntity(
-            FilmDTO filmDTO,
-            Language language,
-            Language originalLanguage,
-            Set<Category> categories,
-            Set<Actor> actors
-    ) {
-        if (filmDTO == null) {
+    public Film toEntity(FilmRequestDTO filmRequestDTO) {
+        if (filmRequestDTO == null) {
             return null;
         }
         Film film = new Film();
-        film.setTitle(filmDTO.getTitle());
-        film.setDescription(filmDTO.getDescription());
-        film.setReleaseYear(filmDTO.getReleaseYear());
-        film.setRentalDuration(filmDTO.getRentalDuration());
-        film.setRentalRate(filmDTO.getRentalRate());
-        film.setLength(filmDTO.getLength());
-        film.setReplacementCost(filmDTO.getReplacementCost());
-        film.setRating(filmDTO.getRating());
-        film.setLanguage(language);
-        film.setOriginalLanguage(originalLanguage);
-        categories.forEach(film::addCategory);
-        actors.forEach(film::addActor);
+        film.setTitle(filmRequestDTO.getTitle());
+        film.setDescription(filmRequestDTO.getDescription());
+        film.setReleaseYear(filmRequestDTO.getReleaseYear());
+        film.setRentalDuration(filmRequestDTO.getRentalDuration());
+        film.setRentalRate(filmRequestDTO.getRentalRate());
+        film.setLength(filmRequestDTO.getLength());
+        film.setReplacementCost(filmRequestDTO.getReplacementCost());
+        film.setRating(filmRequestDTO.getRating());
         return film;
     }
 }

@@ -4,16 +4,12 @@ import com.movieshop.server.domain.Rating;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class FilmDTO {
-
-    private Integer id;
+public class FilmRequestDTO {
 
     @NotNull
     @Size(min = 1, max = 128)
@@ -46,9 +42,4 @@ public class FilmDTO {
 
     private Rating rating;
 
-    @Builder.Default
-    private List<Integer> categoryIds = new ArrayList<>();
-
-    @Builder.Default
-    private List<Integer> actorIds = new ArrayList<>();
 }

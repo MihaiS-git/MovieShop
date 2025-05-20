@@ -1,18 +1,18 @@
 package com.movieshop.server.mapper;
 
 import com.movieshop.server.domain.Address;
-import com.movieshop.server.domain.City;
-import com.movieshop.server.model.AddressDTO;
+import com.movieshop.server.model.AddressRequestDTO;
+import com.movieshop.server.model.AddressResponseDTO;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AddressMapper {
 
-    public AddressDTO toDto(Address address) {
+    public AddressResponseDTO toResponseDto(Address address) {
         if (address == null) {
             return null;
         }
-        return AddressDTO.builder()
+        return AddressResponseDTO.builder()
                 .id(address.getId())
                 .address(address.getAddress())
                 .address2(address.getAddress2())
@@ -23,17 +23,16 @@ public class AddressMapper {
                 .build();
     }
 
-    public Address toEntity(AddressDTO addressDTO, City city) {
-        if (addressDTO == null) {
+    public Address toEntity(AddressRequestDTO addressRequestDTO) {
+        if (addressRequestDTO == null) {
             return null;
         }
         Address address = new Address();
-        address.setAddress(addressDTO.getAddress());
-        address.setAddress2(addressDTO.getAddress2());
-        address.setDistrict(addressDTO.getDistrict());
-        address.setCity(city);
-        address.setPostalCode(addressDTO.getPostalCode());
-        address.setPhone(addressDTO.getPhone());
+        address.setAddress(addressRequestDTO.getAddress());
+        address.setAddress2(addressRequestDTO.getAddress2());
+        address.setDistrict(addressRequestDTO.getDistrict());
+        address.setPostalCode(addressRequestDTO.getPostalCode());
+        address.setPhone(addressRequestDTO.getPhone());
         return address;
     }
 }

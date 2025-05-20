@@ -47,17 +47,17 @@ public class AuthenticationServiceTest {
         RegisterRequest registerRequest = new RegisterRequest("testuser@example.com", "password123", "Test User", "http://example.com/picture.jpg");
 
         // Create mock User object
-        User user = User.builder()
-                .email(registerRequest.getEmail())
-                .password("passwordEncoded")
-                .role(Role.CUSTOMER)
-                .name(registerRequest.getName())
-                .picture(registerRequest.getPicture())
-                .accountNonExpired(true)
-                .accountNonLocked(true)
-                .credentialsNonExpired(true)
-                .enabled(true)
-                .build();
+        User user = new User();
+        user.setEmail(registerRequest.getEmail());
+        user.setPassword("passwordEncoded");
+        user.setRole(Role.CUSTOMER);
+        user.setFirstName(registerRequest.getFirstName());
+        user.setLastName(registerRequest.getLastName());
+        user.setPicture(registerRequest.getPicture());
+        user.setAccountNonExpired(true);
+        user.setAccountNonLocked(true);
+        user.setCredentialsNonExpired(true);
+        user.setEnabled(true);
 
         // Mock the behaviour of the password encoder
         when(passwordEncoder.encode(anyString())).thenReturn("passwordEncoded");
@@ -97,17 +97,17 @@ public class AuthenticationServiceTest {
     void testAuthenticate() {
         AuthenticationRequest request = new AuthenticationRequest("testuser@example.com", "password123");
 
-        User user = User.builder()
-                .email(request.getEmail())
-                .password("passwordEncoded")
-                .role(Role.CUSTOMER)
-                .name("Test User")
-                .picture("http://example.com/picture.jpg")
-                .accountNonExpired(true)
-                .accountNonLocked(true)
-                .credentialsNonExpired(true)
-                .enabled(true)
-                .build();
+        User user = new User();
+        user.setEmail(request.getEmail());
+        user.setPassword("passwordEncoded");
+        user.setRole(Role.CUSTOMER);
+        user.setFirstName("Test");
+        user.setLastName("User");
+        user.setPicture("http://example.com/picture.jpg");
+        user.setAccountNonExpired(true);
+        user.setAccountNonLocked(true);
+        user.setCredentialsNonExpired(true);
+        user.setEnabled(true);
 
         // Mock the behaviour of the authentication manager
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(null);
@@ -178,10 +178,9 @@ public class AuthenticationServiceTest {
     void testAuthenticateUserNotEnabled() {
         AuthenticationRequest request = new AuthenticationRequest("disabled@example.com", "pass");
 
-        User disabledUser = User.builder()
-                .email(request.getEmail())
-                .enabled(false) // Important
-                .build();
+        User disabledUser = new User();
+        disabledUser.setEmail(request.getEmail());
+        disabledUser.setEnabled(false);
 
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(null);
         when(userRepository.findByEmail(anyString())).thenReturn(java.util.Optional.of(disabledUser));
@@ -200,7 +199,6 @@ public class AuthenticationServiceTest {
         InvalidAuthException exception = assertThrows(InvalidAuthException.class, () -> authenticationService.authenticate(request));
         assertTrue(exception.getMessage().contains("Authentication failed"));
     }
-
 
 
 }

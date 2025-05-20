@@ -1,6 +1,7 @@
 package com.movieshop.server.controller;
 
-import com.movieshop.server.model.FilmDTO;
+import com.movieshop.server.model.FilmRequestDTO;
+import com.movieshop.server.model.FilmResponseDTO;
 import com.movieshop.server.model.MoviePageResponse;
 import com.movieshop.server.service.IFilmService;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class FilmController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<FilmDTO>> getAllFilms() {
+    public ResponseEntity<List<FilmResponseDTO>> getAllFilms() {
         return ResponseEntity.ok(filmService.getAllFilms());
     }
 
@@ -33,20 +34,20 @@ public class FilmController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FilmDTO> getFilmById(@PathVariable Integer id) {
+    public ResponseEntity<FilmResponseDTO> getFilmById(@PathVariable Integer id) {
         return ResponseEntity.ok(filmService.getFilmById(id));
     }
 
     @PostMapping
-    public ResponseEntity<FilmDTO> createFilm(@RequestBody FilmDTO filmDTO) {
-        FilmDTO createdFilm = filmService.createFilm(filmDTO);
+    public ResponseEntity<FilmResponseDTO> createFilm(@RequestBody FilmRequestDTO filmRequestDTO) {
+        FilmResponseDTO createdFilm = filmService.createFilm(filmRequestDTO);
         URI location = URI.create("/api/v0/films/" + createdFilm.getId());
         return ResponseEntity.created(location).body(createdFilm);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<FilmDTO> updateFilm(@PathVariable Integer id, @RequestBody FilmDTO filmDTO) {
-        return ResponseEntity.ok(filmService.updateFilm(id, filmDTO));
+    public ResponseEntity<FilmResponseDTO> updateFilm(@PathVariable Integer id, @RequestBody FilmRequestDTO filmRequestDTO) {
+        return ResponseEntity.ok(filmService.updateFilm(id, filmRequestDTO));
     }
 
     @DeleteMapping("/{id}")

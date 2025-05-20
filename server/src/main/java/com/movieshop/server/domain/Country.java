@@ -13,7 +13,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@ToString(exclude = {"cities"})
 @EqualsAndHashCode(exclude = {"cities", "lastUpdate"})
 @Table(name = "countries")
 public class Country {

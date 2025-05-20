@@ -2,7 +2,7 @@ package com.movieshop.server.mapper;
 
 import com.movieshop.server.domain.Actor;
 import com.movieshop.server.domain.Film;
-import com.movieshop.server.model.ActorDTO;
+import com.movieshop.server.model.ActorResponseDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
@@ -10,9 +10,9 @@ import java.util.Set;
 @Component
 public class ActorMapper {
 
-    public ActorDTO toDto(Actor actor) {
+    public ActorResponseDTO toResponseDto(Actor actor) {
         if (actor == null) return null;
-        return ActorDTO.builder()
+        return ActorResponseDTO.builder()
                 .id(actor.getId())
                 .firstName(actor.getFirstName())
                 .lastName(actor.getLastName())
@@ -21,7 +21,7 @@ public class ActorMapper {
                 .build();
     }
 
-    public Actor toEntity(ActorDTO dto, Set<Film> films) {
+    public Actor toEntity(ActorResponseDTO dto, Set<Film> films) {
         if (dto == null) return null;
         Actor actor = new Actor();
         actor.setFirstName(dto.getFirstName());

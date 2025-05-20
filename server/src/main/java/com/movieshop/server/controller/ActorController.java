@@ -1,6 +1,6 @@
 package com.movieshop.server.controller;
 
-import com.movieshop.server.model.ActorDTO;
+import com.movieshop.server.model.ActorResponseDTO;
 import com.movieshop.server.service.IActorService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,25 +19,25 @@ public class ActorController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ActorDTO>> getAllActors() {
+    public ResponseEntity<List<ActorResponseDTO>> getAllActors() {
         return ResponseEntity.ok(actorService.getAllActors());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ActorDTO> getActorById(@PathVariable Integer id) {
+    public ResponseEntity<ActorResponseDTO> getActorById(@PathVariable Integer id) {
         return ResponseEntity.ok(actorService.getActorById(id));
     }
 
     @PostMapping
-    public ResponseEntity<ActorDTO> createActor(@RequestBody ActorDTO actorDTO) {
-        ActorDTO createdActor = actorService.createActor(actorDTO);
+    public ResponseEntity<ActorResponseDTO> createActor(@RequestBody ActorResponseDTO actorResponseDTO) {
+        ActorResponseDTO createdActor = actorService.createActor(actorResponseDTO);
         URI location = URI.create("/api/v0/actors/" + createdActor.getId());
         return ResponseEntity.created(location).body(createdActor);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ActorDTO> updateActor(@PathVariable Integer id, @RequestBody ActorDTO actorDTO) {
-        return ResponseEntity.ok(actorService.updateActor(id, actorDTO));
+    public ResponseEntity<ActorResponseDTO> updateActor(@PathVariable Integer id, @RequestBody ActorResponseDTO actorResponseDTO) {
+        return ResponseEntity.ok(actorService.updateActor(id, actorResponseDTO));
     }
 
     @DeleteMapping("/{id}")

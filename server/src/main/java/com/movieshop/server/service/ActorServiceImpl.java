@@ -4,7 +4,7 @@ import com.movieshop.server.domain.Actor;
 import com.movieshop.server.domain.Film;
 import com.movieshop.server.exception.ResourceNotFoundException;
 import com.movieshop.server.mapper.ActorMapper;
-import com.movieshop.server.model.ActorDTO;
+import com.movieshop.server.model.ActorResponseDTO;
 import com.movieshop.server.repository.ActorRepository;
 import com.movieshop.server.repository.FilmRepository;
 import org.springframework.stereotype.Service;
@@ -32,21 +32,21 @@ public class ActorServiceImpl implements IActorService {
     }
 
     @Override
-    public List<ActorDTO> getAllActors() {
+    public List<ActorResponseDTO> getAllActors() {
         List<Actor> actors = actorRepository.findAll();
-        return actors.stream().map(actorMapper::toDto)
+        return actors.stream().map(actorMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public ActorDTO getActorById(Integer id) {
+    public ActorResponseDTO getActorById(Integer id) {
         Actor actor = getActorByIdOrElseThrow(id);
-        return actorMapper.toDto(actor);
+        return actorMapper.toResponseDto(actor);
     }
 
     @Override
-    public ActorDTO createActor(ActorDTO actorDTO) {
-        List<Integer> filmIds = actorDTO.getFilmIds();
+    public ActorResponseDTO createActor(ActorResponseDTO actorResponseDTO) {
+        List<Integer> filmIds = actorResponseDTO.getFilmIds();
         Set<Film> films;
         if (filmIds != null && !filmIds.isEmpty()) {
             films = filmIds.stream().map(id ->
@@ -56,22 +56,22 @@ public class ActorServiceImpl implements IActorService {
         } else {
             films = new HashSet<>();
         }
-        Actor actor = actorMapper.toEntity(actorDTO, films);
+        Actor actor = actorMapper.toEntity(actorResponseDTO, films);
         Actor savedActor = actorRepository.save(actor);
 
-        return actorMapper.toDto(savedActor);
+        return actorMapper.toResponseDto(savedActor);
     }
 
     @Override
-    public ActorDTO updateActor(Integer id, ActorDTO actorDTO) {
+    public ActorResponseDTO updateActor(Integer id, ActorResponseDTO actorResponseDTO) {
         Actor existentActor = getActorByIdOrElseThrow(id);
 
-        existentActor.setFirstName(actorDTO.getFirstName());
-        existentActor.setLastName(actorDTO.getLastName());
+        existentActor.setFirstName(actorResponseDTO.getFirstName());
+        existentActor.setLastName(actorResponseDTO.getLastName());
 
         Actor updatedActor = actorRepository.save(existentActor);
 
-        return actorMapper.toDto(updatedActor);
+        return actorMapper.toResponseDto(updatedActor);
     }
 
     @Override

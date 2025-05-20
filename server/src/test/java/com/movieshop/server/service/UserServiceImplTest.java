@@ -1,12 +1,22 @@
 package com.movieshop.server.service;
 
+import com.movieshop.server.domain.Address;
+import com.movieshop.server.domain.Role;
+import com.movieshop.server.domain.Store;
 import com.movieshop.server.domain.User;
 import com.movieshop.server.exception.ResourceNotFoundException;
+import com.movieshop.server.mapper.UserMapper;
+import com.movieshop.server.model.UserRequestDTO;
+import com.movieshop.server.model.UserResponseDTO;
 import com.movieshop.server.repository.UserRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,42 +24,178 @@ import static org.mockito.Mockito.*;
 
 class UserServiceImplTest {
 
+    @Mock
     private UserRepository userRepository;
-    private IUserService userService;
+
+    @Mock
+    private UserMapper userMapper;
+
+    @InjectMocks
+    private UserServiceImpl userService;
+
+    AutoCloseable closeable;
 
     @BeforeEach
     void setUp() {
-        userRepository = Mockito.mock(UserRepository.class);
-        userService = new UserServiceImpl(userRepository);
+        closeable = MockitoAnnotations.openMocks(this);
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        closeable.close();
     }
 
     @Test
-    void getUserByEmail_existingEmail_returnsUser() {
-        // Arrange
-        String email = "test@example.com";
+    void testGetUserByEmail_Success() {
         User user = new User();
-        user.setEmail(email);
-        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        user.setEmail("test@example.com");
 
-        // Act
-        User result = userService.getUserByEmail(email);
+        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
 
-        // Assert
-        assertNotNull(result);
-        assertEquals(email, result.getEmail());
-        verify(userRepository, times(1)).findByEmail(email);
+        User result = userService.getUserByEmail("test@example.com");
+
+        assertEquals("test@example.com", result.getEmail());
+        verify(userRepository).findByEmail("test@example.com");
     }
 
     @Test
-    void getUserByEmail_nonExistingEmail_throwsException() {
-        // Arrange
-        String email = "missing@example.com";
-        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+    void testGetUserByEmail_NotFound() {
+        when(userRepository.findByEmail("missing@example.com")).thenReturn(Optional.empty());
 
-        // Act & Assert
-        ResourceNotFoundException thrown = assertThrows(ResourceNotFoundException.class,
-                () -> userService.getUserByEmail(email));
-        assertTrue(thrown.getMessage().contains(email));
-        verify(userRepository, times(1)).findByEmail(email);
+        assertThrows(ResourceNotFoundException.class,
+                () -> userService.getUserByEmail("missing@example.com"));
+    }
+
+    @Test
+    void testGetAllUsers_ReturnsMappedList() {
+        User user1 = new User();
+        User user2 = new User();
+        List<User> users = List.of(user1, user2);
+
+        UserResponseDTO dto1 = new UserResponseDTO();
+        UserResponseDTO dto2 = new UserResponseDTO();
+
+        when(userRepository.findAll()).thenReturn(users);
+        when(userMapper.toResponseDto(user1)).thenReturn(dto1);
+        when(userMapper.toResponseDto(user2)).thenReturn(dto2);
+
+        List<UserResponseDTO> result = userService.getAllUsers();
+
+        assertEquals(2, result.size());
+        assertTrue(result.contains(dto1));
+        assertTrue(result.contains(dto2));
+    }
+
+    @Test
+    void testGetUserById_Success() {
+        User user = new User();
+        user.setId(1);
+        UserResponseDTO dto = new UserResponseDTO();
+
+        when(userRepository.findById(1)).thenReturn(Optional.of(user));
+        when(userMapper.toResponseDto(user)).thenReturn(dto);
+
+        UserResponseDTO result = userService.getUserById(1);
+
+        assertEquals(dto, result);
+    }
+
+    @Test
+    void testGetUserById_NotFound() {
+        when(userRepository.findById(99)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class,
+                () -> userService.getUserById(99));
+    }
+
+    @Test
+    void testUpdateUser_Success_WithAddressAndStore() {
+        User existingUser = new User();
+        existingUser.setId(1);
+
+        Address address = new Address();
+        Store store = new Store();
+
+        UserRequestDTO dto = UserRequestDTO.builder()
+                .email("updated@example.com")
+                .firstName("Updated")
+                .lastName("User")
+                .role(Role.valueOf("ADMIN"))
+                .picture("pic.png")
+                .accountNonExpired(true)
+                .accountNonLocked(true)
+                .credentialsNonExpired(true)
+                .enabled(true)
+                .address(address)
+                .store(store)
+                .build();
+
+        when(userRepository.findById(1)).thenReturn(Optional.of(existingUser));
+        when(userRepository.save(any())).thenReturn(existingUser);
+        when(userMapper.toResponseDto(existingUser)).thenReturn(new UserResponseDTO());
+
+        UserResponseDTO result = userService.updateUser(1, dto);
+
+        assertNotNull(result);
+        verify(userRepository).save(existingUser);
+        assertEquals("updated@example.com", existingUser.getEmail());
+        assertEquals(address, existingUser.getAddress());
+        assertEquals(store, existingUser.getStore());
+    }
+
+    @Test
+    void testUpdateUser_WithNullAddressAndStore() {
+        User existingUser = new User();
+        existingUser.setId(2);
+
+        UserRequestDTO dto = UserRequestDTO.builder()
+                .email("null@example.com")
+                .firstName("Null")
+                .lastName("Check")
+                .role(Role.valueOf("CUSTOMER"))
+                .picture(null)
+                .accountNonExpired(false)
+                .accountNonLocked(false)
+                .credentialsNonExpired(false)
+                .enabled(false)
+                .address(null)
+                .store(null)
+                .build();
+
+        when(userRepository.findById(2)).thenReturn(Optional.of(existingUser));
+        when(userRepository.save(any())).thenReturn(existingUser);
+        when(userMapper.toResponseDto(existingUser)).thenReturn(new UserResponseDTO());
+
+        UserResponseDTO result = userService.updateUser(2, dto);
+
+        assertNotNull(result);
+        assertNull(existingUser.getAddress());
+        assertNull(existingUser.getStore());
+    }
+
+    @Test
+    void testUpdateUser_UserNotFound() {
+        when(userRepository.findById(123)).thenReturn(Optional.empty());
+
+        UserRequestDTO dto = UserRequestDTO.builder().build();
+
+        assertThrows(ResourceNotFoundException.class, () -> userService.updateUser(123, dto));
+    }
+
+    @Test
+    void testDeleteUser_Success() {
+        User user = new User();
+        when(userRepository.findById(1)).thenReturn(Optional.of(user));
+
+        userService.deleteUser(1);
+
+        verify(userRepository).delete(user);
+    }
+
+    @Test
+    void testDeleteUser_NotFound() {
+        when(userRepository.findById(404)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> userService.deleteUser(404));
     }
 }

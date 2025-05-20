@@ -2,7 +2,9 @@ package com.movieshop.server.service;
 
 import com.movieshop.server.domain.Category;
 import com.movieshop.server.exception.ResourceNotFoundException;
-import com.movieshop.server.model.CategoryDTO;
+import com.movieshop.server.mapper.CategoryMapper;
+import com.movieshop.server.model.CategoryRequestDTO;
+import com.movieshop.server.model.CategoryResponseDTO;
 import com.movieshop.server.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
 
@@ -12,40 +14,49 @@ import java.util.List;
 public class CategoryServiceImpl implements ICategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final CategoryMapper categoryMapper;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository, CategoryMapper categoryMapper) {
         this.categoryRepository = categoryRepository;
+        this.categoryMapper = categoryMapper;
     }
 
     @Override
-    public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
+    public List<CategoryResponseDTO> getAllCategories() {
+        List<Category> categories = categoryRepository.findAll();
+        return categories.stream()
+                .map(categoryMapper::toResponseDto)
+                .toList();
     }
 
     @Override
-    public Category getCategoryById(Integer id) {
-        return getCategoryByIdOrElseThrow(id);
+    public CategoryResponseDTO getCategoryById(Integer id) {
+        Category category = getCategoryByIdOrElseThrow(id);
+        return categoryMapper.toResponseDto(category);
     }
 
     @Override
-    public Category getCategoryByName(String name) {
-        return categoryRepository.findByName(name).orElseThrow(() ->
-                new ResourceNotFoundException("Category not found with name: " + name));
+    public CategoryResponseDTO getCategoryByName(CategoryRequestDTO categoryRequestDTO) {
+        String name = categoryRequestDTO.getName();
+        Category category = categoryRepository.findByName(name)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with name: " + name));
+        return categoryMapper.toResponseDto(category);
     }
 
     @Override
-    public Category createCategory(CategoryDTO categoryDTO) {
-        Category newCategory = new Category();
-        newCategory.setId(null);
-        newCategory.setName(categoryDTO.getName());
-        return categoryRepository.save(newCategory);
+    public CategoryResponseDTO createCategory(CategoryRequestDTO categoryRequestDTO) {
+        Category newCategory = categoryMapper.toEntity(categoryRequestDTO);
+        newCategory = categoryRepository.save(newCategory);
+        return categoryMapper.toResponseDto(newCategory);
     }
 
     @Override
-    public Category updateCategory(Integer id, CategoryDTO categoryDTO) {
+    public CategoryResponseDTO updateCategory(Integer id, CategoryRequestDTO categoryRequestDTO) {
         Category existentCategory = getCategoryByIdOrElseThrow(id);
-        existentCategory.setName(categoryDTO.getName());
-        return categoryRepository.save(existentCategory);
+        existentCategory.setName(categoryRequestDTO.getName());
+
+        existentCategory = categoryRepository.save(existentCategory);
+        return categoryMapper.toResponseDto(existentCategory);
     }
 
     @Override

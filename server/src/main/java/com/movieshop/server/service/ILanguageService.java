@@ -1,20 +1,20 @@
 package com.movieshop.server.service;
 
-import com.movieshop.server.domain.Language;
-import com.movieshop.server.model.LanguageDTO;
+import com.movieshop.server.model.LanguageRequestDTO;
+import com.movieshop.server.model.LanguageResponseDTO;
 
 import java.util.List;
 
 public interface ILanguageService {
-    Language getLanguageById(Integer id);
+    LanguageResponseDTO getLanguageById(Integer id);
 
-    Language getLanguageByName(String name);
+    LanguageResponseDTO getLanguageByName(String name);
 
-    List<Language> getAllLanguages();
+    List<LanguageResponseDTO> getAllLanguages();
 
-    Language createLanguage(LanguageDTO languageDTO);
+    LanguageResponseDTO createLanguage(LanguageRequestDTO languageRequestDTO);
 
-    Language updateLanguage(Integer id, LanguageDTO languageDTO);
+    LanguageResponseDTO updateLanguage(Integer id, LanguageRequestDTO languageRequestDTO);
 
     void deleteLanguage(Integer id);
 }

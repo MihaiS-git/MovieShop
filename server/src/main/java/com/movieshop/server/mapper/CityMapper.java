@@ -2,21 +2,20 @@ package com.movieshop.server.mapper;
 
 import com.movieshop.server.domain.Address;
 import com.movieshop.server.domain.City;
-import com.movieshop.server.domain.Country;
-import com.movieshop.server.model.CityDTO;
+import com.movieshop.server.model.CityRequestDTO;
+import com.movieshop.server.model.CityResponseDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
-import java.util.Set;
 
 @Component
 public class CityMapper {
 
-    public CityDTO toDto(City city) {
+    public CityResponseDTO toResponseDto(City city) {
         if (city == null) {
             return null;
         }
-        return CityDTO.builder()
+        return CityResponseDTO.builder()
                 .id(city.getId())
                 .name(city.getName())
                 .country(city.getCountry().getName())
@@ -28,14 +27,12 @@ public class CityMapper {
                 .build();
     }
 
-    public City toEntity(CityDTO cityDTO, Country country, Set<Address> addresses) {
-        if (cityDTO == null) {
+    public City toEntity(CityRequestDTO cityRequestDTO) {
+        if (cityRequestDTO == null) {
             return null;
         }
         City city = new City();
-        city.setName(cityDTO.getName());
-        city.setCountry(country);
-        city.setAddresses(addresses != null ? addresses : Collections.emptySet());
+        city.setName(cityRequestDTO.getName());
         return city;
     }
 }

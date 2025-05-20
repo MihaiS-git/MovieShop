@@ -13,9 +13,9 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@ToString(exclude = {"addresses"})
 @EqualsAndHashCode(exclude = {"addresses", "lastUpdate"})
-@Table(name = "countries")
+@Table(name = "cities")
 public class City {
 
     @Id
@@ -49,5 +49,15 @@ public class City {
     public void removeAddress(Address address){
         addresses.remove(address);
         address.setCity(null);
+    }
+
+    public void addCountry(Country country) {
+        this.country = country;
+        country.getCities().add(this);
+    }
+
+    public void removeCountry(Country country) {
+        this.country = null;
+        country.getCities().remove(this);
     }
 }

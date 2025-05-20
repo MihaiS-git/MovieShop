@@ -1,20 +1,20 @@
 package com.movieshop.server.service;
 
-import com.movieshop.server.domain.Category;
-import com.movieshop.server.model.CategoryDTO;
+import com.movieshop.server.model.CategoryRequestDTO;
+import com.movieshop.server.model.CategoryResponseDTO;
 
 import java.util.List;
 
 public interface ICategoryService {
-    List<Category> getAllCategories();
+    List<CategoryResponseDTO> getAllCategories();
 
-    Category getCategoryById(Integer id);
+    CategoryResponseDTO getCategoryById(Integer id);
 
-    Category getCategoryByName(String name);
+    CategoryResponseDTO getCategoryByName(CategoryRequestDTO categoryRequestDTO);
 
-    Category createCategory(CategoryDTO categoryDTO);
+    CategoryResponseDTO createCategory(CategoryRequestDTO categoryRequestDTO);
 
-    Category updateCategory(Integer id, CategoryDTO categoryDTO);
+    CategoryResponseDTO updateCategory(Integer id, CategoryRequestDTO categoryRequestDTO);
 
     void deleteCategory(Integer id);
 

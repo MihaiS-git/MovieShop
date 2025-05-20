@@ -9,7 +9,8 @@ import lombok.*;
 @Builder
 public class UserDTO {
     private String email;
-    private String name;
+    private String firstName;
+    private String lastName;
     private String role;
     private String picture;
 }

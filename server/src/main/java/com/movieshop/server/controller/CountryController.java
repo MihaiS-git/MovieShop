@@ -1,6 +1,7 @@
 package com.movieshop.server.controller;
 
-import com.movieshop.server.model.CountryDTO;
+import com.movieshop.server.model.CountryRequestDTO;
+import com.movieshop.server.model.CountryResponseDTO;
 import com.movieshop.server.service.ICountryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,25 +20,25 @@ public class CountryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CountryDTO>> getAllCountries() {
+    public ResponseEntity<List<CountryResponseDTO>> getAllCountries() {
         return ResponseEntity.ok(countryService.getAllCountries());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CountryDTO> getCountryById(@PathVariable Integer id) {
+    public ResponseEntity<CountryResponseDTO> getCountryById(@PathVariable Integer id) {
         return ResponseEntity.ok(countryService.getCountryById(id));
     }
 
     @PostMapping
-    public ResponseEntity<CountryDTO> createCountry(@RequestBody CountryDTO countryDTO) {
-        CountryDTO createdCountry = countryService.createCountry(countryDTO);
+    public ResponseEntity<CountryResponseDTO> createCountry(@RequestBody CountryRequestDTO countryRequestDTO) {
+        CountryResponseDTO createdCountry = countryService.createCountry(countryRequestDTO);
         URI location = URI.create("/api/v0/countries/" + createdCountry.getId());
         return ResponseEntity.created(location).body(createdCountry);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CountryDTO> updateCountry(@PathVariable Integer id, @RequestBody CountryDTO countryDTO) {
-        return ResponseEntity.ok(countryService.updateCountry(id, countryDTO));
+    public ResponseEntity<CountryResponseDTO> updateCountry(@PathVariable Integer id, @RequestBody CountryRequestDTO countryRequestDTO) {
+        return ResponseEntity.ok(countryService.updateCountry(id, countryRequestDTO));
     }
 
     @DeleteMapping("/{id}")

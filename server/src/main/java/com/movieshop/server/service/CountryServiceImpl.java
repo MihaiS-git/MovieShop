@@ -3,7 +3,8 @@ package com.movieshop.server.service;
 import com.movieshop.server.domain.Country;
 import com.movieshop.server.exception.ResourceNotFoundException;
 import com.movieshop.server.mapper.CountryMapper;
-import com.movieshop.server.model.CountryDTO;
+import com.movieshop.server.model.CountryRequestDTO;
+import com.movieshop.server.model.CountryResponseDTO;
 import com.movieshop.server.repository.CountryRepository;
 import org.springframework.stereotype.Service;
 
@@ -24,40 +25,40 @@ public class CountryServiceImpl implements ICountryService {
     }
 
     @Override
-    public List<CountryDTO> getAllCountries() {
+    public List<CountryResponseDTO> getAllCountries() {
         List<Country> countries = countryRepository.findAll();
-        return countries.stream().map(countryMapper::toDto).toList();
+        return countries.stream().map(countryMapper::toResponseDto).toList();
     }
 
     @Override
-    public CountryDTO getCountryById(Integer id) {
+    public CountryResponseDTO getCountryById(Integer id) {
         Country country = getCountryByIdOrElseThrow(id);
-        return countryMapper.toDto(country);
+        return countryMapper.toResponseDto(country);
     }
 
     @Override
-    public CountryDTO getCountryByName(String name) {
+    public CountryResponseDTO getCountryByName(String name) {
         Country country = countryRepository.findByName(name).orElseThrow(() ->
                 new ResourceNotFoundException("Country not found with name: " + name));
 
-        return countryMapper.toDto(country);
+        return countryMapper.toResponseDto(country);
     }
 
     @Override
-    public CountryDTO createCountry(CountryDTO countryDTO) {
-        Country savedCountry = countryRepository.save(countryMapper.toEntity(countryDTO));
-        return countryMapper.toDto(savedCountry);
+    public CountryResponseDTO createCountry(CountryRequestDTO countryRequestDTO) {
+        Country savedCountry = countryRepository.save(countryMapper.toEntity(countryRequestDTO));
+        return countryMapper.toResponseDto(savedCountry);
     }
 
     @Override
-    public CountryDTO updateCountry(Integer id, CountryDTO countryDTO) {
+    public CountryResponseDTO updateCountry(Integer id, CountryRequestDTO countryRequestDTO) {
         Country existentCountry = getCountryByIdOrElseThrow(id);
 
-        existentCountry.setName(countryDTO.getName());
+        existentCountry.setName(countryRequestDTO.getName());
 
         Country updatedCountry = countryRepository.save(existentCountry);
 
-        return countryMapper.toDto(updatedCountry);
+        return countryMapper.toResponseDto(updatedCountry);
     }
 
     @Override

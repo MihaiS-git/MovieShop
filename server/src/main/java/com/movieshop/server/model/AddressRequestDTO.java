@@ -7,11 +7,8 @@ import lombok.*;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 @Builder
-public class AddressDTO {
-
-    private Integer id;
+public class AddressRequestDTO {
 
     @NotNull
     @Size(min = 2, max = 50)

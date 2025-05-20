@@ -2,9 +2,10 @@ package com.movieshop.server.service;
 
 import com.movieshop.server.domain.Category;
 import com.movieshop.server.exception.ResourceNotFoundException;
-import com.movieshop.server.model.CategoryDTO;
+import com.movieshop.server.mapper.CategoryMapper;
+import com.movieshop.server.model.CategoryRequestDTO;
+import com.movieshop.server.model.CategoryResponseDTO;
 import com.movieshop.server.repository.CategoryRepository;
-import com.movieshop.server.repository.FilmRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +25,7 @@ public class CategoryServiceTest {
     private CategoryRepository categoryRepository;
 
     @Mock
-    private FilmRepository filmRepository;
+    private CategoryMapper categoryMapper;
 
     @InjectMocks
     private CategoryServiceImpl categoryService;
@@ -46,9 +47,19 @@ public class CategoryServiceTest {
         List<Category> categories = List.of(new Category(), new Category());
         when(categoryRepository.findAll()).thenReturn(categories);
 
-        List<Category> result = categoryService.getAllCategories();
+        List<CategoryResponseDTO> result = categoryService.getAllCategories();
 
         assertEquals(2, result.size());
+        verify(categoryRepository, times(1)).findAll();
+    }
+
+    @Test
+    void getAllCategories_WhenEmpty_ShouldReturnEmptyList() {
+        when(categoryRepository.findAll()).thenReturn(List.of());
+
+        List<CategoryResponseDTO> result = categoryService.getAllCategories();
+
+        assertTrue(result.isEmpty());
         verify(categoryRepository, times(1)).findAll();
     }
 
@@ -56,14 +67,25 @@ public class CategoryServiceTest {
     void getCategoryById_ShouldReturnCategory() {
         Integer id = 1;
         Category category = new Category();
+        category.setId(id);
+        category.setName("Comedy");
+
+        CategoryResponseDTO responseDTO = CategoryResponseDTO.builder()
+                .id(id)
+                .name("Comedy")
+                .build();
 
         when(categoryRepository.findById(id)).thenReturn(Optional.of(category));
+        when(categoryMapper.toResponseDto(category)).thenReturn(responseDTO);
 
-        Category result = categoryService.getCategoryById(id);
+        CategoryResponseDTO result = categoryService.getCategoryById(id);
 
         assertNotNull(result);
-        verify(categoryRepository, times(1)).findById(id);
+        assertEquals("Comedy", result.getName());
+        verify(categoryRepository).findById(id);
+        verify(categoryMapper).toResponseDto(category);
     }
+
 
     @Test
     void getCategoryById_WhenNotFound_ShouldThrowException() {
@@ -81,78 +103,117 @@ public class CategoryServiceTest {
 
     @Test
     void getCategoryByName_ShouldReturnCategory() {
-        String name = "Action";
+        CategoryRequestDTO categoryRequestDTO = CategoryRequestDTO.builder()
+                .name("Action")
+                .build();
         Category category = new Category("Action");
+        CategoryResponseDTO categoryResponseDTO = CategoryResponseDTO.builder()
+                .name("Action")
+                .build();
 
-        when(categoryRepository.findByName(name)).thenReturn(Optional.of(category));
+        when(categoryRepository.findByName("Action")).thenReturn(Optional.of(category));
+        when(categoryMapper.toResponseDto(category)).thenReturn(categoryResponseDTO);
 
-        Category result = categoryService.getCategoryByName(name);
+        CategoryResponseDTO result = categoryService.getCategoryByName(categoryRequestDTO);
 
         assertNotNull(result);
         assertEquals("Action", result.getName());
-        verify(categoryRepository, times(1)).findByName(name);
+        verify(categoryRepository).findByName("Action");
     }
 
     @Test
     void getCategoryByName_WhenNotFound_ShouldThrowException() {
-        String name = "Action";
+        CategoryRequestDTO categoryRequestDTO = CategoryRequestDTO.builder()
+                .name("Action")
+                .build();
 
-        when(categoryRepository.findByName(name)).thenReturn(Optional.empty());
+        when(categoryRepository.findByName(categoryRequestDTO.getName())).thenReturn(Optional.empty());
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            categoryService.getCategoryByName(name);
+            categoryService.getCategoryByName(categoryRequestDTO);
         });
 
-        assertEquals("Category not found with name: " + name, exception.getMessage());
-        verify(categoryRepository, times(1)).findByName(name);
+        assertEquals("Category not found with name: " + categoryRequestDTO.getName(), exception.getMessage());
+        verify(categoryRepository, times(1)).findByName(categoryRequestDTO.getName());
     }
 
     @Test
     void createCategory_SavesAndReturnsCategory() {
-        CategoryDTO dto = new CategoryDTO(10, "Adventure");
+        // Given
+        CategoryRequestDTO dto = CategoryRequestDTO.builder()
+                .name("Adventure")
+                .build();
+
         Category category = new Category();
-        category.setName(dto.getName());
-        Category expected = new Category();
-        expected.setId(10);
-        expected.setName("Adventure");
+        category.setName("Adventure");
 
-        when(categoryRepository.save(category)).thenReturn(expected);
+        Category savedCategory = new Category();
+        savedCategory.setId(1);
+        savedCategory.setName("Adventure");
 
-        Category result = categoryService.createCategory(dto);
+        CategoryResponseDTO expectedResponse = CategoryResponseDTO.builder()
+                .id(1)
+                .name("Adventure")
+                .build();
 
+        // Mocking
+        when(categoryMapper.toEntity(dto)).thenReturn(category);
+        when(categoryRepository.save(category)).thenReturn(savedCategory);
+        when(categoryMapper.toResponseDto(savedCategory)).thenReturn(expectedResponse);
+
+        // When
+        CategoryResponseDTO result = categoryService.createCategory(dto);
+
+        // Then
         assertNotNull(result);
-        assertEquals(expected.getId(), result.getId());
-        assertEquals(expected.getName(), result.getName());
-        verify(categoryRepository, times(1)).save(category);
+        assertEquals(1, result.getId());
+        assertEquals("Adventure", result.getName());
+
+        verify(categoryMapper).toEntity(dto);
+        verify(categoryRepository).save(category);
+        verify(categoryMapper).toResponseDto(savedCategory);
     }
 
     @Test
     void updateCategory_UpdatesAndReturnsCategory() {
-        Category existing = new Category();
-        existing.setId(3);
-        existing.setName("OldName");
+        // Setup
         Integer id = 3;
-        CategoryDTO dto = CategoryDTO.builder()
+        Category existing = new Category();
+        existing.setId(id);
+        existing.setName("OldName");
+
+        CategoryRequestDTO dto = CategoryRequestDTO.builder()
                 .name("NewName")
                 .build();
 
-        when(categoryRepository.findById(3)).thenReturn(Optional.of(existing));
+        CategoryResponseDTO responseDTO = CategoryResponseDTO.builder()
+                .id(id)
+                .name("NewName")
+                .build();
+
+        // Mocks
+        when(categoryRepository.findById(id)).thenReturn(Optional.of(existing));
         when(categoryRepository.save(existing)).thenReturn(existing);
+        when(categoryMapper.toResponseDto(existing)).thenReturn(responseDTO);
 
-        Category result = categoryService.updateCategory(id, dto);
+        // Call
+        CategoryResponseDTO result = categoryService.updateCategory(id, dto);
 
+        // Verify
         assertNotNull(result);
         assertEquals("NewName", result.getName());
-        verify(categoryRepository, times(1)).findById(id);
-        verify(categoryRepository, times(1)).save(existing);
+        verify(categoryRepository).findById(id);
+        verify(categoryRepository).save(existing);
+        verify(categoryMapper).toResponseDto(existing);
     }
+
 
     @Test
     void updateCategory_WhenNotFound_ThrowsException() {
         when(categoryRepository.findById(3)).thenReturn(Optional.empty());
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            categoryService.updateCategory(3, new CategoryDTO());
+            categoryService.updateCategory(3, new CategoryRequestDTO());
         });
 
         assertEquals("Category not found with id: 3", exception.getMessage());
