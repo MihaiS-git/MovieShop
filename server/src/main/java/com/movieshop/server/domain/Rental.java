@@ -4,14 +4,16 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
-@ToString
+@EqualsAndHashCode(exclude = {"inventory", "customer", "staff", "payments"})
+@ToString(exclude = {"inventory", "customer", "staff", "payments"})
 @Table(name = "rentals")
 public class Rental {
 
@@ -30,7 +32,7 @@ public class Rental {
     @JoinColumn(name = "customer_id", nullable = false)
     private User customer;
 
-    @Column(name = "return_date")
+    @Column(name = "return_date", nullable = true)
     private OffsetDateTime returnDate;
 
     @ManyToOne(optional = false)
@@ -40,8 +42,11 @@ public class Rental {
     @Column(name = "last_update", nullable = false)
     private OffsetDateTime lastUpdate;
 
-    @Column(name = "rental_period", nullable = false)
+    @Column(name = "rental_period", nullable = true)
     private Integer rentalPeriod;
+
+    @OneToMany(mappedBy = "rental")
+    private List<Payment> payments = new ArrayList<>();
 
 
     @PrePersist
@@ -59,5 +64,15 @@ public class Rental {
     @PreUpdate
     public void onUpdate(){
         lastUpdate = OffsetDateTime.now();
+    }
+
+    public void addPayment(Payment payment) {
+        payments.add(payment);
+        payment.setRental(this);
+    }
+
+    public void removePayment(Payment payment) {
+        payments.remove(payment);
+        payment.setRental(null);
     }
 }

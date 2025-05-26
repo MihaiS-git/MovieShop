@@ -1,8 +1,6 @@
 package com.movieshop.server.model;
 
-import com.movieshop.server.domain.Address;
 import com.movieshop.server.domain.Role;
-import com.movieshop.server.domain.Store;
 import lombok.*;
 
 @Getter
@@ -19,9 +17,9 @@ public class UserRequestDTO {
 
     private String lastName;
 
-    private Address address;
+    private Integer addressId;
 
-    private Store store;
+    private Integer storeId;
 
     private String picture;
 

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -27,4 +28,6 @@ public class RentalResponseDTO {
     private OffsetDateTime lastUpdate;
 
     private Integer rentalPeriod;
+
+    private List<Integer> paymentIds;
 }

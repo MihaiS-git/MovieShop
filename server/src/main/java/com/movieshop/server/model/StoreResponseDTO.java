@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.OffsetDateTime;
-import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -22,7 +21,5 @@ public class StoreResponseDTO {
     private Integer addressId;
 
     private OffsetDateTime lastUpdate;
-
-    private List<Integer> inventoryIds;
 
 }

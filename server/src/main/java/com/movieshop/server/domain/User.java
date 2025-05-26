@@ -48,8 +48,8 @@ public class User implements UserDetails {
     @JoinColumn(name = "address_id")
     private Address address;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "store_id")
+    @ManyToOne
+    @JoinColumn(name = "store_id", nullable = true)
     private Store store;
 
     private String picture;
@@ -74,6 +74,12 @@ public class User implements UserDetails {
 
     @Column(name = "last_update", nullable = false)
     private OffsetDateTime lastUpdate;
+
+    @OneToMany(mappedBy = "customer")
+    private List<Payment> customerPayments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "staff")
+    private List<Payment> staffPayments = new ArrayList<>();
 
     @PrePersist
     public void onCreate() {
@@ -135,6 +141,60 @@ public class User implements UserDetails {
         if (rental != null) {
             rentals.remove(rental);
             rental.setStaff(null);
+        }
+    }
+
+    public void addCustomerPayment(Payment payment) {
+        if (payment != null) {
+            customerPayments.add(payment);
+            payment.setCustomer(this);
+        }
+    }
+
+    public void removeCustomerPayment(Payment payment) {
+        if (payment != null) {
+            customerPayments.remove(payment);
+            payment.setCustomer(null);
+        }
+    }
+
+    public void addStaffPayment(Payment payment) {
+        if (payment != null) {
+            staffPayments.add(payment);
+            payment.setStaff(this);
+        }
+    }
+
+    public void removeStaffPayment(Payment payment) {
+        if (payment != null) {
+            staffPayments.remove(payment);
+            payment.setStaff(null);
+        }
+    }
+
+    public void addAddress(Address address) {
+        if (address != null) {
+            this.address = address;
+            address.getStaff().add(this);
+        }
+    }
+
+    public void removeAddress(Address address) {
+        if (address != null) {
+            this.address = null;
+            address.getStaff().remove(this);
+        }
+    }
+
+    public void addStore(Store store) {
+            this.store = store;
+            store.setManagerStaff(this);
+    }
+
+    public void removeStore(Store store) {
+        if (store != null) {
+            this.store = null;
+            store.setManagerStaff(null);
         }
     }
 }

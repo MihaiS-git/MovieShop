@@ -1,5 +1,6 @@
 package com.movieshop.server.mapper;
 
+import com.movieshop.server.domain.Payment;
 import com.movieshop.server.domain.Rental;
 import com.movieshop.server.domain.User;
 import com.movieshop.server.model.UserRequestDTO;
@@ -32,6 +33,16 @@ public class UserMapper {
                 .enabled(user.isEnabled())
                 .createAt(user.getCreateAt())
                 .lastUpdate(user.getLastUpdate())
+                .customerPaymentIds(user.getCustomerPayments() != null
+                        ? user.getCustomerPayments().stream()
+                                .map(Payment::getPaymentId)
+                                .toList()
+                        : null)
+                .staffPaymentIds(user.getStaffPayments() != null
+                        ? user.getStaffPayments().stream()
+                                .map(Payment::getPaymentId)
+                                .toList()
+                        : null)
                 .build();
     }
 

@@ -22,7 +22,6 @@ public class Film {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "film_id")
     private Integer id;
 
     @NotNull

@@ -57,15 +57,15 @@ public class Address {
     @OneToMany(mappedBy = "address")
     private Set<User> customers = new HashSet<>();
 
-    public void addStaff(User staff) {
-        this.staff.add(staff);
-        staff.setAddress(this);
-    }
-
-    public void removeStaff(User staff) {
-        this.staff.remove(staff);
-        staff.setAddress(null);
-    }
+//    public void addStaff(User staff) {
+//        this.staff.add(staff);
+//        staff.setAddress(this);
+//    }
+//
+//    public void removeStaff(User staff) {
+//        this.staff.remove(staff);
+//        staff.setAddress(null);
+//    }
 
     public void addStore(Store store) {
         this.stores.add(store);

@@ -12,6 +12,7 @@ import com.movieshop.server.model.MoviePageResponse;
 import com.movieshop.server.repository.CategoryRepository;
 import com.movieshop.server.repository.FilmRepository;
 import com.movieshop.server.repository.LanguageRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -61,14 +62,18 @@ public class FilmServiceImpl implements IFilmService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public MoviePageResponse getAllFilmsPaginated(Integer page, Integer limit) {
         Pageable pageable = PageRequest.of(page, limit, Sort.by(Sort.Direction.ASC, "id"));
         try {
             List<Film> films = filmRepository.findAll(pageable).getContent();
+            List<FilmResponseDTO> filmDTOs = films.stream()
+                    .map(filmMapper::toResponseDto)
+                    .toList();
             long totalCount = filmRepository.count();
 
-            return new MoviePageResponse(films, totalCount);
+            return new MoviePageResponse(filmDTOs, totalCount);
         } catch (Exception e) {
             log.error("Error fetching paginated films: {}", e.getMessage());
             throw new ResourceNotFoundException("Error fetching paginated films: " + e.getMessage());

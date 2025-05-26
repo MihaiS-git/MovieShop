@@ -42,4 +42,8 @@ public class UserResponseDTO {
 
     private OffsetDateTime lastUpdate;
 
+    private List<Integer> customerPaymentIds;
+
+    private List<Integer> staffPaymentIds;
+
 }

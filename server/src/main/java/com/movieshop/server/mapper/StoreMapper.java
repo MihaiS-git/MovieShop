@@ -1,6 +1,5 @@
 package com.movieshop.server.mapper;
 
-import com.movieshop.server.domain.Inventory;
 import com.movieshop.server.domain.Store;
 import com.movieshop.server.model.StoreResponseDTO;
 import org.springframework.stereotype.Component;
@@ -16,11 +15,6 @@ public class StoreMapper {
                 .managerStaffId(store.getManagerStaff().getId())
                 .addressId(store.getAddress().getId())
                 .lastUpdate(store.getLastUpdate())
-                .inventoryIds(store.getInventories() != null
-                        ? store.getInventories().stream()
-                                .map(Inventory::getId)
-                                .toList()
-                        : null)
                 .build();
     }
 }

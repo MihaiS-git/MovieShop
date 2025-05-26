@@ -1,5 +1,6 @@
 package com.movieshop.server.mapper;
 
+import com.movieshop.server.domain.Payment;
 import com.movieshop.server.domain.Rental;
 import com.movieshop.server.model.RentalRequestDTO;
 import com.movieshop.server.model.RentalResponseDTO;
@@ -20,6 +21,9 @@ public class RentalMapper {
                 .staffId(rental.getStaff().getId())
                 .lastUpdate(rental.getLastUpdate())
                 .rentalPeriod(rental.getRentalPeriod())
+                .paymentIds(rental.getPayments().stream()
+                        .map(Payment::getPaymentId)
+                        .toList())
                 .build();
     }
 

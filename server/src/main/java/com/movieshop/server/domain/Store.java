@@ -12,8 +12,8 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
-@ToString
+@EqualsAndHashCode(exclude = {"inventories", "lastUpdate"})
+@ToString(exclude = {"inventories"})
 @Table(name = "stores")
 public class Store {
 
@@ -21,11 +21,11 @@ public class Store {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne(optional = false)
-    @JoinColumn(name = "manager_staff_id", unique = true, nullable = false)
+    @OneToOne
+    @JoinColumn(name = "manager_staff_id", unique = true, nullable = true)
     private User managerStaff;
 
-    @OneToOne(optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "address_id")
     private Address address;
 
@@ -49,5 +49,12 @@ public class Store {
     public void removeInventory(Inventory inventory) {
         inventories.remove(inventory);
         inventory.setStore(null);
+    }
+
+    public void setManagerStaff(User manager) {
+        this.managerStaff = manager;
+        if (manager != null) {
+            manager.setStore(this);
+        }
     }
 }

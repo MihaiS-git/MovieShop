@@ -8,6 +8,8 @@ import com.movieshop.server.exception.ResourceNotFoundException;
 import com.movieshop.server.mapper.UserMapper;
 import com.movieshop.server.model.UserRequestDTO;
 import com.movieshop.server.model.UserResponseDTO;
+import com.movieshop.server.repository.AddressRepository;
+import com.movieshop.server.repository.StoreRepository;
 import com.movieshop.server.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,6 +31,12 @@ class UserServiceImplTest {
 
     @Mock
     private UserMapper userMapper;
+
+    @Mock
+    private AddressRepository addressRepository;
+
+    @Mock
+    private StoreRepository storeRepository;
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -114,23 +122,28 @@ class UserServiceImplTest {
         existingUser.setId(1);
 
         Address address = new Address();
+        address.setId(1);
+
         Store store = new Store();
+        store.setId(1);
 
         UserRequestDTO dto = UserRequestDTO.builder()
                 .email("updated@example.com")
                 .firstName("Updated")
                 .lastName("User")
-                .role(Role.valueOf("ADMIN"))
+                .role(Role.ADMIN)
                 .picture("pic.png")
                 .accountNonExpired(true)
                 .accountNonLocked(true)
                 .credentialsNonExpired(true)
                 .enabled(true)
-                .address(address)
-                .store(store)
+                .addressId(address.getId())
+                .storeId(store.getId())
                 .build();
 
         when(userRepository.findById(1)).thenReturn(Optional.of(existingUser));
+        when(addressRepository.findById(1)).thenReturn(Optional.of(address));
+        when(storeRepository.findById(1)).thenReturn(Optional.of(store));
         when(userRepository.save(any())).thenReturn(existingUser);
         when(userMapper.toResponseDto(existingUser)).thenReturn(new UserResponseDTO());
 
@@ -139,8 +152,8 @@ class UserServiceImplTest {
         assertNotNull(result);
         verify(userRepository).save(existingUser);
         assertEquals("updated@example.com", existingUser.getEmail());
-        assertEquals(address, existingUser.getAddress());
-        assertEquals(store, existingUser.getStore());
+        assertEquals(1, existingUser.getAddress().getId());
+        assertEquals(1, existingUser.getStore().getId());
     }
 
     @Test
@@ -158,8 +171,8 @@ class UserServiceImplTest {
                 .accountNonLocked(false)
                 .credentialsNonExpired(false)
                 .enabled(false)
-                .address(null)
-                .store(null)
+                .addressId(null)
+                .storeId(null)
                 .build();
 
         when(userRepository.findById(2)).thenReturn(Optional.of(existingUser));

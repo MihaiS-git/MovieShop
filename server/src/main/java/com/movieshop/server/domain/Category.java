@@ -43,4 +43,18 @@ public class Category {
     public Category(String name) {
         this.name = name;
     }
+
+    public void addFilm(Film film) {
+        if (film != null) {
+            this.films.add(film);
+            film.getCategories().add(this);
+        }
+    }
+
+    public void removeFilm(Film film) {
+        if (film != null) {
+            this.films.remove(film);
+            film.getCategories().remove(this);
+        }
+    }
 }

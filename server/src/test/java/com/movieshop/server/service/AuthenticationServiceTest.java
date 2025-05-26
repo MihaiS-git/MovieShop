@@ -65,7 +65,7 @@ public class AuthenticationServiceTest {
         // Mock the behaviour of the user repository save method
         when(userRepository.save(any(User.class))).thenReturn(user);
 
-        // Mock the behaviour of the JWT service
+        // Mock the behaviour of the JWT com.movieshop.loader.service
         when(jwtService.generateToken(any(User.class))).thenReturn("mockedJwtToken");
 
         // Call the register method
@@ -115,7 +115,7 @@ public class AuthenticationServiceTest {
         // Mock the behaviour of the userRepository
         when(userRepository.findByEmail(request.getEmail())).thenReturn(java.util.Optional.of(user));
 
-        // Mock the behaviour of the JWT service
+        // Mock the behaviour of the JWT com.movieshop.loader.service
         when(jwtService.generateToken(any(User.class))).thenReturn("mockedJwtToken");
 
         // Call the authenticate method

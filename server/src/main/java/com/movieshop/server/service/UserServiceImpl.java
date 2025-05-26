@@ -7,6 +7,8 @@ import com.movieshop.server.exception.ResourceNotFoundException;
 import com.movieshop.server.mapper.UserMapper;
 import com.movieshop.server.model.UserRequestDTO;
 import com.movieshop.server.model.UserResponseDTO;
+import com.movieshop.server.repository.AddressRepository;
+import com.movieshop.server.repository.StoreRepository;
 import com.movieshop.server.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,10 +19,14 @@ public class UserServiceImpl implements IUserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final AddressRepository addressRepository;
+    private final StoreRepository storeRepository;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, AddressRepository addressRepository, StoreRepository storeRepository) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.addressRepository = addressRepository;
+        this.storeRepository = storeRepository;
     }
 
     @Override
@@ -56,13 +62,16 @@ public class UserServiceImpl implements IUserService {
         existentUser.setCredentialsNonExpired(userRequestDTO.isCredentialsNonExpired());
         existentUser.setEnabled(userRequestDTO.isEnabled());
 
-        Address address = userRequestDTO.getAddress();
-        if (address != null) {
-            existentUser.setAddress(address);
+        if (userRequestDTO.getAddressId() != null) {
+            Address address = addressRepository.findById(userRequestDTO.getAddressId()).orElseThrow(() ->
+                    new ResourceNotFoundException("Address not found with id: " + userRequestDTO.getAddressId()));
+            existentUser.addAddress(address);
         }
-        Store store = userRequestDTO.getStore();
-        if (store != null) {
-            existentUser.setStore(store);
+
+        if (userRequestDTO.getStoreId() != null) {
+            Store store = storeRepository.findById(userRequestDTO.getStoreId()).orElseThrow(() ->
+                    new ResourceNotFoundException("Store not found with id: " + userRequestDTO.getStoreId()));
+            existentUser.addStore(store);
         }
 
         existentUser = userRepository.save(existentUser);
