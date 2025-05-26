@@ -1,12 +1,12 @@
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { Movie } from "../../types/Movie";
+import { MovieItem } from "../../types/Movie";
 
 import MovieCard from "./MovieCard";
 import MoviesPagination from "./MoviesPagination";
 import { useEffect, useRef } from "react";
 
 type Props = {
-  movies: Movie[];
+  movies: MovieItem[];
   totalPages: number;
   page: number;
   handleNextPage: () => void;
@@ -68,7 +68,6 @@ const MovieList: React.FC<Props> = ({
             ref={loaderRef}
             className="mt-6 h-16 text-sm text-charcoal-800 flex items-center justify-center"
           >
-            {/* Loading spinner */}
             <div role="status">
               <svg
                 aria-hidden="true"

@@ -6,36 +6,46 @@ export enum Rating {
   NC17 = "NC-17",
 }
 
-interface Language {
-    id: number;
-    name: string;
+export enum Language {
+  ENGLISH = "English",
+  FRENCH = "French",
+  GERMAN = "German",
+  ITALIAN = "Italian",
+  JAPANESE = "Japanese",
+  MANDARIN = "Mandarin",
+  SPANISH = "Spanish",
 }
+
+export const LANGUAGES = ["English", "French", "German", "Italian", "Japanese", "Mandarin", "Spanish"];
 
 export interface Movie {
   id: number;
   title: string;
   description: string;
   releaseYear: number;
-  languageId: number;
-  originalLanguageId?: number;
+  language: string;
+  originalLanguage?: string;
   rentalDuration: number;
   rentalRate: number;
   length: number;
   replacementCost: number;
   rating: Rating;
   lastUpdate: string;
+}
 
-  // hydrated fields    
-  language?: Language;
-  originalLanguage?: Language;
+export interface MovieItem {
+  id: number;
+  title: string;
+  description: string;
+  rating: Rating;
 }
 
 export interface MovieDto {
   title: string;
   description: string;
   releaseYear: number;
-  languageId: number;
-  originalLanguageId?: number;
+  language: Language;
+  originalLanguage?: Language;
   rentalDuration: number;
   rentalRate: number;
   length: number;

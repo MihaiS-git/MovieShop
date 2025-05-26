@@ -1,15 +1,13 @@
 package com.movieshop.server.service;
 
-import com.movieshop.server.domain.Actor;
-import com.movieshop.server.domain.Category;
 import com.movieshop.server.domain.Film;
 import com.movieshop.server.domain.Language;
 import com.movieshop.server.exception.ResourceNotFoundException;
 import com.movieshop.server.mapper.FilmMapper;
+import com.movieshop.server.model.FilmListItemDTO;
 import com.movieshop.server.model.FilmRequestDTO;
 import com.movieshop.server.model.FilmResponseDTO;
 import com.movieshop.server.model.MoviePageResponse;
-import com.movieshop.server.repository.CategoryRepository;
 import com.movieshop.server.repository.FilmRepository;
 import com.movieshop.server.repository.LanguageRepository;
 import jakarta.transaction.Transactional;
@@ -42,7 +40,7 @@ public class FilmServiceImpl implements IFilmService {
 
     @Override
     public FilmResponseDTO getFilmById(Integer id) {
-        Film film = filmRepository.findById(id)
+        Film film = filmRepository.findByIdWithAllRelations(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Film not found with id: " + id));
         return filmMapper.toResponseDto(film);
     }
@@ -67,10 +65,8 @@ public class FilmServiceImpl implements IFilmService {
     public MoviePageResponse getAllFilmsPaginated(Integer page, Integer limit) {
         Pageable pageable = PageRequest.of(page, limit, Sort.by(Sort.Direction.ASC, "id"));
         try {
-            List<Film> films = filmRepository.findAll(pageable).getContent();
-            List<FilmResponseDTO> filmDTOs = films.stream()
-                    .map(filmMapper::toResponseDto)
-                    .toList();
+            List<FilmListItemDTO> filmDTOs = filmRepository.findAllListItemFilms(pageable).getContent();
+
             long totalCount = filmRepository.count();
 
             return new MoviePageResponse(filmDTOs, totalCount);
@@ -82,9 +78,9 @@ public class FilmServiceImpl implements IFilmService {
 
     @Override
     public FilmResponseDTO createFilm(FilmRequestDTO filmRequestDTO) {
-        Language language = languageRepository.findByName(filmRequestDTO.getLanguage()).orElseThrow(() ->
+        Language language = languageRepository.findByNameIgnoreCase(filmRequestDTO.getLanguage()).orElseThrow(() ->
                 new ResourceNotFoundException("Language not found with name: " + filmRequestDTO.getLanguage()));
-        Language originalLanguage = languageRepository.findByName(filmRequestDTO.getOriginalLanguage()).orElseThrow(() ->
+        Language originalLanguage = languageRepository.findByNameIgnoreCase(filmRequestDTO.getOriginalLanguage()).orElseThrow(() ->
                 new ResourceNotFoundException("Language not found with name: " + filmRequestDTO.getLanguage()));
 
         Film film = filmMapper.toEntity(filmRequestDTO);
@@ -97,23 +93,41 @@ public class FilmServiceImpl implements IFilmService {
     }
 
     @Override
+    @Transactional
     public FilmResponseDTO updateFilm(Integer id, FilmRequestDTO filmRequestDTO) {
-        Film existentFilm = filmRepository.findById(id)
+        Film existentFilm = filmRepository.findByIdWithBasicFields(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Film not found with id: " + id));
         existentFilm.setTitle(filmRequestDTO.getTitle());
         existentFilm.setDescription(filmRequestDTO.getDescription());
         existentFilm.setReleaseYear(filmRequestDTO.getReleaseYear());
-        existentFilm.setLanguage(languageRepository.findByName(filmRequestDTO.getLanguage())
-                .orElseThrow(() -> new ResourceNotFoundException("Language not found with name: " + filmRequestDTO.getLanguage())));
-        existentFilm.setOriginalLanguage(languageRepository.findByName(filmRequestDTO.getOriginalLanguage())
-                .orElseThrow(() -> new ResourceNotFoundException("Language not found with name: " + filmRequestDTO.getLanguage())));
         existentFilm.setRentalDuration(filmRequestDTO.getRentalDuration());
         existentFilm.setRentalRate(filmRequestDTO.getRentalRate());
         existentFilm.setLength(filmRequestDTO.getLength());
         existentFilm.setReplacementCost(filmRequestDTO.getReplacementCost());
         existentFilm.setRating(filmRequestDTO.getRating());
 
+        Language language = null;
+        Language originalLanguage = null;
+
+        if (filmRequestDTO.getLanguage() != null && !filmRequestDTO.getLanguage().isBlank()) {
+            language = languageRepository.findByNameIgnoreCase(filmRequestDTO.getLanguage())
+                    .orElseThrow(() -> new ResourceNotFoundException("Language not found with name: " + filmRequestDTO.getLanguage()));
+            existentFilm.setLanguage(language);
+        }
+        if (filmRequestDTO.getOriginalLanguage() != null && !filmRequestDTO.getOriginalLanguage().isBlank() ) {
+            originalLanguage = languageRepository.findByNameIgnoreCase(filmRequestDTO.getOriginalLanguage())
+                    .orElseThrow(() -> new ResourceNotFoundException("Language not found with name: " + filmRequestDTO.getOriginalLanguage()));
+            existentFilm.setOriginalLanguage(originalLanguage);
+        }
+
         Film updatedFilm = filmRepository.save(existentFilm);
+
+        if(language != null){
+            language.getFilms().add(updatedFilm);
+        }
+        if(originalLanguage != null) {
+            originalLanguage.getOriginalLanguageFilms().add(updatedFilm);
+        }
 
         return filmMapper.toResponseDto(updatedFilm);
     }

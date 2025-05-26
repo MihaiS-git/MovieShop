@@ -1,9 +1,7 @@
 package com.movieshop.server.model;
 
-import com.movieshop.server.domain.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,21 +16,9 @@ public class RegisterRequest {
     @NotBlank(message = "Password cannot be blank")
     private String password;
 
-    @NotNull(message = "Role is required")
-    private Role role;
 
-    private String firstName;
-
-    private String lastName;
-
-    private String picture;
-
-    public RegisterRequest(String email, String password, String name, String picture) {
+    public RegisterRequest(String email, String password) {
         this.email = email;
         this.password = password;
-        this.role = Role.CUSTOMER;
-        this.firstName = name;
-        this.lastName = name;
-        this.picture = picture;
     }
 }

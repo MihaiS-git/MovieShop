@@ -1,5 +1,6 @@
 package com.movieshop.server.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,18 +25,18 @@ public class Rental {
     @Column(name = "rental_date", nullable = false)
     private OffsetDateTime rentalDate;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "inventory_id", nullable = false)
     private Inventory inventory;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "customer_id", nullable = false)
     private User customer;
 
     @Column(name = "return_date", nullable = true)
     private OffsetDateTime returnDate;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "staff_id", nullable = false)
     private User staff;
 
@@ -45,7 +46,8 @@ public class Rental {
     @Column(name = "rental_period", nullable = true)
     private Integer rentalPeriod;
 
-    @OneToMany(mappedBy = "rental")
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "rental")
     private List<Payment> payments = new ArrayList<>();
 
 

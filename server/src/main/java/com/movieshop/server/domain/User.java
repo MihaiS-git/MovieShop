@@ -38,23 +38,25 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Role role;
 
-    @Column(name= "first_name", nullable = false)
+    @Column(name= "first_name", nullable = true)
     private String firstName;
 
-    @Column(name= "last_name", nullable = false)
+    @Column(name= "last_name", nullable = true)
     private String lastName;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "address_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "address_id", nullable = true)
     private Address address;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = true)
     private Store store;
 
+    @Column(nullable = true)
     private String picture;
 
-    @OneToMany(mappedBy = "staff")
+    @JsonIgnore
+    @OneToMany(mappedBy = "staff", fetch = FetchType.LAZY)
     private List<Rental> rentals = new ArrayList<>();
 
     @Column(name="account_non_expired")
@@ -75,10 +77,12 @@ public class User implements UserDetails {
     @Column(name = "last_update", nullable = false)
     private OffsetDateTime lastUpdate;
 
-    @OneToMany(mappedBy = "customer")
+    @JsonIgnore
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
     private List<Payment> customerPayments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "staff")
+    @JsonIgnore
+    @OneToMany(mappedBy = "staff", fetch = FetchType.LAZY)
     private List<Payment> staffPayments = new ArrayList<>();
 
     @PrePersist

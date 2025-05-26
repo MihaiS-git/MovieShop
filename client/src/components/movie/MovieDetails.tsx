@@ -36,7 +36,7 @@ const MovieDetails: React.FC<MovieDetailProps> = ({ movie }) => {
         </div>
         <div>
           <p className="text-center bg-gold-300 p-1 rounded-md text-xs sm:text-base">
-            Language <br /> {movie.languageId}
+            Language <br /> {movie.language}
           </p>
         </div>
         <div>
@@ -51,10 +51,9 @@ const MovieDetails: React.FC<MovieDetailProps> = ({ movie }) => {
         </div>
       </div>
       <div className="flex flex-col items-left mt-2 text-xs sm:text-base">
-        {movie.originalLanguageId !== null &&
-          movie.originalLanguageId !== undefined && 
-          movie.originalLanguageId > 0 && (
-            <p>Original language: {movie.originalLanguageId}</p>
+        {movie.originalLanguage !== null &&
+          movie.originalLanguage !== undefined && (
+            <p>Original language: {movie.originalLanguage}</p>
           )}
         <p>Rental duration: {movie.rentalDuration} days</p>
         <p>Replacement cost: {formatCurrency(movie.replacementCost)}</p>

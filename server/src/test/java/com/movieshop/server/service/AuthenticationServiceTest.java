@@ -6,6 +6,7 @@ import com.movieshop.server.exception.InvalidAuthException;
 import com.movieshop.server.model.AuthenticationRequest;
 import com.movieshop.server.model.RegisterRequest;
 import com.movieshop.server.repository.UserRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -36,24 +37,28 @@ public class AuthenticationServiceTest {
     @InjectMocks
     private AuthenticationService authenticationService;
 
+    AutoCloseable closeable;
+
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        closeable = MockitoAnnotations.openMocks(this);
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        closeable.close();
     }
 
     @Test
     void testRegister() {
         // Create a RegisterRequest object with test data
-        RegisterRequest registerRequest = new RegisterRequest("testuser@example.com", "password123", "Test User", "http://example.com/picture.jpg");
+        RegisterRequest registerRequest = new RegisterRequest("testuser@example.com", "password123");
 
         // Create mock User object
         User user = new User();
         user.setEmail(registerRequest.getEmail());
         user.setPassword("passwordEncoded");
         user.setRole(Role.CUSTOMER);
-        user.setFirstName(registerRequest.getFirstName());
-        user.setLastName(registerRequest.getLastName());
-        user.setPicture(registerRequest.getPicture());
         user.setAccountNonExpired(true);
         user.setAccountNonLocked(true);
         user.setCredentialsNonExpired(true);
@@ -82,7 +87,7 @@ public class AuthenticationServiceTest {
 
     @Test
     void testRegisterThrowsException() {
-        RegisterRequest request = new RegisterRequest("fail@example.com", "pass", "Fail User", null);
+        RegisterRequest request = new RegisterRequest("fail@example.com", "pass");
 
         when(passwordEncoder.encode(anyString())).thenReturn("encodedPass");
         when(userRepository.save(any(User.class))).thenThrow(new RuntimeException("Database is down"));

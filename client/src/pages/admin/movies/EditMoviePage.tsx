@@ -3,7 +3,7 @@ import {
   useUpdateMovieMutation,
 } from "@/features/movies/movieApi";
 import PageContent from "@/PageContent";
-import { Rating } from "@/types/Movie";
+import { Language, LANGUAGES, Rating } from "@/types/Movie";
 import { formatDate } from "@/util/formatDate";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -21,29 +21,29 @@ const EditMoviePage = () => {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [languageId, setLanguageId] = useState<number>(0);
+  const [language, setLanguage] = useState<Language>(LANGUAGES[0] as Language);
   const [length, setLength] = useState<number>(0);
-  const [originalLanguageId, setOriginalLanguageId] = useState<number>(0);
+  const [originalLanguage, setOriginalLanguage] = useState<
+    Language | undefined
+  >(undefined);
   const [rating, setRating] = useState<Rating>(Rating.R);
   const [releaseYear, setReleaseYear] = useState<number>(0);
   const [rentalDuration, setRentalDuration] = useState<number>(0);
   const [rentalRate, setRentalRate] = useState<number>(0);
   const [replacementCost, setReplacementCost] = useState<number>(0);
-  const [lastUpdate, setLastUpdate] = useState<string>("");
 
   useEffect(() => {
     if (movie) {
       setTitle(movie.title);
       setDescription(movie.description);
-      setLanguageId(movie.languageId);
+      setLanguage(movie.language as Language);
       setLength(movie.length);
-      setOriginalLanguageId(movie.originalLanguageId ?? 0);
+      setOriginalLanguage(movie.originalLanguage as Language);
       setRating(movie.rating);
       setReleaseYear(movie.releaseYear);
       setRentalDuration(movie.rentalDuration);
       setRentalRate(movie.rentalRate);
       setReplacementCost(movie.replacementCost);
-      setLastUpdate(movie.lastUpdate);
     }
   }, [movie]);
 
@@ -57,18 +57,23 @@ const EditMoviePage = () => {
     setDescription(e.target.value);
   };
 
-  const handleChangeLanguageId = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLanguageId(Number(e.target.value));
+  const handleChangeLanguage = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setLanguage(e.target.value as Language);
   };
 
   const handleChangeLength = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLength(Number(e.target.value));
   };
 
-  const handleChangeOriginalLanguageId = (
-    e: React.ChangeEvent<HTMLInputElement>
+  const handleChangeOriginalLanguage = (
+    e: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    setOriginalLanguageId(Number(e.target.value));
+    const value = e.target.value;
+    if (value === "") {
+      setOriginalLanguage(undefined);
+    } else if (LANGUAGES.includes(value as Language)) {
+      setOriginalLanguage(value as Language);
+    }
   };
 
   const handleRatingChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -115,8 +120,8 @@ const EditMoviePage = () => {
       return;
     }
 
-    if (!languageId || languageId < 1) {
-      alert("Language ID must be a positive number.");
+    if (!language) {
+      alert("Language must have a value set.");
       return;
     }
 
@@ -136,9 +141,9 @@ const EditMoviePage = () => {
         data: {
           title,
           description,
-          languageId,
+          language,
           length,
-          originalLanguageId,
+          originalLanguage,
           rating,
           releaseYear,
           rentalDuration,
@@ -148,8 +153,9 @@ const EditMoviePage = () => {
         },
       }).unwrap();
       alert("Movie updated successfully");
-    } catch (error) {
-      console.error("Failed to update movie", error);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      alert(`Update failed: ${message}`);
     }
   };
 
@@ -178,10 +184,10 @@ const EditMoviePage = () => {
               id="title"
               name="title"
               type="text"
-              value={title || ""}
+              value={title}
               onChange={handleChangeTitle}
               className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
-              min={1}
+              minLength={1}
               required
             />
           </label>
@@ -190,36 +196,47 @@ const EditMoviePage = () => {
             <textarea
               name="description"
               id="description"
-              value={description || ""}
+              value={description}
               onChange={handleChangeDescription}
               className="h-15 bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
               minLength={1}
               required
             ></textarea>
           </label>
-          <label htmlFor="languageId">
+          <label htmlFor="language">
             Language:{" "}
-            <input
-              id="languageId"
-              name="languageId"
-              type="number"
-              value={languageId || ""}
-              onChange={handleChangeLanguageId}
-              className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
-              min={1}
+            <select
+              name="language"
+              id="language"
+              onChange={handleChangeLanguage}
+              value={language}
               required
-            />
+            >
+              <option value="" disabled>
+                Select Language
+              </option>
+              {LANGUAGES.map((lang) => (
+                <option key={lang} value={lang}>
+                  {lang}
+                </option>
+              ))}
+            </select>
           </label>
-          <label htmlFor="originalLanguageId">
+          <label htmlFor="originalLanguage">
             Original language:{" "}
-            <input
-              id="originalLanguageId"
-              name="originalLanguageId"
-              type="number"
-              value={originalLanguageId || ""}
-              onChange={handleChangeOriginalLanguageId}
-              className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
-            />
+            <select
+              name="originalLanguage"
+              id="originalLanguage"
+              onChange={handleChangeOriginalLanguage}
+              value={originalLanguage ?? ""}
+            >
+              <option value="">Select Language</option>
+              {LANGUAGES.map((lang) => (
+                <option key={lang} value={lang}>
+                  {lang}
+                </option>
+              ))}
+            </select>
           </label>
           <label htmlFor="length">
             Length:{" "}
@@ -227,7 +244,7 @@ const EditMoviePage = () => {
               id="length"
               name="length"
               type="number"
-              value={length || ""}
+              value={length}
               onChange={handleChangeLength}
               className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
               min={1}
@@ -257,7 +274,7 @@ const EditMoviePage = () => {
               id="releaseYear"
               name="releaseYear"
               type="number"
-              value={releaseYear || ""}
+              value={releaseYear}
               onChange={handleChangeReleaseYear}
               className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
               min={1930}
@@ -271,10 +288,11 @@ const EditMoviePage = () => {
               id="rentalDuration"
               name="rentalDuration"
               type="number"
-              value={rentalDuration || ""}
+              value={rentalDuration}
               onChange={handleChangeRentalDuration}
               className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
               min={1}
+              step="1"
               required
             />
           </label>
@@ -284,7 +302,7 @@ const EditMoviePage = () => {
               id="rentalRate"
               name="rentalRate"
               type="number"
-              value={rentalRate || ""}
+              value={rentalRate}
               onChange={handleChangeRentalRate}
               className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
               min={0.0}
@@ -298,24 +316,20 @@ const EditMoviePage = () => {
               id="replacementCost"
               name="replacementCost"
               type="number"
-              value={replacementCost || ""}
+              value={replacementCost}
               onChange={handleChangeReplacementCost}
               className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
-              min={0}
+              min={0.0}
               required
               step="0.01"
             />
-          </label>
-          <label htmlFor="lastUpdate">
-            Last update: {""}
-            {formatDate(lastUpdate)}
           </label>
           <button
             type="submit"
             className="bg-green-600 hover:bg-green-500 rounded-sm mt-2 p-1"
             disabled={isUpdating}
           >
-            Save Changes
+            {isUpdating ? "Updating" : "Save changes"}
           </button>
         </form>
       </div>

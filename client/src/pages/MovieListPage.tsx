@@ -3,14 +3,14 @@ import MovieList from "../components/movies/MovieList";
 import { useGetMoviesQuery } from "../features/movies/movieApi";
 import PageContent from "../PageContent";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { Movie } from "@/types/Movie";
+import { MovieItem } from "@/types/Movie";
 
 const MovieListPage = () => {
   const limit = 16;
   const isMobile = useIsMobile();
 
   const [page, setPage] = useState(1);
-  const [movies, setMovies] = useState<Movie[]>([]);
+  const [movies, setMovies] = useState<MovieItem[]>([]);
 
   const { data, error, isLoading, isFetching } = useGetMoviesQuery({
     page: page - 1,
@@ -22,14 +22,19 @@ const MovieListPage = () => {
   const hasMore = page < totalPages;
 
   useEffect(() => {
-    if(!data) return;
+  if (!data?.movies?.length) return;
 
-    if (isMobile) {
-      setMovies((prev) => [...prev, ...(data.movies || [])]);
-    } else {
-      setMovies(data.movies || []);
-    }
-  }, [data, isMobile]);
+  setMovies((prev) => {
+    const prevIds = new Set(prev.map((m) => m.id));
+
+    // Only include movies that are not already in the list
+    const newMovies = data.movies.filter((m) => !prevIds.has(m.id));
+
+    if (newMovies.length === 0) return prev;
+
+    return isMobile ? [...prev, ...newMovies] : [...newMovies]; // Replace or append
+  });
+}, [data, isMobile]);
 
   const handleNextPage = () => {
     if (page < totalPages) {
@@ -49,7 +54,9 @@ const MovieListPage = () => {
 
   const loadMore = useCallback(() => {
     if (!isFetching && hasMore) {
-      setPage((prev) => prev + 1);
+      setTimeout(() => {
+        setPage((prev) => prev + 1);
+      }, 100);
     }
   }, [isFetching, hasMore]);
 

@@ -1,14 +1,14 @@
 import { useCreateMovieMutation } from "@/features/movies/movieApi";
 import PageContent from "@/PageContent";
-import { Rating } from "@/types/Movie";
+import { Language, LANGUAGES, Rating } from "@/types/Movie";
 import { useState } from "react";
 
 const AddMovie = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [languageId, setLanguageId] = useState<number>(0);
+  const [language, setLanguage] = useState<Language>(LANGUAGES[0] as Language);
   const [length, setLength] = useState<number>(0);
-  const [originalLanguageId, setOriginalLanguageId] = useState<number>(0);
+  const [originalLanguage, setOriginalLanguage] = useState<Language>(LANGUAGES[0] as Language);
   const [rating, setRating] = useState<Rating>(Rating.R);
   const [releaseYear, setReleaseYear] = useState<number>(0);
   const [rentalDuration, setRentalDuration] = useState<number>(0);
@@ -27,18 +27,18 @@ const AddMovie = () => {
     setDescription(e.target.value);
   };
 
-  const handleChangeLanguageId = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLanguageId(Number(e.target.value));
+  const handleChangeLanguage = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setLanguage(e.target.value as Language);
   };
 
   const handleChangeLength = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLength(Number(e.target.value));
   };
 
-  const handleChangeOriginalLanguageId = (
-    e: React.ChangeEvent<HTMLInputElement>
+  const handleChangeOriginalLanguage = (
+    e: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    setOriginalLanguageId(Number(e.target.value));
+    setOriginalLanguage(e.target.value as Language);
   };
 
   const handleRatingChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -83,8 +83,8 @@ const AddMovie = () => {
       return;
     }
 
-    if (!languageId || languageId < 1) {
-      alert("Language ID must be a positive number.");
+    if (!language) {
+      alert("Language must be set.");
       return;
     }
 
@@ -102,9 +102,9 @@ const AddMovie = () => {
       await createMovie({
         title,
         description,
-        languageId,
+        language,
         length,
-        originalLanguageId,
+        originalLanguage,
         rating,
         releaseYear,
         rentalDuration,
@@ -153,29 +153,37 @@ const AddMovie = () => {
               required
             ></textarea>
           </label>
-          <label htmlFor="languageId">
+          <label htmlFor="language">
             Language:{" "}
-            <input
-              id="languageId"
-              name="languageId"
-              type="number"
-              value={languageId || ""}
-              onChange={handleChangeLanguageId}
-              className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
-              min={1}
+            <select
+              name="language"
+              onChange={handleChangeLanguage}
+              value={language}
               required
-            />
+            >
+              <option value="">Select language</option>
+              {LANGUAGES.map((lang) => (
+                <option key={lang} value={lang}>
+                  {lang}
+                </option>
+              ))}
+            </select>
           </label>
-          <label htmlFor="originalLanguageId">
+          <label htmlFor="originalLanguage">
             Original language:{" "}
-            <input
-              id="originalLanguageId"
-              name="originalLanguageId"
-              type="number"
-              value={originalLanguageId || ""}
-              onChange={handleChangeOriginalLanguageId}
-              className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
-            />
+            <select
+              name="originalLanguage"
+              onChange={handleChangeOriginalLanguage}
+              value={originalLanguage}
+              required
+            >
+              <option value="">Select language</option>
+              {LANGUAGES.map((lang) => (
+                <option key={lang} value={lang}>
+                  {lang}
+                </option>
+              ))}
+            </select>
           </label>
           <label htmlFor="length">
             Length:{" "}

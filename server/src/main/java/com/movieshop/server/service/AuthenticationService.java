@@ -39,9 +39,6 @@ public class AuthenticationService {
                     user.setEmail(request.getEmail());
                     user.setPassword(passwordEncoder.encode(request.getPassword()));
                     user.setRole(Role.CUSTOMER);
-                    user.setFirstName(request.getFirstName());
-                    user.setLastName(request.getLastName());
-                    user.setPicture(request.getPicture());
                     user.setAccountNonExpired(true);
                     user.setAccountNonLocked(true);
                     user.setCredentialsNonExpired(true);

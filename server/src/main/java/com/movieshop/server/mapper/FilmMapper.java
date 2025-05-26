@@ -3,8 +3,11 @@ package com.movieshop.server.mapper;
 import com.movieshop.server.domain.Actor;
 import com.movieshop.server.domain.Category;
 import com.movieshop.server.domain.Film;
+import com.movieshop.server.domain.Rating;
+import com.movieshop.server.model.FilmListItemDTO;
 import com.movieshop.server.model.FilmRequestDTO;
 import com.movieshop.server.model.FilmResponseDTO;
+import com.movieshop.server.model.FilmUpdateResponseDTO;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -30,6 +33,39 @@ public class FilmMapper {
                 .rating(film.getRating())
                 .actorIds(film.getActors().stream().map(Actor::getId).toList())
                 .categories(film.getCategories().stream().map(Category::getName).toList())
+                .build();
+    }
+
+    public FilmUpdateResponseDTO toUpdateResponseDto(Film film) {
+        if (film == null) {
+            return null;
+        }
+        return FilmUpdateResponseDTO.builder()
+                .id(film.getId())
+                .title(film.getTitle())
+                .description(film.getDescription())
+                .releaseYear(film.getReleaseYear())
+                .language(film.getLanguage() == null ? null :
+                        film.getLanguage().getName())
+                .originalLanguage(film.getOriginalLanguage() == null ? null :
+                        film.getOriginalLanguage().getName())
+                .rentalDuration(film.getRentalDuration())
+                .rentalRate(film.getRentalRate())
+                .length(film.getLength())
+                .replacementCost(film.getReplacementCost())
+                .rating(film.getRating())
+                .build();
+    }
+
+    public FilmListItemDTO toListItemDto(Film film) {
+        if (film == null) {
+            return null;
+        }
+        return FilmListItemDTO.builder()
+                .id(film.getId())
+                .title(film.getTitle())
+                .description(film.getDescription())
+                .rating(film.getRating() != null ? Rating.fromString(film.getRating().name()) : null)
                 .build();
     }
 

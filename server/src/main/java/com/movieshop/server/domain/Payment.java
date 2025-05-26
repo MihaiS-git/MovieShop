@@ -1,7 +1,6 @@
 package com.movieshop.server.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Positive;
 import lombok.*;
 
 import java.time.OffsetDateTime;

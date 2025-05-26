@@ -1,9 +1,9 @@
-import { Movie } from "../../types/Movie";
+import { MovieItem } from "../../types/Movie";
 import { RootState } from "../../app/store";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => {
+const MovieCard: React.FC<{ movie: MovieItem }> = ({ movie }) => {
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
 
@@ -13,7 +13,7 @@ const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => {
 
   return (
     <div
-      className="flex flex-col justify-between items-center h-90 w-60 mx-auto bg-charcoal-800 dark:bg-red-500 cursor-pointer rounded-md shadow-charcoal-800 shadow-[5px_5px_8px_-2px_rgba(0,0,0,0.8)] dark:shadow-gray-600"
+      className="flex flex-col justify-between items-center h-90 w-60 mx-auto bg-charcoal-800 dark:bg-red-500 cursor-pointer rounded-md shadow-charcoal-800 shadow-[5px_5px_8px_-2px_rgba(0,0,0,0.8)] dark:shadow-gray-600 pb-4"
       onClick={handleCardClick}
     >
       <img

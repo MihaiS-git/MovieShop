@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import fetchApi from "../../util/api";
-import { MovieDto, Movie } from "../../types/Movie";
+import { MovieDto, Movie, MovieItem } from "../../types/Movie";
 
 export const movieApi = createApi({
   reducerPath: "movieApi",
@@ -14,7 +14,7 @@ export const movieApi = createApi({
   tagTypes: ["Movie"],
   endpoints: (builder) => ({
     getMovies: builder.query<
-      { movies: Movie[]; totalCount: number },
+      { movies: MovieItem[]; totalCount: number },
       { page: number; limit: number }
     >({
       query: ({ page, limit }) => ({
