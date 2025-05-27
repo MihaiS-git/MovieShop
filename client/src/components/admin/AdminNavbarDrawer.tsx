@@ -31,7 +31,7 @@ const AdminNavbarDrawer: React.FC<AdminNavDrawerProps> = ({
               }
               to="/admin/movies/edit"
             >
-              Edit Movies
+              Movies List
             </NavLink>
             <NavLink
               className={({ isActive }) =>
