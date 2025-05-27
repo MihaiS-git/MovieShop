@@ -21,11 +21,11 @@ public class Store {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manager_staff_id", unique = true, nullable = true)
     private User managerStaff;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "address_id")
     private Address address;
 
@@ -38,7 +38,7 @@ public class Store {
         lastUpdate = OffsetDateTime.now();
     }
 
-    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Inventory> inventories = new HashSet<>();
 
     public void addInventory(Inventory inventory) {

@@ -2,6 +2,7 @@ package com.movieshop.server.controller;
 
 import com.movieshop.server.model.FilmRequestDTO;
 import com.movieshop.server.model.FilmResponseDTO;
+import com.movieshop.server.model.FilmUpdateResponseDTO;
 import com.movieshop.server.model.MoviePageResponse;
 import com.movieshop.server.service.IFilmService;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +47,7 @@ public class FilmController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<FilmResponseDTO> updateFilm(@PathVariable Integer id, @RequestBody FilmRequestDTO filmRequestDTO) {
+    public ResponseEntity<FilmUpdateResponseDTO> updateFilm(@PathVariable Integer id, @RequestBody FilmRequestDTO filmRequestDTO) {
         return ResponseEntity.ok(filmService.updateFilm(id, filmRequestDTO));
     }
 

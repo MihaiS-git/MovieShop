@@ -36,11 +36,11 @@ public class Film {
     @NotNull
     private Integer releaseYear;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "language_id")
     private Language language;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "original_language_id")
     private Language originalLanguage;
 
@@ -72,7 +72,7 @@ public class Film {
         this.lastUpdate = OffsetDateTime.now();
     }
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "film_category",
             joinColumns = @JoinColumn(name = "film_id"),
@@ -80,13 +80,14 @@ public class Film {
     )
     private Set<Category> categories = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "film_actor",
             joinColumns = @JoinColumn(name = "film_id"),
             inverseJoinColumns = @JoinColumn(name = "actor_id")
     )
     private Set<Actor> actors = new HashSet<>();
+
 
     public void addCategory(Category category) {
         categories.add(category);
@@ -108,7 +109,7 @@ public class Film {
         actor.getFilms().remove(this);
     }
 
-    @OneToMany(mappedBy = "film", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "film", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Inventory> inventories = new HashSet<>();
 
     public void addInventory(Inventory inventory) {
@@ -121,6 +122,19 @@ public class Film {
         inventory.setFilm(null);
     }
 
+    public void addLanguage(Language language) {
+        this.language = language;
+        if (language != null) {
+            language.getFilms().add(this);
+        }
+    }
+
+    public void addOriginalLanguage(Language originalLanguage) {
+        this.originalLanguage = originalLanguage;
+        if (originalLanguage != null) {
+            originalLanguage.getOriginalLanguageFilms().add(this);
+        }
+    }
 
     public Film(@NotNull String title,
                 @NotNull String description,

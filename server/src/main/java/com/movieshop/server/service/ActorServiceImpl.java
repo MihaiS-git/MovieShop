@@ -4,6 +4,7 @@ import com.movieshop.server.domain.Actor;
 import com.movieshop.server.domain.Film;
 import com.movieshop.server.exception.ResourceNotFoundException;
 import com.movieshop.server.mapper.ActorMapper;
+import com.movieshop.server.model.ActorRequestDTO;
 import com.movieshop.server.model.ActorResponseDTO;
 import com.movieshop.server.repository.ActorRepository;
 import com.movieshop.server.repository.FilmRepository;
@@ -45,29 +46,19 @@ public class ActorServiceImpl implements IActorService {
     }
 
     @Override
-    public ActorResponseDTO createActor(ActorResponseDTO actorResponseDTO) {
-        List<Integer> filmIds = actorResponseDTO.getFilmIds();
-        Set<Film> films;
-        if (filmIds != null && !filmIds.isEmpty()) {
-            films = filmIds.stream().map(id ->
-                    filmRepository.findById(id).orElseThrow(() ->
-                            new ResourceNotFoundException("Film not found")))
-                    .collect(Collectors.toSet());
-        } else {
-            films = new HashSet<>();
-        }
-        Actor actor = actorMapper.toEntity(actorResponseDTO, films);
+    public ActorResponseDTO createActor(ActorRequestDTO actorRequestDTO) {
+        Actor actor = actorMapper.toEntity(actorRequestDTO);
         Actor savedActor = actorRepository.save(actor);
 
         return actorMapper.toResponseDto(savedActor);
     }
 
     @Override
-    public ActorResponseDTO updateActor(Integer id, ActorResponseDTO actorResponseDTO) {
+    public ActorResponseDTO updateActor(Integer id, ActorRequestDTO actorRequestDTO) {
         Actor existentActor = getActorByIdOrElseThrow(id);
 
-        existentActor.setFirstName(actorResponseDTO.getFirstName());
-        existentActor.setLastName(actorResponseDTO.getLastName());
+        existentActor.setFirstName(actorRequestDTO.getFirstName());
+        existentActor.setLastName(actorRequestDTO.getLastName());
 
         Actor updatedActor = actorRepository.save(existentActor);
 

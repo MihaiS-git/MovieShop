@@ -26,21 +26,21 @@ public class Category {
     @Column(name="last_update", nullable = false)
     private OffsetDateTime lastUpdate;
 
-    public Category(int id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
     @PrePersist
     @PreUpdate
     public void updateTimestamp(){
         this.lastUpdate = OffsetDateTime.now();
     }
 
-    @ManyToMany(mappedBy = "categories")
+    @ManyToMany(mappedBy = "categories", fetch = FetchType.LAZY)
     private Set<Film> films = new HashSet<>();
 
     public Category(String name) {
+        this.name = name;
+    }
+
+    public Category(int id, String name) {
+        this.id = id;
         this.name = name;
     }
 

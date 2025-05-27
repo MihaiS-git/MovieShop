@@ -1,14 +1,10 @@
 package com.movieshop.server.service;
 
-import com.movieshop.server.domain.Address;
-import com.movieshop.server.domain.Store;
 import com.movieshop.server.domain.User;
 import com.movieshop.server.exception.ResourceNotFoundException;
 import com.movieshop.server.mapper.UserMapper;
-import com.movieshop.server.model.UserRequestDTO;
 import com.movieshop.server.model.UserResponseDTO;
-import com.movieshop.server.repository.AddressRepository;
-import com.movieshop.server.repository.StoreRepository;
+import com.movieshop.server.model.UserUpdateRequestDTO;
 import com.movieshop.server.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -19,14 +15,13 @@ public class UserServiceImpl implements IUserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final AddressRepository addressRepository;
-    private final StoreRepository storeRepository;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, AddressRepository addressRepository, StoreRepository storeRepository) {
+    public UserServiceImpl(
+            UserRepository userRepository,
+            UserMapper userMapper
+    ) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
-        this.addressRepository = addressRepository;
-        this.storeRepository = storeRepository;
     }
 
     @Override
@@ -49,30 +44,12 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public UserResponseDTO updateUser(Integer id, UserRequestDTO userRequestDTO) {
+    public UserResponseDTO updateUser(Integer id, UserUpdateRequestDTO userRequestDTO) {
         User existentUser = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
-        existentUser.setEmail(userRequestDTO.getEmail());
-        existentUser.setRole(userRequestDTO.getRole());
         existentUser.setFirstName(userRequestDTO.getFirstName());
         existentUser.setLastName(userRequestDTO.getLastName());
         existentUser.setPicture(userRequestDTO.getPicture());
-        existentUser.setAccountNonExpired(userRequestDTO.isAccountNonExpired());
-        existentUser.setAccountNonLocked(userRequestDTO.isAccountNonLocked());
-        existentUser.setCredentialsNonExpired(userRequestDTO.isCredentialsNonExpired());
-        existentUser.setEnabled(userRequestDTO.isEnabled());
-
-        if (userRequestDTO.getAddressId() != null) {
-            Address address = addressRepository.findById(userRequestDTO.getAddressId()).orElseThrow(() ->
-                    new ResourceNotFoundException("Address not found with id: " + userRequestDTO.getAddressId()));
-            existentUser.addAddress(address);
-        }
-
-        if (userRequestDTO.getStoreId() != null) {
-            Store store = storeRepository.findById(userRequestDTO.getStoreId()).orElseThrow(() ->
-                    new ResourceNotFoundException("Store not found with id: " + userRequestDTO.getStoreId()));
-            existentUser.addStore(store);
-        }
 
         existentUser = userRepository.save(existentUser);
 

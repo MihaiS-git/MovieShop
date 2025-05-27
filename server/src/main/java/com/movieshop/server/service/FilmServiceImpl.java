@@ -4,10 +4,7 @@ import com.movieshop.server.domain.Film;
 import com.movieshop.server.domain.Language;
 import com.movieshop.server.exception.ResourceNotFoundException;
 import com.movieshop.server.mapper.FilmMapper;
-import com.movieshop.server.model.FilmListItemDTO;
-import com.movieshop.server.model.FilmRequestDTO;
-import com.movieshop.server.model.FilmResponseDTO;
-import com.movieshop.server.model.MoviePageResponse;
+import com.movieshop.server.model.*;
 import com.movieshop.server.repository.FilmRepository;
 import com.movieshop.server.repository.LanguageRepository;
 import jakarta.transaction.Transactional;
@@ -94,7 +91,7 @@ public class FilmServiceImpl implements IFilmService {
 
     @Override
     @Transactional
-    public FilmResponseDTO updateFilm(Integer id, FilmRequestDTO filmRequestDTO) {
+    public FilmUpdateResponseDTO updateFilm(Integer id, FilmRequestDTO filmRequestDTO) {
         Film existentFilm = filmRepository.findByIdWithBasicFields(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Film not found with id: " + id));
         existentFilm.setTitle(filmRequestDTO.getTitle());
@@ -112,24 +109,17 @@ public class FilmServiceImpl implements IFilmService {
         if (filmRequestDTO.getLanguage() != null && !filmRequestDTO.getLanguage().isBlank()) {
             language = languageRepository.findByNameIgnoreCase(filmRequestDTO.getLanguage())
                     .orElseThrow(() -> new ResourceNotFoundException("Language not found with name: " + filmRequestDTO.getLanguage()));
-            existentFilm.setLanguage(language);
+            existentFilm.addLanguage(language);
         }
         if (filmRequestDTO.getOriginalLanguage() != null && !filmRequestDTO.getOriginalLanguage().isBlank() ) {
             originalLanguage = languageRepository.findByNameIgnoreCase(filmRequestDTO.getOriginalLanguage())
                     .orElseThrow(() -> new ResourceNotFoundException("Language not found with name: " + filmRequestDTO.getOriginalLanguage()));
-            existentFilm.setOriginalLanguage(originalLanguage);
+            existentFilm.addOriginalLanguage(originalLanguage);
         }
 
         Film updatedFilm = filmRepository.save(existentFilm);
 
-        if(language != null){
-            language.getFilms().add(updatedFilm);
-        }
-        if(originalLanguage != null) {
-            originalLanguage.getOriginalLanguageFilms().add(updatedFilm);
-        }
-
-        return filmMapper.toResponseDto(updatedFilm);
+        return filmMapper.toUpdateResponseDto(updatedFilm);
     }
 
     @Override

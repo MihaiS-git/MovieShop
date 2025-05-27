@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.OffsetDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -45,5 +46,7 @@ public class Language {
     public Language(int id, String name) {
         this.id = id;
         this.name = name;
+        this.films = new HashSet<>();
+        this.originalLanguageFilms = new HashSet<>();
     }
 }

@@ -21,11 +21,11 @@ public class Inventory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "film_id", nullable = false)
     private Film film;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
@@ -38,7 +38,7 @@ public class Inventory {
         lastUpdate = OffsetDateTime.now();
     }
 
-    @OneToMany(mappedBy = "inventory")
+    @OneToMany(mappedBy = "inventory", fetch = FetchType.LAZY)
     private List<Rental> rentals = new ArrayList<>();
 
     public void addRental(Rental rental) {

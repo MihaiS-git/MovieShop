@@ -25,11 +25,11 @@ public class City {
     @NotNull
     private String name;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_id", nullable = false)
     private Country country;
 
-    @OneToMany(mappedBy="city", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy="city", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Address> addresses = new HashSet<>();
 
     @Column(name = "last_update")
@@ -49,15 +49,5 @@ public class City {
     public void removeAddress(Address address){
         addresses.remove(address);
         address.setCity(null);
-    }
-
-    public void addCountry(Country country) {
-        this.country = country;
-        country.getCities().add(this);
-    }
-
-    public void removeCountry(Country country) {
-        this.country = null;
-        country.getCities().remove(this);
     }
 }

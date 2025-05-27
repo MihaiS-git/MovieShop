@@ -176,20 +176,6 @@ public class User implements UserDetails {
         }
     }
 
-    public void addAddress(Address address) {
-        if (address != null) {
-            this.address = address;
-            address.getStaff().add(this);
-        }
-    }
-
-    public void removeAddress(Address address) {
-        if (address != null) {
-            this.address = null;
-            address.getStaff().remove(this);
-        }
-    }
-
     public void addStore(Store store) {
             this.store = store;
             store.setManagerStaff(this);

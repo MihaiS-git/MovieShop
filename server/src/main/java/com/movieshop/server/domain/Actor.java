@@ -33,28 +33,18 @@ public class Actor {
     @Column(name = "last_update", nullable = false)
     private OffsetDateTime lastUpdate;
 
-    public Actor(int d, String firstName, String lastName) {
-        this.id = d;
-        this.firstName = firstName;
-        this.lastName = lastName;
-    }
-
     @PrePersist
     @PreUpdate
     public void updateTimestamp() {
         this.lastUpdate = OffsetDateTime.now();
     }
 
-    @ManyToMany(mappedBy = "actors")
+    @ManyToMany(mappedBy = "actors", fetch = FetchType.LAZY)
     private Set<Film> films = new HashSet<>();
 
-    public void addFilm(Film film) {
-        films.add(film);
-        film.getActors().add(this);
-    }
-
-    public void removeFilm(Film film) {
-        films.remove(film);
-        film.getActors().remove(this);
+    public Actor(int d, String firstName, String lastName) {
+        this.id = d;
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 }

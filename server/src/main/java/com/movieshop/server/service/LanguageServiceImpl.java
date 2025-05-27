@@ -29,7 +29,7 @@ public class LanguageServiceImpl implements ILanguageService {
 
     @Override
     public LanguageResponseDTO getLanguageByName(String name) {
-        Language language = languageRepository.findByName(name)
+        Language language = languageRepository.findByNameIgnoreCase(name)
                 .orElseThrow(() -> new ResourceNotFoundException("Language not found with name: " + name));
         return languageMapper.toResponseDto(language);
     }

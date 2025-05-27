@@ -3,9 +3,7 @@ package com.movieshop.server.service;
 import com.movieshop.server.domain.*;
 import com.movieshop.server.exception.ResourceNotFoundException;
 import com.movieshop.server.mapper.FilmMapper;
-import com.movieshop.server.model.FilmRequestDTO;
-import com.movieshop.server.model.FilmResponseDTO;
-import com.movieshop.server.model.MoviePageResponse;
+import com.movieshop.server.model.*;
 import com.movieshop.server.repository.FilmRepository;
 import com.movieshop.server.repository.LanguageRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -62,8 +60,34 @@ class FilmServiceImplTest {
         return film;
     }
 
+    private FilmListItemDTO sampleFilmListItemDTO() {
+        return FilmListItemDTO.builder()
+                .id(1)
+                .title("Test Movie")
+                .description("Description")
+                .rating(Rating.valueOf("PG"))
+                .build();
+    }
+
     private FilmResponseDTO sampleFilmDTO() {
         return FilmResponseDTO.builder()
+                .id(1)
+                .title("Test Movie")
+                .description("Description")
+                .releaseYear(2024)
+                .language("English")
+                .originalLanguage("French")
+                .rentalDuration(5)
+                .rentalRate(Double.parseDouble("3.99"))
+                .length(120)
+                .replacementCost(Double.parseDouble("20.00"))
+                .rating(Rating.valueOf("PG"))
+                .build();
+    }
+
+    private FilmUpdateResponseDTO sampleUpdateFilmDTO() {
+        return FilmUpdateResponseDTO.builder()
+                .id(1)
                 .title("Test Movie")
                 .description("Description")
                 .releaseYear(2024)
@@ -97,7 +121,7 @@ class FilmServiceImplTest {
         Film film = sampleFilm();
         FilmResponseDTO dto = sampleFilmDTO();
 
-        when(filmRepository.findById(1)).thenReturn(Optional.of(film));
+        when(filmRepository.findByIdWithAllRelations(1)).thenReturn(Optional.of(film));
         when(filmMapper.toResponseDto(film)).thenReturn(dto);
 
         FilmResponseDTO result = filmService.getFilmById(1);
@@ -144,14 +168,14 @@ class FilmServiceImplTest {
 
     @Test
     void getAllFilmsPaginated_success() {
-        List<Film> films = List.of(sampleFilm());
-        Page<Film> page = new PageImpl<>(films);
+        List<FilmListItemDTO> films = List.of(sampleFilmListItemDTO());
+        Page<FilmListItemDTO> page = new PageImpl<>(films);
 
-        when(filmRepository.findAll(any(Pageable.class))).thenReturn(page);
+        when(filmRepository.findAllListItemFilms(any())).thenReturn(page);
         when(filmRepository.count()).thenReturn(1L);
 
         MoviePageResponse result = filmService.getAllFilmsPaginated(0, 10);
-        assertThat(result.getFilms().size()).isEqualTo(1);
+        assertThat(result.getMovies().size()).isEqualTo(1);
     }
 
     @Test
@@ -159,7 +183,7 @@ class FilmServiceImplTest {
         int page = 0;
         int limit = 10;
         Pageable pageable = PageRequest.of(page, limit, Sort.by(Sort.Direction.ASC, "id"));
-        when(filmRepository.findAll(pageable)).thenThrow(new RuntimeException("Database error"));
+        when(filmRepository.findAllListItemFilms(any(Pageable.class))).thenThrow(new RuntimeException("Database error"));
 
         assertThatThrownBy(() -> filmService.getAllFilmsPaginated(page, limit))
                 .isInstanceOf(ResourceNotFoundException.class)
@@ -186,8 +210,8 @@ class FilmServiceImplTest {
                 .build();
 
 
-        when(languageRepository.findByName("English")).thenReturn(Optional.of(lang));
-        when(languageRepository.findByName("French")).thenReturn(Optional.of(origLang));
+        when(languageRepository.findByNameIgnoreCase("English")).thenReturn(Optional.of(lang));
+        when(languageRepository.findByNameIgnoreCase("French")).thenReturn(Optional.of(origLang));
 
         Film filmEntity = sampleFilm();
         when(filmMapper.toEntity(dto)).thenReturn(filmEntity);
@@ -213,7 +237,7 @@ class FilmServiceImplTest {
                 .rating(Rating.PG)
                 .build();
 
-        when(languageRepository.findByName("English")).thenReturn(Optional.empty());
+        when(languageRepository.findByNameIgnoreCase("English")).thenReturn(Optional.empty());
 
         ResourceNotFoundException exception = assertThrows(
                 ResourceNotFoundException.class,
@@ -240,8 +264,8 @@ class FilmServiceImplTest {
                 .rating(Rating.PG)
                 .build();
 
-        when(languageRepository.findByName("English")).thenReturn(Optional.of(lang));
-        when(languageRepository.findByName("French")).thenReturn(Optional.empty());
+        when(languageRepository.findByNameIgnoreCase("English")).thenReturn(Optional.of(lang));
+        when(languageRepository.findByNameIgnoreCase("French")).thenReturn(Optional.empty());
 
         ResourceNotFoundException exception = assertThrows(
                 ResourceNotFoundException.class,
@@ -255,21 +279,27 @@ class FilmServiceImplTest {
     void updateFilm_success() {
         Film existent = sampleFilm();
         FilmRequestDTO requestDto = sampleRequestFilmDTO();
+
         Language lang = new Language(1, "English");
         Language origLang = new Language(2, "French");
 
-        FilmResponseDTO dto = sampleFilmDTO();
+        Film updatedFilm = sampleFilm();
+        FilmUpdateResponseDTO dto = sampleUpdateFilmDTO();
 
-        when(filmRepository.findById(1)).thenReturn(Optional.of(existent));
-        when(languageRepository.findByName("English")).thenReturn(Optional.of(lang));
-        when(languageRepository.findByName("French")).thenReturn(Optional.of(origLang));
-        when(filmRepository.save(any())).thenReturn(existent);
-        when(filmMapper.toEntity(requestDto)).thenReturn(existent);
-        when(filmMapper.toResponseDto(existent)).thenReturn(dto);
+        when(filmRepository.findByIdWithBasicFields(1)).thenReturn(Optional.of(existent));
+        when(languageRepository.findByNameIgnoreCase("English")).thenReturn(Optional.of(lang));
+        when(languageRepository.findByNameIgnoreCase("French")).thenReturn(Optional.of(origLang));
+        when(filmMapper.toEntity(requestDto)).thenReturn(updatedFilm);
+        when(filmRepository.save(any(Film.class))).thenReturn(updatedFilm);
+        when(filmMapper.toUpdateResponseDto(updatedFilm)).thenReturn(dto);
 
-        FilmResponseDTO result = filmService.updateFilm(1, requestDto);
+        FilmUpdateResponseDTO result = filmService.updateFilm(1, requestDto);
+
         assertThat(result.getTitle()).isEqualTo("Test Movie");
+        assertThat(result.getLanguage()).isEqualTo("English");
+        assertThat(result.getOriginalLanguage()).isEqualTo("French");
     }
+
 
     @Test
     void deleteFilm_success() {

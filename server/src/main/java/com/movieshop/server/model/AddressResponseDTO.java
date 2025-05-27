@@ -28,9 +28,7 @@ public class AddressResponseDTO {
 
     private OffsetDateTime lastUpdate;
 
-    private List<Integer> staff;
+    private List<Integer> userIds;
 
-    private List<Integer> stores;
-
-    private List<Integer> customers;
+    private List<Integer> storeIds;
 }

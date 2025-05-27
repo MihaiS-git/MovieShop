@@ -1,6 +1,8 @@
 package com.movieshop.server.mapper;
 
 import com.movieshop.server.domain.Address;
+import com.movieshop.server.domain.Store;
+import com.movieshop.server.domain.User;
 import com.movieshop.server.model.AddressRequestDTO;
 import com.movieshop.server.model.AddressResponseDTO;
 import org.springframework.stereotype.Component;
@@ -20,6 +22,9 @@ public class AddressMapper {
                 .city(address.getCity().getName())
                 .postalCode(address.getPostalCode())
                 .phone(address.getPhone())
+                .lastUpdate(address.getLastUpdate())
+                .userIds(address.getUsers() != null ? address.getUsers().stream().map(User::getId).toList() : null)
+                .storeIds(address.getStores() != null ? address.getStores().stream().map(Store::getId).toList() : null)
                 .build();
     }
 

@@ -1,5 +1,6 @@
 package com.movieshop.server.service;
 
+import com.movieshop.server.model.ActorRequestDTO;
 import com.movieshop.server.model.ActorResponseDTO;
 
 import java.util.List;
@@ -10,9 +11,9 @@ public interface IActorService {
 
     ActorResponseDTO getActorById(Integer id);
 
-    ActorResponseDTO createActor(ActorResponseDTO actorResponseDTO);
+    ActorResponseDTO createActor(ActorRequestDTO actorRequestDTO);
 
-    ActorResponseDTO updateActor(Integer id, ActorResponseDTO actorResponseDTO);
+    ActorResponseDTO updateActor(Integer id, ActorRequestDTO actorRequestDTO);
 
     void deleteActor(Integer id);
 

@@ -75,7 +75,7 @@ public class LanguageServiceTest {
                 .name("Spanish")
                 .build();
 
-        when(languageRepository.findByName("Spanish")).thenReturn(Optional.of(lang));
+        when(languageRepository.findByNameIgnoreCase("Spanish")).thenReturn(Optional.of(lang));
         when(languageMapper.toResponseDto(lang)).thenReturn(dto);
 
         LanguageResponseDTO result = languageService.getLanguageByName("Spanish");
@@ -86,7 +86,7 @@ public class LanguageServiceTest {
 
     @Test
     void getLanguageByName_whenNotFound_throwsException() {
-        when(languageRepository.findByName("Klingon")).thenReturn(Optional.empty());
+        when(languageRepository.findByNameIgnoreCase("Klingon")).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> languageService.getLanguageByName("Klingon"));
     }

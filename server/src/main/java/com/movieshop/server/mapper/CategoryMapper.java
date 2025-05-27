@@ -15,7 +15,7 @@ public class CategoryMapper {
                 .id(category.getId())
                 .name(category.getName())
                 .lastUpdate(category.getLastUpdate())
-                .films(category.getFilms().stream()
+                .filmIds(category.getFilms().stream()
                         .map(Film::getId)
                         .toList())
                 .build();

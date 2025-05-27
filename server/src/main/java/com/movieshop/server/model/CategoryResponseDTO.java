@@ -17,6 +17,6 @@ public class CategoryResponseDTO {
 
     private OffsetDateTime lastUpdate;
 
-    private List<Integer> films;
+    private List<Integer> filmIds;
 
 }

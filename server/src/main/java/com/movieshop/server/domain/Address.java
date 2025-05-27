@@ -13,8 +13,8 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(exclude = {"staff", "stores", "customers"})
-@EqualsAndHashCode(exclude = {"staff", "stores", "customers", "lastUpdate"})
+@ToString(exclude = {"users", "stores"})
+@EqualsAndHashCode(exclude = {"users", "stores", "lastUpdate"})
 @Table(name = "addresses")
 public class Address {
 
@@ -29,7 +29,7 @@ public class Address {
 
     private String district;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "city_id", nullable = false)
     @NotNull
     private City city;
@@ -48,42 +48,10 @@ public class Address {
         lastUpdate = OffsetDateTime.now();
     }
 
-    @OneToMany(mappedBy = "address")
-    private Set<User> staff = new HashSet<>();
+    @OneToMany(mappedBy = "address", fetch = FetchType.LAZY)
+    private Set<User> users = new HashSet<>();
 
-    @OneToMany(mappedBy = "address")
+    @OneToMany(mappedBy = "address", fetch = FetchType.LAZY)
     private Set<Store> stores = new HashSet<>();
 
-    @OneToMany(mappedBy = "address")
-    private Set<User> customers = new HashSet<>();
-
-//    public void addStaff(User staff) {
-//        this.staff.add(staff);
-//        staff.setAddress(this);
-//    }
-//
-//    public void removeStaff(User staff) {
-//        this.staff.remove(staff);
-//        staff.setAddress(null);
-//    }
-
-    public void addStore(Store store) {
-        this.stores.add(store);
-        store.setAddress(this);
-    }
-
-    public void removeStore(Store store) {
-        this.stores.remove(store);
-        store.setAddress(null);
-    }
-
-    public void addCustomer(User customer) {
-        this.customers.add(customer);
-        customer.setAddress(this);
-    }
-
-    public void removeCustomer(User customer) {
-        this.customers.remove(customer);
-        customer.setAddress(null);
-    }
 }

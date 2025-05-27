@@ -1,5 +1,6 @@
 package com.movieshop.server.controller;
 
+import com.movieshop.server.model.ActorRequestDTO;
 import com.movieshop.server.model.ActorResponseDTO;
 import com.movieshop.server.service.IActorService;
 import org.springframework.http.ResponseEntity;
@@ -29,15 +30,15 @@ public class ActorController {
     }
 
     @PostMapping
-    public ResponseEntity<ActorResponseDTO> createActor(@RequestBody ActorResponseDTO actorResponseDTO) {
-        ActorResponseDTO createdActor = actorService.createActor(actorResponseDTO);
+    public ResponseEntity<ActorResponseDTO> createActor(@RequestBody ActorRequestDTO actorRequestDTO) {
+        ActorResponseDTO createdActor = actorService.createActor(actorRequestDTO);
         URI location = URI.create("/api/v0/actors/" + createdActor.getId());
         return ResponseEntity.created(location).body(createdActor);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ActorResponseDTO> updateActor(@PathVariable Integer id, @RequestBody ActorResponseDTO actorResponseDTO) {
-        return ResponseEntity.ok(actorService.updateActor(id, actorResponseDTO));
+    public ResponseEntity<ActorResponseDTO> updateActor(@PathVariable Integer id, @RequestBody ActorRequestDTO actorRequestDTO) {
+        return ResponseEntity.ok(actorService.updateActor(id, actorRequestDTO));
     }
 
     @DeleteMapping("/{id}")

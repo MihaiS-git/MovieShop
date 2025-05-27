@@ -1,12 +1,11 @@
 package com.movieshop.server.service;
 
 import com.movieshop.server.domain.Actor;
-import com.movieshop.server.domain.Film;
 import com.movieshop.server.exception.ResourceNotFoundException;
 import com.movieshop.server.mapper.ActorMapper;
+import com.movieshop.server.model.ActorRequestDTO;
 import com.movieshop.server.model.ActorResponseDTO;
 import com.movieshop.server.repository.ActorRepository;
-import com.movieshop.server.repository.FilmRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,9 +20,6 @@ public class ActorServiceTest {
 
     @Mock
     private ActorRepository actorRepository;
-
-    @Mock
-    private FilmRepository filmRepository;
 
     @Mock
     private ActorMapper actorMapper;
@@ -87,66 +83,28 @@ public class ActorServiceTest {
 
     @Test
     void createActor_ShouldSaveAndReturnDTO() {
-        ActorResponseDTO actorResponseDTO = new ActorResponseDTO();
+        ActorRequestDTO actorRequestDTO = new ActorRequestDTO();
 
         Actor actorEntity = new Actor();
         Actor savedActor = new Actor();
         ActorResponseDTO savedDto = new ActorResponseDTO();
 
-        when(actorMapper.toEntity(actorResponseDTO, new HashSet<>())).thenReturn(actorEntity);
+        when(actorMapper.toEntity(actorRequestDTO)).thenReturn(actorEntity);
         when(actorRepository.save(actorEntity)).thenReturn(savedActor);
         when(actorMapper.toResponseDto(savedActor)).thenReturn(savedDto);
 
-        ActorResponseDTO result = actorService.createActor(actorResponseDTO);
+        ActorResponseDTO result = actorService.createActor(actorRequestDTO);
 
         assertNotNull(result);
-        verify(actorMapper).toEntity(actorResponseDTO, new HashSet<>());
+        verify(actorMapper).toEntity(actorRequestDTO);
         verify(actorRepository).save(actorEntity);
         verify(actorMapper).toResponseDto(savedActor);
     }
-
-    @Test
-    void createActor_WithFilmIds_ShouldMapFilmsAndSave() {
-        // Arrange
-        Integer filmId1 = 1;
-        Integer filmId2 = 2;
-
-        ActorResponseDTO actorResponseDTO = ActorResponseDTO.builder()
-                .filmIds(List.of(filmId1, filmId2))
-                .build();
-
-        Film film1 = new Film();
-        film1.setId(1);
-        Film film2 = new Film();
-        film2.setId(2);
-
-        Actor actorEntity = new Actor();
-        Actor savedActor = new Actor();
-        ActorResponseDTO savedDto = new ActorResponseDTO();
-
-        when(filmRepository.findById(filmId1)).thenReturn(Optional.of(film1));
-        when(filmRepository.findById(filmId2)).thenReturn(Optional.of(film2));
-        when(actorMapper.toEntity(actorResponseDTO, Set.of(film1, film2))).thenReturn(actorEntity);
-        when(actorRepository.save(actorEntity)).thenReturn(savedActor);
-        when(actorMapper.toResponseDto(savedActor)).thenReturn(savedDto);
-
-        // Act
-        ActorResponseDTO result = actorService.createActor(actorResponseDTO);
-
-        // Assert
-        assertNotNull(result);
-        verify(filmRepository).findById(filmId1);
-        verify(filmRepository).findById(filmId2);
-        verify(actorMapper).toEntity(actorResponseDTO, Set.of(film1, film2));
-        verify(actorRepository).save(actorEntity);
-        verify(actorMapper).toResponseDto(savedActor);
-    }
-
 
     @Test
     void updateActor_WhenFound_ShouldUpdateAndReturnDTO() {
         Integer id = 1;
-        ActorResponseDTO dto = ActorResponseDTO.builder()
+        ActorRequestDTO dto = ActorRequestDTO.builder()
                 .firstName("John")
                 .lastName("Doe")
                 .build();
@@ -180,7 +138,7 @@ public class ActorServiceTest {
     @Test
     void updateActor_WhenNotFound_ShouldThrowException() {
         Integer id = 1;
-        ActorResponseDTO dto = new ActorResponseDTO();
+        ActorRequestDTO dto = new ActorRequestDTO();
 
         when(actorRepository.findById(id)).thenReturn(Optional.empty());
 

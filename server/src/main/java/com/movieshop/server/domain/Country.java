@@ -25,7 +25,7 @@ public class Country {
     @NotNull
     private String name;
 
-    @OneToMany(mappedBy="country", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy="country", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<City> cities = new HashSet<>();
 
     @Column(name = "last_update")

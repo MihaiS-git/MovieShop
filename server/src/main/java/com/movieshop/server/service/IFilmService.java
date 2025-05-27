@@ -2,6 +2,7 @@ package com.movieshop.server.service;
 
 import com.movieshop.server.model.FilmRequestDTO;
 import com.movieshop.server.model.FilmResponseDTO;
+import com.movieshop.server.model.FilmUpdateResponseDTO;
 import com.movieshop.server.model.MoviePageResponse;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public interface IFilmService {
 
     FilmResponseDTO createFilm(FilmRequestDTO film);
 
-    FilmResponseDTO updateFilm(Integer id, FilmRequestDTO filmRequestDTO);
+    FilmUpdateResponseDTO updateFilm(Integer id, FilmRequestDTO filmRequestDTO);
 
     void deleteFilm(Integer id);
 }

@@ -18,7 +18,7 @@ public class CountryMapper {
         return CountryResponseDTO.builder()
                 .id(country.getId())
                 .name(country.getName())
-                .cities(country.getCities() != null
+                .cityIds(country.getCities() != null
                         ? (country.getCities().stream()
                         .map(City::getId)
                         .toList())

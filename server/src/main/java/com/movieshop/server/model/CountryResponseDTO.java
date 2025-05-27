@@ -16,7 +16,7 @@ public class CountryResponseDTO {
 
     private String name;
 
-    private List<Integer> cities;
+    private List<Integer> cityIds;
 
     private OffsetDateTime lastUpdate;
 }
