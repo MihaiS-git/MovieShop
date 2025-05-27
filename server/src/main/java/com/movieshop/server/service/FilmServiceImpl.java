@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -111,7 +112,7 @@ public class FilmServiceImpl implements IFilmService {
                     .orElseThrow(() -> new ResourceNotFoundException("Language not found with name: " + filmRequestDTO.getLanguage()));
             existentFilm.addLanguage(language);
         }
-        if (filmRequestDTO.getOriginalLanguage() != null && !filmRequestDTO.getOriginalLanguage().isBlank() ) {
+        if (filmRequestDTO.getOriginalLanguage() != null && !filmRequestDTO.getOriginalLanguage().isBlank()) {
             originalLanguage = languageRepository.findByNameIgnoreCase(filmRequestDTO.getOriginalLanguage())
                     .orElseThrow(() -> new ResourceNotFoundException("Language not found with name: " + filmRequestDTO.getOriginalLanguage()));
             existentFilm.addOriginalLanguage(originalLanguage);
@@ -127,6 +128,18 @@ public class FilmServiceImpl implements IFilmService {
         Film existentFilm = filmRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Film not found with id: " + id));
         filmRepository.delete(existentFilm);
+    }
+
+    @Override
+    @Transactional
+    public List<FilmSearchResponseDTO> searchFilmsByTitle(String searchTerm) {
+        if (searchTerm == null || searchTerm.trim().isBlank()) {
+            return new ArrayList<>();
+        }
+        List<Film> films = filmRepository.findAllByTitleContainingIgnoreCase(searchTerm.trim());
+        return films.stream()
+                .map(filmMapper::toSearchResponseDto)
+                .collect(Collectors.toList());
     }
 }
 

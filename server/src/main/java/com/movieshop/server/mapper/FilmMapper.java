@@ -4,10 +4,7 @@ import com.movieshop.server.domain.Actor;
 import com.movieshop.server.domain.Category;
 import com.movieshop.server.domain.Film;
 import com.movieshop.server.domain.Rating;
-import com.movieshop.server.model.FilmListItemDTO;
-import com.movieshop.server.model.FilmRequestDTO;
-import com.movieshop.server.model.FilmResponseDTO;
-import com.movieshop.server.model.FilmUpdateResponseDTO;
+import com.movieshop.server.model.*;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -53,6 +50,20 @@ public class FilmMapper {
                 .rentalRate(film.getRentalRate())
                 .length(film.getLength())
                 .replacementCost(film.getReplacementCost())
+                .rating(film.getRating())
+                .build();
+    }
+
+    public FilmSearchResponseDTO toSearchResponseDto(Film film) {
+        if (film == null) {
+            return null;
+        }
+        return FilmSearchResponseDTO.builder()
+                .id(film.getId())
+                .title(film.getTitle())
+                .description(film.getDescription())
+                .releaseYear(film.getReleaseYear())
+                .length(film.getLength())
                 .rating(film.getRating())
                 .build();
     }

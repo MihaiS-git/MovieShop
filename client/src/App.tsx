@@ -20,6 +20,7 @@ import AddMovie from "./pages/admin/movies/AddMovie";
 import EditReviews from "./pages/admin/reviews/EditReviews";
 import AddReview from "./pages/admin/reviews/AddReview";
 import EditMoviePage from "./pages/admin/movies/EditMoviePage";
+import SearchMoviePage from "./pages/admin/movies/SearchMoviePage";
 
 const router = createBrowserRouter([
   {
@@ -53,6 +54,10 @@ const router = createBrowserRouter([
           {
             path: "movies",
             children: [
+              {
+                path: "search",
+                element: <SearchMoviePage/>,
+              },
               {
                 path: "edit",
                 element: <EditMovies/>,

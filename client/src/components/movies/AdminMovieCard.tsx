@@ -1,7 +1,7 @@
-import { Movie } from "../../types/Movie";
+import { MovieItem } from "../../types/Movie";
 import { useNavigate } from "react-router-dom";
 
-const MovieCard: React.FC<{ movie: Movie; handleDeleteClick: () => void }> = ({ movie, handleDeleteClick }) => {
+const MovieCard: React.FC<{ movie: MovieItem; handleDeleteClick: () => void }> = ({ movie, handleDeleteClick }) => {
   const navigate = useNavigate();
 
   const handleEditClick = () => {

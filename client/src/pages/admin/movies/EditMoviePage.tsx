@@ -4,7 +4,6 @@ import {
 } from "@/features/movies/movieApi";
 import PageContent from "@/PageContent";
 import { Language, LANGUAGES, Rating } from "@/types/Movie";
-import { formatDate } from "@/util/formatDate";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -165,7 +164,7 @@ const EditMoviePage = () => {
   return (
     <PageContent className="flex flex-col items-center justify-items-start pt-4 w-full min-h-screen text-charcoal-800">
       <h1 className="bg-charcoal-800 dark:bg-red-500 text-red-500 dark:text-charcoal-800 text-base lg:text-lg text-center w-50 p-2 mb-4 rounded-2xl">
-        Edit movie page
+        Edit Movie
       </h1>
       <div className="flex flex-col items-center lg:flex-row pb-24 w-full justify-center gap-4">
         <img

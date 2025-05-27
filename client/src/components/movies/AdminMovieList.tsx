@@ -1,12 +1,12 @@
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { Movie } from "../../types/Movie";
+import { MovieItem } from "../../types/Movie";
 import { useEffect, useRef } from "react";
 
 import MoviesPagination from "./MoviesPagination";
 import AdminMovieCard from "./AdminMovieCard";
 
 type Props = {
-  movies: Movie[];
+  movies: MovieItem[];
   totalPages: number;
   page: number;
   handleNextPage: () => void;

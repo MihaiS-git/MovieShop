@@ -66,6 +66,12 @@ export const movieApi = createApi({
       }),
       invalidatesTags: [{ type: "Movie", id: "LIST" }],
     }),
+    searchMoviesByTitle: builder.query<Movie[], string>({
+      query: (title) => ({
+        url: `/films/search`,
+        params: {title},
+      }),
+    }),
   }),
 });
 
@@ -75,4 +81,6 @@ export const {
   useCreateMovieMutation,
   useUpdateMovieMutation,
   useDeleteMovieByIdMutation,
+  useSearchMoviesByTitleQuery,
+  useLazySearchMoviesByTitleQuery,
 } = movieApi;

@@ -156,6 +156,7 @@ const AddMovie = () => {
           <label htmlFor="language">
             Language:{" "}
             <select
+              id="language"
               name="language"
               onChange={handleChangeLanguage}
               value={language}
@@ -172,6 +173,7 @@ const AddMovie = () => {
           <label htmlFor="originalLanguage">
             Original language:{" "}
             <select
+              id="originalLanguage"
               name="originalLanguage"
               onChange={handleChangeOriginalLanguage}
               value={originalLanguage}

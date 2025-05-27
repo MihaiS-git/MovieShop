@@ -10,10 +10,19 @@ const AdminNavbarDrawer: React.FC<AdminNavDrawerProps> = ({
   return (
     <aside className="h-full w-full bg-charcoal-800 text-gray-400 text-base p-4 py-24 z-90">
       <ul className="flex flex-col items-left gap-4">
-
         <li onClick={toggleAdminMenu}>
           <div className="flex flex-col ">
             <h1 className="pb-2 text-xl">Movies</h1>
+            <NavLink
+              className={({ isActive }) =>
+                isActive
+                  ? "text-red-500 font-bold"
+                  : "text-gray-300 hover:text-red-500"
+              }
+              to="/admin/movies/search"
+            >
+              Search Movie
+            </NavLink>
             <NavLink
               className={({ isActive }) =>
                 isActive
@@ -34,7 +43,7 @@ const AdminNavbarDrawer: React.FC<AdminNavDrawerProps> = ({
             >
               Add Movie
             </NavLink>
-            <hr className="border-t border-gray-400 my-2"/>
+            <hr className="border-t border-gray-400 my-2" />
           </div>
         </li>
 
@@ -51,7 +60,7 @@ const AdminNavbarDrawer: React.FC<AdminNavDrawerProps> = ({
             >
               Edit Users
             </NavLink>
-            <hr className="border-t border-gray-400 my-2"/>
+            <hr className="border-t border-gray-400 my-2" />
           </div>
         </li>
 
@@ -68,8 +77,8 @@ const AdminNavbarDrawer: React.FC<AdminNavDrawerProps> = ({
             >
               Edit Orders
             </NavLink>
-            
-            <hr className="border-t border-gray-400 my-2"/>
+
+            <hr className="border-t border-gray-400 my-2" />
           </div>
         </li>
 
@@ -96,7 +105,7 @@ const AdminNavbarDrawer: React.FC<AdminNavDrawerProps> = ({
             >
               Add Review
             </NavLink>
-            <hr className="border-t border-gray-400 my-2"/>
+            <hr className="border-t border-gray-400 my-2" />
           </div>
         </li>
 

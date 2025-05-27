@@ -37,8 +37,12 @@ export interface MovieItem {
   id: number;
   title: string;
   description: string;
+  releaseYear: number;
+  length: number;
   rating: Rating;
 }
+
+
 
 export interface MovieDto {
   title: string;

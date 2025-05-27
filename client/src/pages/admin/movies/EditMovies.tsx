@@ -3,7 +3,7 @@ import {
   useGetMoviesQuery,
 } from "@/features/movies/movieApi";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { Movie } from "@/types/Movie";
+import { MovieItem } from "@/types/Movie";
 import { useCallback, useEffect, useState } from "react";
 
 import PageContent from "@/PageContent";
@@ -15,7 +15,7 @@ const EditMovies = () => {
   const [deleteMovie] = useDeleteMovieByIdMutation();
 
   const [page, setPage] = useState(1);
-  const [movies, setMovies] = useState<Movie[]>([]);
+  const [movies, setMovies] = useState<MovieItem[]>([]);
 
   const { data, error, isLoading, isFetching } = useGetMoviesQuery({
     page: page - 1,

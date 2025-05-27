@@ -1,9 +1,6 @@
 package com.movieshop.server.controller;
 
-import com.movieshop.server.model.FilmRequestDTO;
-import com.movieshop.server.model.FilmResponseDTO;
-import com.movieshop.server.model.FilmUpdateResponseDTO;
-import com.movieshop.server.model.MoviePageResponse;
+import com.movieshop.server.model.*;
 import com.movieshop.server.service.IFilmService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -56,4 +53,10 @@ public class FilmController {
         filmService.deleteFilm(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<FilmSearchResponseDTO>> searchFilmsByTitle(@RequestParam String title) {
+        return ResponseEntity.ok(filmService.searchFilmsByTitle(title));
+    }
+
 }

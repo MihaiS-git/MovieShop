@@ -1,9 +1,6 @@
 package com.movieshop.server.service;
 
-import com.movieshop.server.model.FilmRequestDTO;
-import com.movieshop.server.model.FilmResponseDTO;
-import com.movieshop.server.model.FilmUpdateResponseDTO;
-import com.movieshop.server.model.MoviePageResponse;
+import com.movieshop.server.model.*;
 
 import java.util.List;
 
@@ -21,4 +18,6 @@ public interface IFilmService {
     FilmUpdateResponseDTO updateFilm(Integer id, FilmRequestDTO filmRequestDTO);
 
     void deleteFilm(Integer id);
+
+    List<FilmSearchResponseDTO> searchFilmsByTitle(String searchTerm);
 }
