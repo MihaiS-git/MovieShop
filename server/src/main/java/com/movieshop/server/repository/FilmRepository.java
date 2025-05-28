@@ -1,11 +1,8 @@
 package com.movieshop.server.repository;
 
 import com.movieshop.server.domain.Film;
-import com.movieshop.server.model.FilmListItemDTO;
-import com.movieshop.server.model.FilmResponseDTO;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -13,10 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-public interface FilmRepository extends JpaRepository<Film, Integer> {
-
-    @Query("SELECT new com.movieshop.server.model.FilmListItemDTO(f.id, f.title, f.description, f.rating) FROM Film f")
-    Page<FilmListItemDTO> findAllListItemFilms(Pageable pageable);
+public interface FilmRepository extends JpaRepository<Film, Integer>, JpaSpecificationExecutor<Film> {
 
     Optional<Film> findByTitle(String title);
 

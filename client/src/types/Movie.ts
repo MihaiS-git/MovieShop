@@ -6,6 +6,48 @@ export enum Rating {
   NC17 = "NC-17",
 }
 
+export enum Category {
+  "Action",
+  "Animation",
+  "Children",
+  "Classics",
+  "Comedy",
+  "Documentary",
+  "Drama",
+  "Family",
+  "Foreign",
+  "Games",
+  "Horror",
+  "Music",
+  "New",
+  "Sci-Fi",
+  "Sports",
+  "Travel",
+}
+
+export const RATING = ["G", "PG", "PG_13", "R", "NC_17"];
+
+export const YEARS = [2025, 2024, 2023, 2022, 2021, 2020];
+
+export const CATEGORIES = [  
+  "Action",
+  "Animation",
+  "Children",
+  "Classics",
+  "Comedy",
+  "Documentary",
+  "Drama",
+  "Family",
+  "Foreign",
+  "Games",
+  "Horror",
+  "Music",
+  "New",
+  "Sci-Fi",
+  "Sports",
+  "Travel",
+];
+
 export enum Language {
   ENGLISH = "English",
   FRENCH = "French",
@@ -16,7 +58,15 @@ export enum Language {
   SPANISH = "Spanish",
 }
 
-export const LANGUAGES = ["English", "French", "German", "Italian", "Japanese", "Mandarin", "Spanish"];
+export const LANGUAGES = [
+  "English",
+  "French",
+  "German",
+  "Italian",
+  "Japanese",
+  "Mandarin",
+  "Spanish",
+];
 
 export interface Movie {
   id: number;
@@ -41,8 +91,6 @@ export interface MovieItem {
   length: number;
   rating: Rating;
 }
-
-
 
 export interface MovieDto {
   title: string;

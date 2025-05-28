@@ -72,22 +72,20 @@ const SearchMoviePage = () => {
             />
             <ul>
               {searchResult.map((movie) => (
-                <>
-                  <li
-                    key={movie.id}
-                    className="cursor-pointer border bg-gray-400 hover:bg-gray-300 transition text-gray-900"
-                    onClick={() => handleMovieClick(movie.id)}
-                  >
-                    <MovieSearchResultRow
-                      id={movie.id}
-                      title={movie.title}
-                      releaseYear={movie.releaseYear}
-                      length={movie.length}
-                      rating={movie.rating}
-                      isHeader={false}
-                    />
-                  </li>
-                </>
+                <li
+                  key={movie.id}
+                  className="cursor-pointer border bg-gray-400 hover:bg-gray-300 transition text-gray-900"
+                  onClick={() => handleMovieClick(movie.id)}
+                >
+                  <MovieSearchResultRow
+                    id={movie.id}
+                    title={movie.title}
+                    releaseYear={movie.releaseYear}
+                    length={movie.length}
+                    rating={movie.rating}
+                    isHeader={false}
+                  />
+                </li>
               ))}
             </ul>
           </div>

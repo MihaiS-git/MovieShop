@@ -15,11 +15,18 @@ export const movieApi = createApi({
   endpoints: (builder) => ({
     getMovies: builder.query<
       { movies: MovieItem[]; totalCount: number },
-      { page: number; limit: number }
+      { page: number; limit: number; orderBy?: string; ratingFilter?: string, yearFilter?: number, categoryFilter?: string }
     >({
-      query: ({ page, limit }) => ({
+      query: ({ page, limit, orderBy, ratingFilter, yearFilter, categoryFilter }) => ({
         url: "/films",
-        params: { page, limit },
+        params: {
+          page,
+          limit,
+          ...(orderBy ? { orderBy } : {}),
+          ...(ratingFilter && ratingFilter.toLowerCase() !== "all" ? { ratingFilter } : {}),
+          ...(yearFilter && yearFilter > 0 ? {yearFilter} : {}),
+          ...(categoryFilter && categoryFilter !== "All" ? {categoryFilter} : {}),
+        },
       }),
       providesTags: (result) =>
         result?.movies
@@ -69,7 +76,7 @@ export const movieApi = createApi({
     searchMoviesByTitle: builder.query<Movie[], string>({
       query: (title) => ({
         url: `/films/search`,
-        params: {title},
+        params: { title },
       }),
     }),
   }),

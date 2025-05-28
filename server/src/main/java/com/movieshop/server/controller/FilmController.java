@@ -26,9 +26,14 @@ public class FilmController {
     @GetMapping
     public ResponseEntity<MoviePageResponse> getAllFilmsPaginated(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "16") int limit) {
+            @RequestParam(defaultValue = "16") int limit,
+            @RequestParam(defaultValue = "id_asc") String orderBy,
+            @RequestParam(required = false) String titleFilter,
+            @RequestParam(required = false) Integer yearFilter,
+            @RequestParam(required = false) String ratingFilter,
+            @RequestParam(required = false) String categoryFilter) {
 
-        return ResponseEntity.ok(filmService.getAllFilmsPaginated(page, limit));
+        return ResponseEntity.ok(filmService.getAllFilmsPaginated(page, limit, orderBy, titleFilter, yearFilter, ratingFilter, categoryFilter));
     }
 
     @GetMapping("/{id}")

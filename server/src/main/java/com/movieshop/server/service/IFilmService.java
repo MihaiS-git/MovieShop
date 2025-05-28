@@ -11,7 +11,7 @@ public interface IFilmService {
 
     List<FilmResponseDTO> getAllFilms();
 
-    MoviePageResponse getAllFilmsPaginated(Integer page, Integer limit);
+    MoviePageResponse getAllFilmsPaginated(Integer page, Integer limit, String orderBy, String titleFilter, Integer yearFilter, String ratingFilter, String categoryFilter);
 
     FilmResponseDTO createFilm(FilmRequestDTO film);
 

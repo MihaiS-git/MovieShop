@@ -1,5 +1,6 @@
 package com.movieshop.server.service;
 
+import com.movieshop.server.FilmSpecifications;
 import com.movieshop.server.domain.Film;
 import com.movieshop.server.domain.Language;
 import com.movieshop.server.exception.ResourceNotFoundException;
@@ -9,9 +10,11 @@ import com.movieshop.server.repository.FilmRepository;
 import com.movieshop.server.repository.LanguageRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -60,18 +63,47 @@ public class FilmServiceImpl implements IFilmService {
 
     @Transactional
     @Override
-    public MoviePageResponse getAllFilmsPaginated(Integer page, Integer limit) {
-        Pageable pageable = PageRequest.of(page, limit, Sort.by(Sort.Direction.ASC, "id"));
-        try {
-            List<FilmListItemDTO> filmDTOs = filmRepository.findAllListItemFilms(pageable).getContent();
+    public MoviePageResponse getAllFilmsPaginated(Integer page, Integer limit, String orderBy,
+                                                  String titleFilter, Integer yearFilter,
+                                                  String ratingFilter, String categoryFilter
+    ) {
+        Sort sort = parseOrderBy(orderBy);
 
-            long totalCount = filmRepository.count();
+        Pageable pageable = PageRequest.of(page, limit, sort);
 
-            return new MoviePageResponse(filmDTOs, totalCount);
-        } catch (Exception e) {
-            log.error("Error fetching paginated films: {}", e.getMessage());
-            throw new ResourceNotFoundException("Error fetching paginated films: " + e.getMessage());
+        Specification<Film> spec = Specification
+                .where(FilmSpecifications.hasRating((ratingFilter)))
+                .and(FilmSpecifications.titleContains(titleFilter))
+                .and(FilmSpecifications.releaseYearEquals(yearFilter))
+                .and(FilmSpecifications.inCategory(categoryFilter));
+
+        Page<Film> filmPage = filmRepository.findAll(spec, pageable);
+
+        List<FilmListItemDTO> filmDTOs = filmPage.getContent().stream()
+                .map(filmMapper::toListItemDto)
+                .toList();
+
+        return new MoviePageResponse(filmDTOs, filmPage.getTotalElements());
+    }
+
+    private Sort parseOrderBy(String orderBy) {
+        if (orderBy == null || orderBy.isBlank()) {
+            return Sort.by(Sort.Direction.ASC, "id");
         }
+        String[] parts = orderBy.split("_", 2);
+        if (parts.length != 2) {
+            log.warn("Invalid orderBy format '{}', falling back to id_asc", orderBy);
+            return Sort.by(Sort.Direction.ASC, "id");
+        }
+        String field = parts[0];
+        Sort.Direction direction;
+        try {
+            direction = Sort.Direction.fromString(parts[1]);
+        } catch (IllegalArgumentException e) {
+            log.warn("Invalid sort direction '{}', defaulting to ASC", parts[1]);
+            direction = Sort.Direction.ASC;
+        }
+        return Sort.by(direction, field);
     }
 
     @Override
@@ -104,8 +136,8 @@ public class FilmServiceImpl implements IFilmService {
         existentFilm.setReplacementCost(filmRequestDTO.getReplacementCost());
         existentFilm.setRating(filmRequestDTO.getRating());
 
-        Language language = null;
-        Language originalLanguage = null;
+        Language language;
+        Language originalLanguage;
 
         if (filmRequestDTO.getLanguage() != null && !filmRequestDTO.getLanguage().isBlank()) {
             language = languageRepository.findByNameIgnoreCase(filmRequestDTO.getLanguage())

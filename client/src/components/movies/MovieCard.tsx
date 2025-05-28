@@ -28,7 +28,7 @@ const MovieCard: React.FC<{ movie: MovieItem }> = ({ movie }) => {
         {movie.description}
       </p>
       <p className="text-red-500 dark:text-charcoal-800 text-xs font-bold">
-        {movie.rating}
+        {movie.rating.replace(/_/g, "-")}
       </p>
       {isAuthenticated && (
         <button className="bg-gold-300 hover:bg-gold-500 text-charcoal-800 text-xs px-2 py-1 w-2/5 mx-auto mb-4 cursor-pointer rounded-sm">

@@ -76,7 +76,15 @@ public class FilmMapper {
                 .id(film.getId())
                 .title(film.getTitle())
                 .description(film.getDescription())
-                .rating(film.getRating() != null ? Rating.fromString(film.getRating().name()) : null)
+                .releaseYear(film.getReleaseYear())
+                .language(film.getLanguage() != null ? film.getLanguage().getName() : null)
+                .originalLanguage(film.getOriginalLanguage() != null ? film.getOriginalLanguage().getName() : null)
+                .rentalRate(film.getRentalRate())
+                .length(film.getLength())
+                .rating(film.getRating() != null ? film.getRating().toString() : null)
+                .categories(film.getCategories() != null
+                        ? film.getCategories().stream().map(Category::getName).toList()
+                        :null)
                 .build();
     }
 
