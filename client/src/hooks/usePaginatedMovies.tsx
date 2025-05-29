@@ -13,6 +13,8 @@ const usePaginatedMovies = () => {
   const [ratingFilter, setRatingFilter] = useState("All");
   const [yearFilter, setYearFilter] = useState(0);
   const [categoryFilter, setCategoryFilter] = useState("All");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debounceSearchTerm, setDebounceSearchTerm] = useState(searchTerm);
 
   const [resetFilters, setResetFilters] = useState(false);
 
@@ -21,15 +23,24 @@ const usePaginatedMovies = () => {
   const { data, error, isLoading, isFetching } = useGetMoviesQuery({
     page: page - 1,
     limit,
-    orderBy: sortField,
-    ratingFilter,
-    yearFilter,
-    categoryFilter,
+    orderBy: sortField === "None" ? undefined : sortField,
+    ratingFilter: ratingFilter === "All" ? undefined : ratingFilter,
+    yearFilter: yearFilter === 0 ? undefined : yearFilter,
+    categoryFilter: categoryFilter === "All" ? undefined : categoryFilter,
+    titleFilter: debounceSearchTerm.trim() === "" ? undefined : debounceSearchTerm.trim(),
   });
 
   const totalCount = data?.totalCount || 0;
   const totalPages = Math.ceil(totalCount / limit);
   const hasMore = page < totalPages;
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebounceSearchTerm(searchTerm);
+    }, 300);
+
+    return () => clearTimeout(timeout);
+  }, [searchTerm]);
 
   useEffect(() => {
     setResetFilters(true);
@@ -80,6 +91,13 @@ const usePaginatedMovies = () => {
     }
   }, [isFetching, hasMore, isLoading, totalPages, resetFilters]);
 
+  const handleSearchTermChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    setPage(1);
+    setResetFilters(true);
+  };
+
+
   return {
     totalPages,
     page,
@@ -101,8 +119,9 @@ const usePaginatedMovies = () => {
     isFetching,
     error,
     setMovies,
+    searchTerm,
+    handleSearchTermChange,
   };
-
 };
 
 function getSortField(order: string): string | undefined {

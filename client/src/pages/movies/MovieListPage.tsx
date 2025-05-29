@@ -21,7 +21,10 @@ const MovieListPage = () => {
     setCategoryFilter,
     movies,
     isLoading,
-    error} = usePaginatedMovies();
+    error,
+    searchTerm,
+    handleSearchTermChange,
+  } = usePaginatedMovies();
 
   if (isLoading && page == 1) return <p>Loading...</p>;
   if (error) return <p>Error loading movies</p>;
@@ -44,12 +47,12 @@ const MovieListPage = () => {
         setYearFilter={setYearFilter}
         categoryFilter={categoryFilter}
         setCategoryFilter={setCategoryFilter}
+        searchTerm={searchTerm}
+        handleSearchTermChange={handleSearchTermChange}
         movies={movies}
       />
     </PageContent>
   );
 };
-
-
 
 export default MovieListPage;

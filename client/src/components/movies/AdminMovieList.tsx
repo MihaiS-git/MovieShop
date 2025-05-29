@@ -24,7 +24,10 @@ type Props = {
   yearFilter: number;
   setYearFilter: (year: number) => void;
   categoryFilter: string;
-  setCategoryFilter: (category: string) => void;
+  setCategoryFilter: (category: string) => void;  
+  searchTerm: string;
+  handleSearchTermChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+ 
 };
 
 const MovieList: React.FC<Props> = ({
@@ -45,6 +48,8 @@ const MovieList: React.FC<Props> = ({
   setYearFilter,
   categoryFilter,
   setCategoryFilter,
+    searchTerm,
+  handleSearchTermChange,
 }) => {
   const isMobile = useIsMobile();
   const loaderRef = useRef<HTMLDivElement>(null);
@@ -85,6 +90,8 @@ const MovieList: React.FC<Props> = ({
         setYearFilter={setYearFilter}
         categoryFilter={categoryFilter}
         setCategoryFilter={setCategoryFilter}
+                searchTerm={searchTerm}
+        handleSearchTermChange={handleSearchTermChange}
       />
       {movies.length === 0 ? (
         <p className="h-screen pt-24 text-2xl">
@@ -101,7 +108,7 @@ const MovieList: React.FC<Props> = ({
               <p>Actions</p>
             </div>
           ) : (
-            <div className="grid grid-cols-12 items-center h-12 w-full text-charcoal-800 text-sm font-bold bg-gray-200 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-200 cursor-pointer my-0.25">
+            <div className="grid grid-cols-12 items-center h-12 w-full text-charcoal-800 text-xs font-bold bg-gray-200 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-200 cursor-pointer my-0.25">
               <p className="border-e-charcoal-800 border">Picture</p>
               <p className="border-e-charcoal-800 border">Title</p>
               <p className="col-span-2 border-e-charcoal-800 border">

@@ -19,7 +19,7 @@ const MovieCard: React.FC<{ movie: MovieItem }> = ({ movie }) => {
     >
       <img
         src={`/movie_placeholder.png`}
-        alt="Movie Poster"
+        alt={movie.title}
         className="h-40 w-full rounded-t-md mt-0"
       />
       <h1 className="font-semibold mt-4 mb-2 text-gold-500 text-">
@@ -45,7 +45,7 @@ const MovieCard: React.FC<{ movie: MovieItem }> = ({ movie }) => {
         </p>
       </div>
       <p className="text-gold-500 dark:text-charcoal-800 text- font-bold px-2 pb-2">
-        {formatCurrency(movie.rentalRate)}
+        {formatCurrency(Number(movie.rentalRate))}
       </p>
 
       {isAuthenticated && (

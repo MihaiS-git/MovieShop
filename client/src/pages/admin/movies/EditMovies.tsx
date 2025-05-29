@@ -24,6 +24,8 @@ const EditMovies = () => {
     movies,
     isLoading,
     error,
+     searchTerm,
+    handleSearchTermChange,
     setMovies,
   } = usePaginatedMovies();
 
@@ -61,6 +63,8 @@ const EditMovies = () => {
         setYearFilter={setYearFilter}
         categoryFilter={categoryFilter}
         setCategoryFilter={setCategoryFilter}
+        searchTerm={searchTerm}
+        handleSearchTermChange={handleSearchTermChange}
       />
     </PageContent>
   );

@@ -22,6 +22,8 @@ type Props = {
   setYearFilter: (year: number) => void;
   categoryFilter: string;
   setCategoryFilter: (category: string) => void;
+  searchTerm: string;
+  handleSearchTermChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   movies: MovieItem[];
 };
 
@@ -41,6 +43,8 @@ const MovieList: React.FC<Props> = ({
   setYearFilter,
   categoryFilter,
   setCategoryFilter,
+  searchTerm,
+  handleSearchTermChange,
   movies,
 }) => {
   const isMobile = useIsMobile();
@@ -82,6 +86,8 @@ const MovieList: React.FC<Props> = ({
         setYearFilter={setYearFilter}
         categoryFilter={categoryFilter}
         setCategoryFilter={setCategoryFilter}
+        searchTerm={searchTerm}
+        handleSearchTermChange={handleSearchTermChange}
       />
 
       {movies.length === 0 ? (
@@ -97,7 +103,7 @@ const MovieList: React.FC<Props> = ({
               </li>
             ))}
           </ul>
-          
+
           {isMobile ? (
             hasMore ? (
               <div
