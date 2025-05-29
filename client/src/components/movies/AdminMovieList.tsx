@@ -92,6 +92,32 @@ const MovieList: React.FC<Props> = ({
         </p>
       ) : (
         <>
+          {isMobile ? (
+            <div className="grid grid-cols-6 items-center h-12 w-full text-charcoal-800 text-xs font-bold bg-gray-200 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-200 cursor-pointer my-0.25">
+              <p className="border-e-charcoal-800 border">Picture</p>
+              <p className="border-e-charcoal-800 border col-span-2">Title</p>
+              <p>Rating</p>
+              <p className="border-x-charcoal-800 border">Release Year</p>
+              <p>Actions</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-12 items-center h-12 w-full text-charcoal-800 text-sm font-bold bg-gray-200 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-200 cursor-pointer my-0.25">
+              <p className="border-e-charcoal-800 border">Picture</p>
+              <p className="border-e-charcoal-800 border">Title</p>
+              <p className="col-span-2 border-e-charcoal-800 border">
+                Description
+              </p>
+              <p className="border-e-charcoal-800 border">Rating</p>
+              <p className="border-e-charcoal-800 border">Release Year</p>
+              <p>Language</p>
+              <p className="border-x-charcoal-800 border">Original Language</p>
+              <p className="border-e-charcoal-800 border">Rental Rate</p>
+              <p className="border-e-charcoal-800 border">Length</p>
+              <p className="border-e-charcoal-800 border">Categories</p>
+              <p>Actions</p>
+            </div>
+          )}
+
           <ul className="flex flex-col">
             {movies?.map((movie) => (
               <li key={movie.id} className="px-0">
