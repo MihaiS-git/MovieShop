@@ -19,16 +19,6 @@ const AdminNavbarDrawer: React.FC<AdminNavDrawerProps> = ({
                   ? "text-red-500 font-bold"
                   : "text-gray-300 hover:text-red-500"
               }
-              to="/admin/movies/search"
-            >
-              Search Movie
-            </NavLink>
-            <NavLink
-              className={({ isActive }) =>
-                isActive
-                  ? "text-red-500 font-bold"
-                  : "text-gray-300 hover:text-red-500"
-              }
               to="/admin/movies/edit"
             >
               Movies List
@@ -58,7 +48,7 @@ const AdminNavbarDrawer: React.FC<AdminNavDrawerProps> = ({
               }
               to="/admin/users/edit"
             >
-              Edit Users
+              Users List
             </NavLink>
             <hr className="border-t border-gray-400 my-2" />
           </div>
@@ -75,7 +65,7 @@ const AdminNavbarDrawer: React.FC<AdminNavDrawerProps> = ({
               }
               to="/admin/orders/edit"
             >
-              Edit Orders
+              Orders List
             </NavLink>
 
             <hr className="border-t border-gray-400 my-2" />
@@ -93,33 +83,26 @@ const AdminNavbarDrawer: React.FC<AdminNavDrawerProps> = ({
               }
               to="/admin/reviews/edit"
             >
-              Edit Reviews
-            </NavLink>
-            <NavLink
-              className={({ isActive }) =>
-                isActive
-                  ? "text-red-500 font-bold"
-                  : "text-gray-300 hover:text-red-500"
-              }
-              to="/admin/reviews/add"
-            >
-              Add Review
+              Reviews List
             </NavLink>
             <hr className="border-t border-gray-400 my-2" />
           </div>
         </li>
 
         <li onClick={toggleAdminMenu}>
-          <NavLink
-            className={({ isActive }) =>
-              isActive
-                ? "text-red-500 font-bold"
-                : "text-gray-300 hover:text-red-500"
-            }
-            to="/admin/dashboard"
-          >
-            Dashboard
-          </NavLink>
+          <div className="flex flex-col ">
+            <h1 className="pb-2 text-xl">Dashboard</h1>
+            <NavLink
+              className={({ isActive }) =>
+                isActive
+                  ? "text-red-500 font-bold"
+                  : "text-gray-300 hover:text-red-500"
+              }
+              to="/admin/dashboard"
+            >
+              Reports
+            </NavLink>
+          </div>
         </li>
       </ul>
     </aside>
