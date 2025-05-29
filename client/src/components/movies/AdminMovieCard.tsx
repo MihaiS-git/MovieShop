@@ -21,7 +21,7 @@ const MovieCard: React.FC<{ movie: MovieItem; handleDeleteClick: () => void }> =
       <p className="text-xs text-center px-2 line-clamp-3">
         {movie.description}
       </p>
-      <p className="text-xs font-bold">{movie.rating}</p>
+      <p className="text-xs font-bold">{movie.rating.replace(/_/g, "-")}</p>
       <div className="flex gap-1">
         <button
           className="bg-green-500 hover:bg-green-800 text-charcoal-800 text-xs px-2 py-1 mx-auto mb-4 w-20 cursor-pointer rounded-sm"

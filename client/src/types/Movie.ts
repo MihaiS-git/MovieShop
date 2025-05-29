@@ -88,8 +88,12 @@ export interface MovieItem {
   title: string;
   description: string;
   releaseYear: number;
+  language: string;
+  originalLanguage: string;
+  rentalRate: number;
   length: number;
   rating: Rating;
+  categories: string[];
 }
 
 export interface MovieDto {

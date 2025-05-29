@@ -2,6 +2,7 @@ import { MovieItem } from "../../types/Movie";
 import { RootState } from "../../app/store";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { formatCurrency } from "@/util/formatcurrency";
 
 const MovieCard: React.FC<{ movie: MovieItem }> = ({ movie }) => {
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
@@ -24,12 +25,29 @@ const MovieCard: React.FC<{ movie: MovieItem }> = ({ movie }) => {
       <h1 className="font-semibold mt-4 mb-2 text-gold-500 text-">
         {movie.title}
       </h1>
-      <p className="text-red-500 dark:text-charcoal-800 text-xs text-center px-2 line-clamp-3">
+      <p className="text-red-500 dark:text-charcoal-800 text-xs text-center px-2 pb-2 line-clamp-3">
         {movie.description}
       </p>
-      <p className="text-red-500 dark:text-charcoal-800 text-xs font-bold">
-        {movie.rating.replace(/_/g, "-")}
+      <div className="flex flex-row w-full justify-center">
+        <p className="text-gold-500 dark:text-charcoal-800 text-xs px-2">
+          {movie.releaseYear}
+        </p>
+
+        <p className="text-gold-500 dark:text-charcoal-800 text-xs px-1">
+          {movie.length}min
+        </p>
+
+        <p className="text-gold-500 dark:text-charcoal-800 text-xs px-1">
+          {movie.rating.replace(/_/g, "-")}
+        </p>
+        <p className="text-gold-500 dark:text-charcoal-800 text-xs px-2">
+          {movie.language}
+        </p>
+      </div>
+      <p className="text-gold-500 dark:text-charcoal-800 text- font-bold px-2 pb-2">
+        {formatCurrency(movie.rentalRate)}
       </p>
+
       {isAuthenticated && (
         <button className="bg-gold-300 hover:bg-gold-500 text-charcoal-800 text-xs px-2 py-1 w-2/5 mx-auto mb-4 cursor-pointer rounded-sm">
           Add To Cart
