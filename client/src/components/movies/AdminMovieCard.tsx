@@ -1,7 +1,11 @@
+import { formatCurrency } from "@/util/formatcurrency";
 import { MovieItem } from "../../types/Movie";
 import { useNavigate } from "react-router-dom";
 
-const MovieCard: React.FC<{ movie: MovieItem; handleDeleteClick: () => void }> = ({ movie, handleDeleteClick }) => {
+const AdminMovieCard: React.FC<{
+  movie: MovieItem;
+  handleDeleteClick: () => void;
+}> = ({ movie, handleDeleteClick }) => {
   const navigate = useNavigate();
 
   const handleEditClick = () => {
@@ -9,28 +13,37 @@ const MovieCard: React.FC<{ movie: MovieItem; handleDeleteClick: () => void }> =
   };
 
   return (
-    <div className="flex flex-col justify-between items-center h-80 w-50 mx-auto text-charcoal-800 bg-gray-200 cursor-pointer rounded-md shadow-charcoal-800/50 shadow-[8px_8px_10px_-3px_rgba(0,0,0,0.3)] dark:shadow-gray-400/50">
+    <div className="grid grid-cols-12 items-center h-20 w-full text-charcoal-800 text-xs bg-gray-200 cursor-pointer my-0.25">
       <img
         src={`/movie_placeholder.png`}
         alt="Movie Poster"
-        className="h-40 w-full rounded-t-md mt-0"
+        className="h-20 w-20"
       />
-      <h1 className="font-semibold mt-4 mb-2 text-charcoal-800 text-">
-        {movie.title}
-      </h1>
-      <p className="text-xs text-center px-2 line-clamp-3">
+      <p className="text-charcoal-800">{movie.title}</p>
+      <p className="text-xs text-start px-2 line-clamp-3 col-span-2">
         {movie.description}
       </p>
-      <p className="text-xs font-bold">{movie.rating.replace(/_/g, "-")}</p>
-      <div className="flex gap-1">
+      <p>{movie.rating.replace(/_/g, "-")}</p>
+      <p>{movie.releaseYear}</p>
+      <p>{movie.language}</p>
+      <p>{movie.originalLanguage || "N/A" }</p>
+      <p>{formatCurrency(movie.rentalRate)}</p>
+      <p>{movie.length}</p>
+      <ul>
+        {movie.categories.map((c) => (
+          <li key={c}>{c}</li>
+        ))}
+      </ul>
+
+      <div className="flex flex-col justify-around items-center">
         <button
-          className="bg-green-500 hover:bg-green-800 text-charcoal-800 text-xs px-2 py-1 mx-auto mb-4 w-20 cursor-pointer rounded-sm"
+          className="bg-green-500 hover:bg-green-800 text-charcoal-800 cursor-pointer p-1 w-15 m-1 rounded-sm"
           onClick={handleEditClick}
         >
           Edit
         </button>
         <button
-          className="bg-red-400 hover:bg-red-500 text-charcoal-800 text-xs px-2 py-1 mx-auto mb-4 w-20 cursor-pointer rounded-sm"
+          className="bg-red-400 hover:bg-red-500 text-charcoal-800 cursor-pointer p-1 w-15 m-1 rounded-sm"
           onClick={handleDeleteClick}
         >
           Delete
@@ -40,4 +53,4 @@ const MovieCard: React.FC<{ movie: MovieItem; handleDeleteClick: () => void }> =
   );
 };
 
-export default MovieCard;
+export default AdminMovieCard;

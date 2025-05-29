@@ -97,6 +97,7 @@ const MovieList: React.FC<Props> = ({
               </li>
             ))}
           </ul>
+          
           {isMobile ? (
             hasMore ? (
               <div

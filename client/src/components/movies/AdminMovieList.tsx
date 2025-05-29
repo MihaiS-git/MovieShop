@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import MoviesPagination from "./MoviesPagination";
 import AdminMovieCard from "./AdminMovieCard";
 import MovieListFiltersBlock from "../movie/MovieListFiltersBlock";
+import AdminMobileMovieCard from "./AdminMobileMovieCard";
 
 type Props = {
   movies: MovieItem[];
@@ -57,7 +58,7 @@ const MovieList: React.FC<Props> = ({
           loadMore();
         }
       },
-      { threshold: 1 }
+      { threshold: 1.0 }
     );
 
     const ref = loaderRef.current;
@@ -69,7 +70,7 @@ const MovieList: React.FC<Props> = ({
   }, [isMobile, hasMore, loadMore]);
 
   return (
-    <div className="flex flex-col justify-around align-middle text-center">
+    <div className="flex flex-col justify-around align-middle text-center px-4">
       <div className="w-full h-full text-red-500 dark:text-charcoal-800 flex flex-col pb-4 items-center">
         <h1 className="bg-charcoal-800 dark:bg-red-500 text-base lg:text-lg text-center w-50 p-2 rounded-2xl">
           Edit Movies
@@ -85,15 +86,26 @@ const MovieList: React.FC<Props> = ({
         categoryFilter={categoryFilter}
         setCategoryFilter={setCategoryFilter}
       />
-      {movies.length > 0 ? (
+      {movies.length === 0 ? (
+        <p className="h-screen pt-24 text-2xl">
+          No movies match selected filters.
+        </p>
+      ) : (
         <>
-          <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+          <ul className="flex flex-col">
             {movies?.map((movie) => (
               <li key={movie.id} className="px-0">
-                <AdminMovieCard
-                  movie={movie}
-                  handleDeleteClick={() => handleDeleteClick(movie.id)}
-                />
+                {isMobile ? (
+                  <AdminMobileMovieCard
+                    movie={movie}
+                    handleDeleteClick={() => handleDeleteClick(movie.id)}
+                  />
+                ) : (
+                  <AdminMovieCard
+                    movie={movie}
+                    handleDeleteClick={() => handleDeleteClick(movie.id)}
+                  />
+                )}
               </li>
             ))}
           </ul>
@@ -140,10 +152,6 @@ const MovieList: React.FC<Props> = ({
             />
           )}
         </>
-      ) : (
-        <p className="h-screen pt-24 text-2xl">
-          No movies match selected filters.
-        </p>
       )}
     </div>
   );

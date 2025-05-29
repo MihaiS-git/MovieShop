@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import MovieList from "../components/movies/MovieList";
-import { useGetMoviesQuery } from "../features/movies/movieApi";
-import PageContent from "../PageContent";
+import MovieList from "../../components/movies/MovieList";
+import { useGetMoviesQuery } from "../../features/movies/movieApi";
+import PageContent from "../../PageContent";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { MovieItem } from "@/types/Movie";
 

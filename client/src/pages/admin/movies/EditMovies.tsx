@@ -12,6 +12,7 @@ import AdminMovieList from "@/components/movies/AdminMovieList";
 const EditMovies = () => {
   const limit = 16;
   const isMobile = useIsMobile();
+
   const [deleteMovie] = useDeleteMovieByIdMutation();
 
   const [page, setPage] = useState(1);
@@ -34,9 +35,13 @@ const EditMovies = () => {
     categoryFilter,
   });
   const totalCount = data?.totalCount || 0;
-
   const totalPages = Math.ceil(totalCount / limit);
   const hasMore = page < totalPages;
+
+  useEffect(() => {
+    setResetFilters(true);
+    setPage(1);
+  }, [orderBy, ratingFilter, yearFilter, categoryFilter]);
 
   useEffect(() => {
     if (!data) return;
@@ -73,10 +78,14 @@ const EditMovies = () => {
   };
 
   const loadMore = useCallback(() => {
-    if (!isFetching && hasMore) {
-      setPage((prev) => prev + 1);
+    if (!isFetching && hasMore && !isLoading && !resetFilters) {
+      setPage((prev) => {
+        // Avoid setting the same page again
+        const nextPage = prev + 1;
+        return nextPage <= totalPages ? nextPage : prev;
+      });
     }
-  }, [isFetching, hasMore]);
+  }, [isFetching, hasMore, isLoading, totalPages, resetFilters]);
 
   const handleDeleteClick = async (movieId: number) => {
     try {
