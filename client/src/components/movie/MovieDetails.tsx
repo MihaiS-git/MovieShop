@@ -1,6 +1,5 @@
 import { Movie } from "@/types/Movie";
 import { formatCurrency } from "@/util/formatcurrency";
-import { formatDate } from "@/util/formatDate";
 import React from "react";
 
 interface MovieDetailProps {
@@ -8,14 +7,25 @@ interface MovieDetailProps {
 }
 
 const MovieDetails: React.FC<MovieDetailProps> = ({ movie }) => {
+  console.log(movie);
+
   return (
     <div className="min-h-screen bg-red-500 dark:bg-charcoal-800 text-charcoal-800 dark:text-red-500 flex flex-col items-center gap-4">
+      <h1 className="text-gold-500 text-2xl font-bold mt-2">{movie.title}</h1>
       <img
         src="/movie_placeholder.png"
         alt="Movie Poster"
         className="h-100 w-80 rounded-2xl shadow-red-800 dark:shadow-gold-500/50 shadow-[8px_8px_10px_-3px_rgba(0,0,0,0.3)]"
       />
-      <h1 className="text-gold-500 text-2xl font-bold mt-2">{movie.title}</h1>
+      <ul className="flex flex-row w-full justify-center items-center mt-4">
+        {movie.categories.map((category) => (
+          <li key={category}>
+            <span className="m-0.5 py-2 px-8 bg-charcoal-800 text-red-500 dark:bg-red-500 dark:text-charcoal-800 text-xs rounded-2xl">
+              {category}
+            </span>
+          </li>
+        ))}
+      </ul>
       <p className="text-lg">{movie.description}</p>
       <p className="text-center">
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab totam
@@ -46,7 +56,7 @@ const MovieDetails: React.FC<MovieDetailProps> = ({ movie }) => {
         </div>
         <div>
           <p className="text-center bg-gold-300 p-1 rounded-md text-xs sm:text-base">
-            Rate <br /> {formatCurrency(movie.rentalRate)}
+            Rental Rate <br /> {formatCurrency(movie.rentalRate)}
           </p>
         </div>
       </div>
@@ -57,7 +67,6 @@ const MovieDetails: React.FC<MovieDetailProps> = ({ movie }) => {
           )}
         <p>Rental duration: {movie.rentalDuration} days</p>
         <p>Replacement cost: {formatCurrency(movie.replacementCost)}</p>
-        <p>Last update: {formatDate(movie.lastUpdate)}</p>
       </div>
     </div>
   );

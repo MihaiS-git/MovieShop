@@ -81,6 +81,7 @@ export interface Movie {
   replacementCost: number;
   rating: Rating;
   lastUpdate: string;
+  categories: string[];
 }
 
 export interface MovieItem {
