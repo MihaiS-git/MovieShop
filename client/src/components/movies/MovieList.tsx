@@ -3,73 +3,25 @@ import { MovieItem } from "../../types/Movie";
 
 import MovieCard from "./MovieCard";
 import MoviesPagination from "./MoviesPagination";
-import { useEffect, useRef } from "react";
 import MovieListFiltersBlock from "../movie/MovieListFiltersBlock";
+import { MovieFilters, MoviePagination } from "@/types/MovieFilters";
+import useInfiniteScroll from "@/hooks/useInfiniteScroll";
 
 type Props = {
-  totalPages: number;
-  page: number;
-  handleNextPage: () => void;
-  handlePrevPage: () => void;
-  onPageChange: (pageNo: number) => void;
-  hasMore: boolean;
-  loadMore: () => void;
-  orderBy: string;
-  setOrderBy: (order: string) => void;
-  ratingFilter: string;
-  setRatingFilter: (rating: string) => void;
-  yearFilter: number;
-  setYearFilter: (year: number) => void;
-  categoryFilter: string;
-  setCategoryFilter: (category: string) => void;
-  searchTerm: string;
-  handleSearchTermChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  moviePagination: MoviePagination;
+  movieFilters: MovieFilters;
   movies: MovieItem[];
 };
 
 const MovieList: React.FC<Props> = ({
-  totalPages,
-  page,
-  handleNextPage,
-  handlePrevPage,
-  onPageChange,
-  hasMore,
-  loadMore,
-  orderBy,
-  setOrderBy,
-  ratingFilter,
-  setRatingFilter,
-  yearFilter,
-  setYearFilter,
-  categoryFilter,
-  setCategoryFilter,
-  searchTerm,
-  handleSearchTermChange,
+  moviePagination,
+  movieFilters,
   movies,
 }) => {
   const isMobile = useIsMobile();
-  const loaderRef = useRef<HTMLDivElement>(null);
+  const { hasMore, loadMore } = moviePagination;
 
-  useEffect(() => {
-    if (!isMobile || !hasMore) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          // Debounced load more
-          loadMore();
-        }
-      },
-      { threshold: 1.0 }
-    );
-
-    const ref = loaderRef.current;
-    if (ref) observer.observe(ref);
-
-    return () => {
-      if (ref) observer.unobserve(ref);
-    };
-  }, [isMobile, hasMore, loadMore]);
+  const loaderRef = useInfiniteScroll(loadMore, hasMore);
 
   return (
     <div className="flex flex-col justify-around align-middle text-center">
@@ -77,18 +29,7 @@ const MovieList: React.FC<Props> = ({
         Available Movies
       </h1>
 
-      <MovieListFiltersBlock
-        orderBy={orderBy}
-        setOrderBy={setOrderBy}
-        ratingFilter={ratingFilter}
-        setRatingFilter={setRatingFilter}
-        yearFilter={yearFilter}
-        setYearFilter={setYearFilter}
-        categoryFilter={categoryFilter}
-        setCategoryFilter={setCategoryFilter}
-        searchTerm={searchTerm}
-        handleSearchTermChange={handleSearchTermChange}
-      />
+      <MovieListFiltersBlock movieFilters={movieFilters} />
 
       {movies.length === 0 ? (
         <p className="h-screen pt-24 text-2xl">
@@ -134,13 +75,7 @@ const MovieList: React.FC<Props> = ({
               </div>
             )
           ) : (
-            <MoviesPagination
-              totalPages={totalPages}
-              page={page}
-              handleNextPage={handleNextPage}
-              handlePrevPage={handlePrevPage}
-              onPageChange={onPageChange}
-            />
+            <MoviesPagination moviePagination={moviePagination} />
           )}
         </>
       )}

@@ -4,6 +4,7 @@ import usePaginatedMovies from "@/hooks/usePaginatedMovies";
 
 const MovieListPage = () => {
   const {
+    movies,
     totalPages,
     page,
     handleNextPage,
@@ -19,11 +20,10 @@ const MovieListPage = () => {
     setYearFilter,
     categoryFilter,
     setCategoryFilter,
-    movies,
-    isLoading,
-    error,
     searchTerm,
     handleSearchTermChange,
+    isLoading,
+    error,
   } = usePaginatedMovies();
 
   if (isLoading && page == 1) return <p>Loading...</p>;
@@ -32,23 +32,27 @@ const MovieListPage = () => {
   return (
     <PageContent className="flex flex-col items-center justify-center mx-auto px-6 py-24 w-full h-min-screen">
       <MovieList
-        totalPages={totalPages}
-        page={page}
-        handleNextPage={handleNextPage}
-        handlePrevPage={handlePrevPage}
-        onPageChange={onPageChange}
-        hasMore={hasMore}
-        loadMore={loadMore}
-        orderBy={orderBy}
-        setOrderBy={setOrderBy}
-        ratingFilter={ratingFilter}
-        setRatingFilter={setRatingFilter}
-        yearFilter={yearFilter}
-        setYearFilter={setYearFilter}
-        categoryFilter={categoryFilter}
-        setCategoryFilter={setCategoryFilter}
-        searchTerm={searchTerm}
-        handleSearchTermChange={handleSearchTermChange}
+        moviePagination={{
+          totalPages,
+          page,
+          handleNextPage,
+          handlePrevPage,
+          onPageChange,
+          hasMore,
+          loadMore,
+        }}
+        movieFilters={{
+          orderBy,
+          setOrderBy,
+          ratingFilter,
+          setRatingFilter,
+          yearFilter,
+          setYearFilter,
+          categoryFilter,
+          setCategoryFilter,
+          searchTerm,
+          handleSearchTermChange,
+        }}
         movies={movies}
       />
     </PageContent>

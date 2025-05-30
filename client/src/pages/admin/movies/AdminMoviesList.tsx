@@ -4,7 +4,7 @@ import PageContent from "@/PageContent";
 import AdminMovieList from "@/components/movies/AdminMovieList";
 import usePaginatedMovies from "@/hooks/usePaginatedMovies";
 
-const EditMovies = () => {
+const AdminMoviesList = () => {
   const {
     totalPages,
     page,
@@ -24,14 +24,14 @@ const EditMovies = () => {
     movies,
     isLoading,
     error,
-     searchTerm,
+    searchTerm,
     handleSearchTermChange,
     setMovies,
   } = usePaginatedMovies();
 
   const [deleteMovie] = useDeleteMovieByIdMutation();
 
-  const handleDeleteClick = async (movieId: number) => {
+  const handleDelete = async (movieId: number) => {
     try {
       await deleteMovie(movieId);
       setMovies((prev) => prev.filter((m) => m.id !== movieId));
@@ -46,28 +46,32 @@ const EditMovies = () => {
   return (
     <PageContent className="flex flex-col items-center justify-center pt-4 pb-24 w-full">
       <AdminMovieList
+        moviePagination={{
+          totalPages,
+          page,
+          handleNextPage,
+          handlePrevPage,
+          onPageChange,
+          hasMore,
+          loadMore,
+        }}
+        movieFilters={{
+          orderBy,
+          setOrderBy,
+          ratingFilter,
+          setRatingFilter,
+          yearFilter,
+          setYearFilter,
+          categoryFilter,
+          setCategoryFilter,
+          searchTerm,
+          handleSearchTermChange,
+        }}
         movies={movies}
-        totalPages={totalPages}
-        page={page}
-        handleNextPage={handleNextPage}
-        handlePrevPage={handlePrevPage}
-        onPageChange={onPageChange}
-        hasMore={hasMore}
-        loadMore={loadMore}
-        handleDeleteClick={handleDeleteClick}
-        orderBy={orderBy}
-        setOrderBy={setOrderBy}
-        ratingFilter={ratingFilter}
-        setRatingFilter={setRatingFilter}
-        yearFilter={yearFilter}
-        setYearFilter={setYearFilter}
-        categoryFilter={categoryFilter}
-        setCategoryFilter={setCategoryFilter}
-        searchTerm={searchTerm}
-        handleSearchTermChange={handleSearchTermChange}
+        handleDelete={handleDelete}
       />
     </PageContent>
   );
 };
 
-export default EditMovies;
+export default AdminMoviesList;

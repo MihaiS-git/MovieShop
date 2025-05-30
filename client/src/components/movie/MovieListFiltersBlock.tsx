@@ -1,30 +1,12 @@
 import { CATEGORIES, RATING, YEARS } from "@/types/Movie";
+import { MovieFilters } from "@/types/MovieFilters";
 
 type MovieListFiltersBlockProps = {
-  orderBy: string;
-  setOrderBy: (value: string) => void;
-  ratingFilter: string;
-  setRatingFilter: (value: string) => void;
-  yearFilter: number;
-  setYearFilter: (value: number) => void;
-  categoryFilter: string;
-  setCategoryFilter: (category: string) => void;
-  searchTerm: string;
-  handleSearchTermChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  movieFilters: MovieFilters;
 };
 
-const MovieListFiltersBlock = ({
-  orderBy,
-  setOrderBy,
-  ratingFilter,
-  setRatingFilter,
-  yearFilter,
-  setYearFilter,
-  categoryFilter,
-  setCategoryFilter,
-  searchTerm,
-  handleSearchTermChange,
-}: MovieListFiltersBlockProps) => {
+const MovieListFiltersBlock = ({movieFilters} : MovieListFiltersBlockProps) => {
+  const {orderBy, setOrderBy, ratingFilter, setRatingFilter, yearFilter, setYearFilter, categoryFilter, setCategoryFilter, searchTerm, handleSearchTermChange} = movieFilters;
   return (
     <div className="w-full mb-4 rounded-lg bg-charcoal-800 text-red-500 dark:bg-red-500 dark:text-charcoal-800 text-sm">
       

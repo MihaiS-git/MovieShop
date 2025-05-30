@@ -8,22 +8,15 @@ import {
     PaginationNext,
     PaginationPrevious,
   } from "../ui/pagination";
+import { MoviePagination } from "@/types/MovieFilters";
   
   type Props = {
-    totalPages: number;
-    page: number;
-    handleNextPage: () => void;
-    handlePrevPage: () => void;
-    onPageChange: (pageNo: number) => void;
+    moviePagination: MoviePagination
   };
   
-  const MoviesPagination: React.FC<Props> = ({
-    totalPages,
-    page,
-    handleNextPage,
-    handlePrevPage,
-    onPageChange,
-  }) => {
+  const MoviesPagination: React.FC<Props> = ({ moviePagination }) => {
+    const { page, totalPages, onPageChange, handlePrevPage, handleNextPage } = moviePagination;
+  
     const getPageNumbers = () => {
       const pages = new Set<number>();
   

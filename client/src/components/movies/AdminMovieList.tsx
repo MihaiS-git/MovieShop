@@ -1,78 +1,30 @@
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { MovieItem } from "../../types/Movie";
-import { useEffect, useRef } from "react";
 
 import MoviesPagination from "./MoviesPagination";
 import AdminMovieCard from "./AdminMovieCard";
 import MovieListFiltersBlock from "../movie/MovieListFiltersBlock";
 import AdminMobileMovieCard from "./AdminMobileMovieCard";
+import { MovieFilters, MoviePagination } from "@/types/MovieFilters";
+import useInfiniteScroll from "@/hooks/useInfiniteScroll";
 
 type Props = {
+  moviePagination: MoviePagination;
+  movieFilters: MovieFilters;
   movies: MovieItem[];
-  totalPages: number;
-  page: number;
-  handleNextPage: () => void;
-  handlePrevPage: () => void;
-  onPageChange: (pageNo: number) => void;
-  hasMore: boolean;
-  loadMore: () => void;
-  handleDeleteClick: (id: number) => void;
-  orderBy: string;
-  setOrderBy: (order: string) => void;
-  ratingFilter: string;
-  setRatingFilter: (rating: string) => void;
-  yearFilter: number;
-  setYearFilter: (year: number) => void;
-  categoryFilter: string;
-  setCategoryFilter: (category: string) => void;  
-  searchTerm: string;
-  handleSearchTermChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
- 
+  handleDelete: (id: number) => void;
 };
 
 const MovieList: React.FC<Props> = ({
+  moviePagination,
+  movieFilters,
   movies,
-  totalPages,
-  page,
-  handleNextPage,
-  handlePrevPage,
-  onPageChange,
-  hasMore,
-  loadMore,
-  handleDeleteClick,
-  orderBy,
-  setOrderBy,
-  ratingFilter,
-  setRatingFilter,
-  yearFilter,
-  setYearFilter,
-  categoryFilter,
-  setCategoryFilter,
-    searchTerm,
-  handleSearchTermChange,
+  handleDelete,
 }) => {
   const isMobile = useIsMobile();
-  const loaderRef = useRef<HTMLDivElement>(null);
+  const { hasMore, loadMore } = moviePagination;
 
-  useEffect(() => {
-    if (!isMobile || !hasMore) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          loadMore();
-        }
-      },
-      { threshold: 1.0 }
-    );
-
-    const ref = loaderRef.current;
-    if (ref) observer.observe(ref);
-
-    return () => {
-      if (ref) observer.unobserve(ref);
-    };
-  }, [isMobile, hasMore, loadMore]);
+  const loaderRef = useInfiniteScroll(loadMore, hasMore);
 
   return (
     <div className="flex flex-col justify-around align-middle text-center px-4">
@@ -81,18 +33,7 @@ const MovieList: React.FC<Props> = ({
           Edit Movies
         </h1>
       </div>
-      <MovieListFiltersBlock
-        orderBy={orderBy}
-        setOrderBy={setOrderBy}
-        ratingFilter={ratingFilter}
-        setRatingFilter={setRatingFilter}
-        yearFilter={yearFilter}
-        setYearFilter={setYearFilter}
-        categoryFilter={categoryFilter}
-        setCategoryFilter={setCategoryFilter}
-                searchTerm={searchTerm}
-        handleSearchTermChange={handleSearchTermChange}
-      />
+      <MovieListFiltersBlock movieFilters={movieFilters} />
       {movies.length === 0 ? (
         <p className="h-screen pt-24 text-2xl">
           No movies match selected filters.
@@ -131,12 +72,12 @@ const MovieList: React.FC<Props> = ({
                 {isMobile ? (
                   <AdminMobileMovieCard
                     movie={movie}
-                    handleDeleteClick={() => handleDeleteClick(movie.id)}
+                    handleDeleteClick={() => handleDelete(movie.id)}
                   />
                 ) : (
                   <AdminMovieCard
                     movie={movie}
-                    handleDeleteClick={() => handleDeleteClick(movie.id)}
+                    handleDeleteClick={() => handleDelete(movie.id)}
                   />
                 )}
               </li>
@@ -176,13 +117,7 @@ const MovieList: React.FC<Props> = ({
               </div>
             )
           ) : (
-            <MoviesPagination
-              totalPages={totalPages}
-              page={page}
-              handleNextPage={handleNextPage}
-              handlePrevPage={handlePrevPage}
-              onPageChange={onPageChange}
-            />
+            <MoviesPagination moviePagination={moviePagination} />
           )}
         </>
       )}
