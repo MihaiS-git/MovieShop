@@ -22,7 +22,7 @@ const MovieList: React.FC<Props> = ({
   handleDelete,
 }) => {
   const isMobile = useIsMobile();
-  const { hasMore, loadMore } = moviePagination;
+  const { hasMore, loadMore, totalPages } = moviePagination;
 
   const loaderRef = useInfiniteScroll(loadMore, hasMore);
 
@@ -117,7 +117,9 @@ const MovieList: React.FC<Props> = ({
               </div>
             )
           ) : (
-            <MoviesPagination moviePagination={moviePagination} />
+            totalPages > 1 && (
+              <MoviesPagination moviePagination={moviePagination} />
+            )
           )}
         </>
       )}

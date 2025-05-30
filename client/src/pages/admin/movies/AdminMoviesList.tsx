@@ -27,6 +27,7 @@ const AdminMoviesList = () => {
     searchTerm,
     handleSearchTermChange,
     setMovies,
+    resetAllFilters
   } = usePaginatedMovies();
 
   const [deleteMovie] = useDeleteMovieByIdMutation();
@@ -66,6 +67,7 @@ const AdminMoviesList = () => {
           setCategoryFilter,
           searchTerm,
           handleSearchTermChange,
+          resetAllFilters
         }}
         movies={movies}
         handleDelete={handleDelete}

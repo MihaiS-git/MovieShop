@@ -9,6 +9,7 @@ export type MovieFilters = {
   setCategoryFilter: (category: string) => void;
   searchTerm: string;
   handleSearchTermChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  resetAllFilters: () => void;
 };
 
 export type MoviePagination = {

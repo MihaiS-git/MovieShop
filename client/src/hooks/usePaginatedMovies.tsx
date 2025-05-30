@@ -16,8 +16,6 @@ const usePaginatedMovies = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [debounceSearchTerm, setDebounceSearchTerm] = useState(searchTerm);
 
-  const [resetFilters, setResetFilters] = useState(false);
-
   const sortField = useMemo(() => getSortField(orderBy), [orderBy]);
 
   const { data, error, isLoading, isFetching } = useGetMoviesQuery({
@@ -43,7 +41,6 @@ const usePaginatedMovies = () => {
   }, [searchTerm]);
 
   useEffect(() => {
-    setResetFilters(true);
     setPage(1);
   }, [orderBy, ratingFilter, yearFilter, categoryFilter]);
 
@@ -52,9 +49,8 @@ const usePaginatedMovies = () => {
 
     const isFirstPage = page === 1;
 
-    if (resetFilters || isFirstPage) {
+    if (isFirstPage) {
       setMovies(data.movies);
-      setResetFilters(false);
     } else {
       setMovies((prev) => {
         const prevIds = new Set(prev.map((m) => m.id));
@@ -63,7 +59,16 @@ const usePaginatedMovies = () => {
         return isMobile ? [...prev, ...newMovies] : [...newMovies];
       });
     }
-  }, [data, isMobile, page, resetFilters]);
+  }, [data, isMobile, page]);
+
+  const resetAllFilters = () => {
+    setOrderBy("");
+    setRatingFilter("All");
+    setYearFilter(0);
+    setCategoryFilter("All");
+    setSearchTerm("");
+    setPage(1);
+  };
 
   const handleNextPage = () => {
     if (page < totalPages) {
@@ -82,19 +87,18 @@ const usePaginatedMovies = () => {
   };
 
   const loadMore = useCallback(() => {
-    if (!isFetching && hasMore && !isLoading && !resetFilters) {
+    if (!isFetching && hasMore && !isLoading) {
       setPage((prev) => {
         // Avoid setting the same page again
         const nextPage = prev + 1;
         return nextPage <= totalPages ? nextPage : prev;
       });
     }
-  }, [isFetching, hasMore, isLoading, totalPages, resetFilters]);
+  }, [isFetching, hasMore, isLoading, totalPages]);
 
   const handleSearchTermChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
     setPage(1);
-    setResetFilters(true);
   };
 
 
@@ -121,6 +125,7 @@ const usePaginatedMovies = () => {
     setMovies,
     searchTerm,
     handleSearchTermChange,
+    resetAllFilters
   };
 };
 

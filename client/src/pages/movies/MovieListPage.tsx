@@ -24,6 +24,7 @@ const MovieListPage = () => {
     handleSearchTermChange,
     isLoading,
     error,
+    resetAllFilters
   } = usePaginatedMovies();
 
   if (isLoading && page == 1) return <p>Loading...</p>;
@@ -52,6 +53,7 @@ const MovieListPage = () => {
           setCategoryFilter,
           searchTerm,
           handleSearchTermChange,
+          resetAllFilters
         }}
         movies={movies}
       />
