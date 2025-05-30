@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useIsMobile } from "./useIsMobile";
 import { useGetMoviesQuery } from "@/features/movies/movieApi";
 import { MovieItem } from "@/types/Movie";
@@ -16,12 +16,10 @@ const usePaginatedMovies = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [debounceSearchTerm, setDebounceSearchTerm] = useState(searchTerm);
 
-  const sortField = useMemo(() => getSortField(orderBy), [orderBy]);
-
   const { data, error, isLoading, isFetching } = useGetMoviesQuery({
     page: page - 1,
     limit,
-    orderBy: sortField === "None" ? undefined : sortField,
+    orderBy: orderBy === "None" ? undefined : orderBy,
     ratingFilter: ratingFilter === "All" ? undefined : ratingFilter,
     yearFilter: yearFilter === 0 ? undefined : yearFilter,
     categoryFilter: categoryFilter === "All" ? undefined : categoryFilter,
@@ -128,20 +126,5 @@ const usePaginatedMovies = () => {
     resetAllFilters
   };
 };
-
-function getSortField(order: string): string | undefined {
-  switch (order) {
-    case "Title Ascending":
-      return "title_asc";
-    case "Title Descending":
-      return "title_desc";
-    case "Rating Ascending":
-      return "rating_asc";
-    case "Rating Descending":
-      return "rating_desc";
-    default:
-      return undefined;
-  }
-}
 
 export default usePaginatedMovies;

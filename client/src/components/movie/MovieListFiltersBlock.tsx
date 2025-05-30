@@ -51,10 +51,10 @@ const MovieListFiltersBlock = ({
             onChange={(e) => setOrderBy(e.target.value)}
           >
             <option value="None">None</option>
-            <option value="Title Ascending">Title Ascending</option>
-            <option value="Title Descending">Title Descending</option>
-            <option value="Rating Ascending">Rating Ascending</option>
-            <option value="Rating Descending">Rating Descending</option>
+            <option value="title_asc">Title Ascending</option>
+            <option value="title_desc">Title Descending</option>
+            <option value="rating_asc">Rating Ascending</option>
+            <option value="rating_desc">Rating Descending</option>
           </select>
         </div>
 

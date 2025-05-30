@@ -25,7 +25,7 @@ export const movieApi = createApi({
           ...(orderBy ? { orderBy } : {}),
           ...(ratingFilter && ratingFilter.toLowerCase() !== "all" ? { ratingFilter } : {}),
           ...(yearFilter && yearFilter > 0 ? {yearFilter} : {}),
-          ...(categoryFilter && categoryFilter !== "All" ? {categoryFilter} : {}),
+          ...(categoryFilter && categoryFilter.toLowerCase() !== "all" ? {categoryFilter} : {}),
           ...(titleFilter?.trim() ? {titleFilter} : {}),
         },
       }),

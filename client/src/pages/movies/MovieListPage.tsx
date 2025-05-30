@@ -18,7 +18,7 @@ const MovieListPage = () => {
   const updateFilters = (newFilters: Record<string, string | number>) => {
     const params = new URLSearchParams(searchParams);
     Object.entries(newFilters).forEach(([key, value]) => {
-      if (value === "All" || value === "" || value === 0) {
+      if (value === "All" || value === "None" || value === "" || value === 0) {
         params.delete(key);
       } else {
         params.set(key, String(value));
@@ -37,11 +37,11 @@ const MovieListPage = () => {
   const { data, isLoading, error } = useGetMoviesQuery({
     page: apiPage,
     limit,
-    orderBy,
+    orderBy: orderBy === "None" ? undefined : orderBy,
     ratingFilter,
     yearFilter,
     categoryFilter,
-    titleFilter: searchTerm, // backend expects this name
+    titleFilter: searchTerm,
   });
 
   const totalCount = data?.totalCount || 0;

@@ -15,7 +15,7 @@ type Props = {
   handleDelete: (id: number) => void;
 };
 
-const MovieList: React.FC<Props> = ({
+const AdminMovieList: React.FC<Props> = ({
   moviePagination,
   movieFilters,
   movies,
@@ -125,4 +125,4 @@ const MovieList: React.FC<Props> = ({
   );
 };
 
-export default MovieList;
+export default AdminMovieList;
