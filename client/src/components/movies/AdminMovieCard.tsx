@@ -15,7 +15,7 @@ const AdminMovieCard: React.FC<{
   return (
     <>
 
-      <div className="grid grid-cols-12 items-center h-20 w-full text-charcoal-800 text-xs bg-gray-200 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-200 cursor-pointer my-0.25">
+      <div className="grid grid-cols-12 items-center h-20 w-full text-charcoal-800 text-xs bg-gray-200 dark:bg-gray-900 hover:bg-gray-300 dark:text-gray-200 dark:border-gray-200 dark:hover:bg-gray-800 cursor-pointer my-0.25">
         <img
           src={`/movie_placeholder.png`}
           alt="Movie Poster"

@@ -4,7 +4,7 @@ import PageContent from "@/PageContent";
 import AdminMovieList from "@/components/movies/AdminMovieList";
 import usePaginatedMovies from "@/hooks/usePaginatedMovies";
 
-const AdminMoviesList = () => {
+const AdminMoviesListPage = () => {
   const {
     totalPages,
     page,
@@ -76,4 +76,4 @@ const AdminMoviesList = () => {
   );
 };
 
-export default AdminMoviesList;
+export default AdminMoviesListPage;

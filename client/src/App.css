@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
 @import "tailwindcss";
-@import "tw-animate-css";
+/* @import "tw-animate-css"; */
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -143,4 +143,3 @@
     @apply bg-background text-foreground;
   }
 }
-

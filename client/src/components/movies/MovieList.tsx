@@ -39,8 +39,10 @@ const MovieList: React.FC<Props> = ({
         <>
           <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
             {movies?.map((movie: MovieItem) => (
-              <li key={movie.id} className="px-0">
-                <MovieCard movie={movie} />
+              <li key={movie.id} className="group px-0">
+                <div className="transition-transform duration-300 ease-in-out hover:-translate-y-1">
+                  <MovieCard movie={movie} />
+                </div>
               </li>
             ))}
           </ul>
