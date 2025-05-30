@@ -1,9 +1,11 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
+  --font-display: "Roboto", "sans-serif";
   /* REDS */
   --color-red-500: oklch(0.703 0.238 29);     /* FF4C4C - Cinematic Red */
   --color-red-600: oklch(0.631 0.228 29);     /* D14444 - Darker Red */
