@@ -2,13 +2,25 @@ import { Movie } from "@/types/Movie";
 import { formatCurrency } from "@/util/formatcurrency";
 import React from "react";
 import BadgeXS from "../ui/BadgeXS";
+import { useNavigate } from "react-router-dom";
 
 interface MovieDetailProps {
   movie: Movie;
 }
 
 const MovieDetails: React.FC<MovieDetailProps> = ({ movie }) => {
-  console.log(movie);
+  const navigate = useNavigate();
+
+  const handleFilterClick = (
+    filterKey: string,
+    filterValue: string | number
+  ) => {
+    const params = new URLSearchParams();
+    params.set(filterKey, String(filterValue));
+    params.set("page", "1");
+
+    navigate(`/movies?${params.toString()}`);
+  };
 
   return (
     <div className="min-h-screen bg-red-500 dark:bg-charcoal-800 text-charcoal-800 dark:text-red-500 flex flex-col items-center gap-4 mt-0 lg:mt-8">
@@ -38,14 +50,23 @@ const MovieDetails: React.FC<MovieDetailProps> = ({ movie }) => {
           <ul className="flex flex-row w-full justify-center items-center mt-4">
             {movie.categories.map((category) => (
               <li key={category}>
-                <BadgeXS element={category} />
+                <span
+                  className="m-0.5 py-2 px-8 bg-charcoal-800 text-red-500 dark:bg-red-500 dark:text-charcoal-800 hover:bg-gray-300 cursor-pointer text-xs rounded-2xl"
+                  onClick={() => handleFilterClick("category", category)}
+                >
+                  {category}
+                </span>
               </li>
             ))}
           </ul>
 
           <div className="flex flex-row flex-wrap w-full justify-center items-center mt-1.5">
-            <BadgeXS element={movie.rating.replace(/_/g, "-")} />
-            <BadgeXS element={movie.releaseYear.toString()} />
+            <span className="m-0.5 py-2 px-8 bg-charcoal-800 text-red-500 dark:bg-red-500 dark:text-charcoal-800 hover:bg-gray-300 cursor-pointer text-xs rounded-2xl" onClick={() => handleFilterClick("rating", movie.rating)}>
+              {movie.rating.replace(/_/g, "-")}
+            </span>
+            <span className="m-0.5 py-2 px-8 bg-charcoal-800 text-red-500 dark:bg-red-500 dark:text-charcoal-800 hover:bg-gray-300 cursor-pointer text-xs rounded-2xl" onClick={() => handleFilterClick("year", movie.releaseYear)}>
+              {movie.releaseYear.toString()}
+            </span>
             <BadgeXS element={movie.language} />
             <BadgeXS element={`${movie.length} min`} />
             <BadgeXS element={formatCurrency(movie.rentalRate)} />
