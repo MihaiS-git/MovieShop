@@ -25,7 +25,7 @@ const MovieCard: React.FC<{ movie: MovieItem }> = ({ movie }) => {
       <h1 className="font-semibold mt-4 mb-2 text-gold-500 text-">
         {movie.title}
       </h1>
-      <p className="text-red-500 dark:text-charcoal-800 text-xs text-center px-2 pb-2 line-clamp-3">
+      <p className="text-red-500 dark:text-charcoal-800 text-xs text-center px-2 pb-2 line-clamp-4">
         {movie.description}
       </p>
       <div className="flex flex-row w-full justify-center">
