@@ -23,7 +23,7 @@ const MovieListFiltersBlock = ({
   } = movieFilters;
   return (
     <div className="w-full mb-4 rounded-lg bg-charcoal-800 text-red-500 dark:bg-red-500 dark:text-charcoal-800 text-sm">
-      <div className="w-full grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-11 p-2 gap-1 sm:gap-x-5 md:gap-x-10 md:px-12 lg:gap-x-2 lg:px-2">
+      <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-11 p-2 gap-1 sm:gap-x-5 md:gap-x-10 md:px-12 lg:gap-x-2 lg:px-2">
         <div className="flex flex-row items-center justify-start cols-span-1 xl:col-span-2 mx-auto">
           <label htmlFor="searchMovie" className="w-15 text-start">
             Search:{" "}

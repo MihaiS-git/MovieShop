@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useIsMobile } from "./useIsMobile";
 import { useGetMoviesQuery } from "@/features/movies/movieApi";
 import { MovieItem } from "@/types/Movie";
@@ -23,7 +23,8 @@ const usePaginatedMovies = () => {
     ratingFilter: ratingFilter === "All" ? undefined : ratingFilter,
     yearFilter: yearFilter === 0 ? undefined : yearFilter,
     categoryFilter: categoryFilter === "All" ? undefined : categoryFilter,
-    titleFilter: debounceSearchTerm.trim() === "" ? undefined : debounceSearchTerm.trim(),
+    titleFilter:
+      debounceSearchTerm.trim() === "" ? undefined : debounceSearchTerm.trim(),
   });
 
   const totalCount = data?.totalCount || 0;
@@ -40,23 +41,21 @@ const usePaginatedMovies = () => {
 
   useEffect(() => {
     setPage(1);
-  }, [orderBy, ratingFilter, yearFilter, categoryFilter]);
+  }, [orderBy, ratingFilter, yearFilter, categoryFilter, debounceSearchTerm]);
 
   useEffect(() => {
-    if (!data) return;
+    if (!data || !data.movies) return;
 
-    const isFirstPage = page === 1;
+    setMovies((prev) => {
+      if (page === 1) return data.movies;
 
-    if (isFirstPage) {
-      setMovies(data.movies);
-    } else {
-      setMovies((prev) => {
-        const prevIds = new Set(prev.map((m) => m.id));
-        const newMovies = data.movies.filter((m) => !prevIds.has(m.id));
-        if (newMovies.length === 0) return prev;
-        return isMobile ? [...prev, ...newMovies] : [...newMovies];
-      });
-    }
+      const prevIds = new Set(prev.map((m) => m.id));
+      const newMovies = data.movies.filter((m) => !prevIds.has(m.id));
+
+      if (newMovies.length === 0) return prev;
+
+      return isMobile ? [...prev, ...newMovies] : [...newMovies];
+    });
   }, [data, isMobile, page]);
 
   const resetAllFilters = () => {
@@ -84,21 +83,19 @@ const usePaginatedMovies = () => {
     setPage(pageNo);
   };
 
-  const loadMore = useCallback(() => {
-    if (!isFetching && hasMore && !isLoading) {
-      setPage((prev) => {
-        // Avoid setting the same page again
-        const nextPage = prev + 1;
-        return nextPage <= totalPages ? nextPage : prev;
-      });
+  const loadMore = () => {
+    // Prevent triggering while first page is still loading
+    if (page === 1 && (isLoading || isFetching)) return;
+
+    if (!isLoading && !isFetching && hasMore) {
+      setPage((prev) => prev + 1);
     }
-  }, [isFetching, hasMore, isLoading, totalPages]);
+  };
 
   const handleSearchTermChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
     setPage(1);
   };
-
 
   return {
     totalPages,
@@ -123,7 +120,7 @@ const usePaginatedMovies = () => {
     setMovies,
     searchTerm,
     handleSearchTermChange,
-    resetAllFilters
+    resetAllFilters,
   };
 };
 

@@ -2,8 +2,12 @@ import { useSearchParams } from "react-router-dom";
 import MovieList from "../../components/movies/MovieList";
 import PageContent from "../../PageContent";
 import { useGetMoviesQuery } from "@/features/movies/movieApi";
+import { useEffect, useRef, useState } from "react";
+import { MovieItem } from "@/types/Movie";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 const MovieListPage = () => {
+  const isMobile = useIsMobile();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const rawPage = parseInt(searchParams.get("page") || "1", 10);
@@ -15,6 +19,15 @@ const MovieListPage = () => {
   const categoryFilter = searchParams.get("category") || "All";
   const searchTerm = searchParams.get("searchTerm") || "";
 
+  const [movies, setMovies] = useState<MovieItem[]>([]);
+  const prevFilters = useRef({
+    orderBy,
+    ratingFilter,
+    yearFilter,
+    categoryFilter,
+    searchTerm,
+  });
+
   const updateFilters = (newFilters: Record<string, string | number>) => {
     const params = new URLSearchParams(searchParams);
     Object.entries(newFilters).forEach(([key, value]) => {
@@ -24,7 +37,7 @@ const MovieListPage = () => {
         params.set(key, String(value));
       }
     });
-    params.set("page", "1"); // reset page on filter change
+    params.set("page", "1");
     setSearchParams(params);
   };
 
@@ -44,6 +57,43 @@ const MovieListPage = () => {
     titleFilter: searchTerm,
   });
 
+  useEffect(() => {
+    const filtersChanged =
+      prevFilters.current.orderBy !== orderBy ||
+      prevFilters.current.ratingFilter !== ratingFilter ||
+      prevFilters.current.yearFilter !== yearFilter ||
+      prevFilters.current.categoryFilter !== categoryFilter ||
+      prevFilters.current.searchTerm !== searchTerm;
+
+    if (filtersChanged || rawPage === 1 || searchParams.toString() === "" || !isMobile) {
+      setMovies(data?.movies || []);
+    } else if (data?.movies) {
+      setMovies((prev: MovieItem[]) => {
+        const prevIds = new Set(prev.map((m) => m.id));
+        const newMovies = data.movies.filter((m) => !prevIds.has(m.id));
+        return [...prev, ...newMovies];
+      });
+    }
+
+    prevFilters.current = {
+      orderBy,
+      ratingFilter,
+      yearFilter,
+      categoryFilter,
+      searchTerm,
+    };
+  }, [
+    data,
+    orderBy,
+    ratingFilter,
+    yearFilter,
+    categoryFilter,
+    searchTerm,
+    rawPage,
+    searchParams,
+    isMobile,
+  ]);
+
   const totalCount = data?.totalCount || 0;
   const totalPages = Math.ceil(totalCount / limit);
   const hasMore = rawPage < totalPages;
@@ -60,7 +110,11 @@ const MovieListPage = () => {
   const handleNextPage = () => goToPage(rawPage + 1);
   const handlePrevPage = () => goToPage(rawPage > 1 ? rawPage - 1 : 1);
   const onPageChange = (newPage: number) => goToPage(newPage);
-  const resetAllFilters = () => setSearchParams(new URLSearchParams());
+  const resetAllFilters = () => {
+    const params = new URLSearchParams();
+    params.set("page", "1");
+    setSearchParams(params);
+  };
 
   if (isLoading && rawPage === 1) return <p>Loading...</p>;
   if (error) return <p>Error loading movies</p>;
@@ -90,7 +144,7 @@ const MovieListPage = () => {
           handleSearchTermChange,
           resetAllFilters,
         }}
-        movies={data?.movies || []}
+        movies={movies || []}
       />
     </PageContent>
   );

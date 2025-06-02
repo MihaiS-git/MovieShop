@@ -24,7 +24,7 @@ const MovieList: React.FC<Props> = ({
   const loaderRef = useInfiniteScroll(loadMore, hasMore);
 
   return (
-    <div className="flex flex-col justify-around align-middle text-center">
+    <div className="flex flex-col justify-around align-middle text-center w-full">
       <h1 className="font-bold text-2xl mb-4 text-charcoal-800 dark:text-gold-500">
         Available Movies
       </h1>
@@ -32,7 +32,7 @@ const MovieList: React.FC<Props> = ({
       <MovieListFiltersBlock movieFilters={movieFilters} />
 
       {movies.length === 0 ? (
-        <p className="h-screen pt-24 text-2xl">
+        <p className="h-screen pt-24 text-sm p-4">
           No movies match selected filters.
         </p>
       ) : (
@@ -52,8 +52,11 @@ const MovieList: React.FC<Props> = ({
               <div
                 ref={loaderRef}
                 className="mt-6 h-16 text-sm text-charcoal-800 flex items-center justify-center"
+                aria-busy="true"
+                aria-live="polite"
               >
                 <div role="status">
+                  <span className="sr-only">Loading more movies...</span>
                   <svg
                     aria-hidden="true"
                     className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-charcoal-800 dark:fill-red-600"
