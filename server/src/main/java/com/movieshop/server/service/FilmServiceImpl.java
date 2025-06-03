@@ -40,10 +40,10 @@ public class FilmServiceImpl implements IFilmService {
     }
 
     @Override
-    public FilmResponseDTO getFilmById(Integer id) {
+    public FilmFullResponseDTO getFilmById(Integer id) {
         Film film = filmRepository.findByIdWithAllRelations(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Film not found with id: " + id));
-        return filmMapper.toResponseDto(film);
+        return filmMapper.toFullResponseDto(film);
     }
 
     @Override

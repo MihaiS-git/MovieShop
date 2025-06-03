@@ -10,7 +10,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
-import org.springframework.data.domain.*;
 
 import java.util.*;
 
@@ -60,15 +59,6 @@ class FilmServiceImplTest {
         return film;
     }
 
-    private FilmListItemDTO sampleFilmListItemDTO() {
-        return FilmListItemDTO.builder()
-                .id(1)
-                .title("Test Movie")
-                .description("Description")
-                .rating("PG")
-                .build();
-    }
-
     private FilmResponseDTO sampleFilmDTO() {
         return FilmResponseDTO.builder()
                 .id(1)
@@ -82,6 +72,29 @@ class FilmServiceImplTest {
                 .length(120)
                 .replacementCost(Double.parseDouble("20.00"))
                 .rating(Rating.valueOf("PG"))
+                .build();
+    }
+
+    private FilmFullResponseDTO sampleFullFilmDTO() {
+        return FilmFullResponseDTO.builder()
+                .id(1)
+                .title("Test Movie")
+                .description("Description")
+                .releaseYear(2024)
+                .language("English")
+                .originalLanguage("French")
+                .rentalDuration(5)
+                .rentalRate(Double.parseDouble("3.99"))
+                .length(120)
+                .replacementCost(Double.parseDouble("20.00"))
+                .rating(Rating.valueOf("PG"))
+                .actors(List.of(
+                        ActorResponseForFilmDTO.builder()
+                                .id(1)
+                                .firstName("John")
+                                .lastName("Doe")
+                                .build()
+                ))
                 .build();
     }
 
@@ -119,12 +132,12 @@ class FilmServiceImplTest {
     @Test
     void getFilmById_success() {
         Film film = sampleFilm();
-        FilmResponseDTO dto = sampleFilmDTO();
+        FilmFullResponseDTO dto = sampleFullFilmDTO();
 
         when(filmRepository.findByIdWithAllRelations(1)).thenReturn(Optional.of(film));
-        when(filmMapper.toResponseDto(film)).thenReturn(dto);
+        when(filmMapper.toFullResponseDto(film)).thenReturn(dto);
 
-        FilmResponseDTO result = filmService.getFilmById(1);
+        FilmFullResponseDTO result = filmService.getFilmById(1);
         assertThat(result.getTitle()).isEqualTo("Test Movie");
     }
 
@@ -165,30 +178,6 @@ class FilmServiceImplTest {
         List<FilmResponseDTO> result = filmService.getAllFilms();
         assertThat(result).hasSize(1);
     }
-
-//    @Test
-//    void getAllFilmsPaginated_success() {
-//        List<FilmListItemDTO> films = List.of(sampleFilmListItemDTO());
-//        Page<FilmListItemDTO> page = new PageImpl<>(films);
-//
-//        when(filmRepository.findAllListItemFilms(any())).thenReturn(page);
-//        when(filmRepository.count()).thenReturn(1L);
-//
-//        MoviePageResponse result = filmService.getAllFilmsPaginated(0, 10, "id_asc", null, null, null, null);
-//        assertThat(result.getMovies().size()).isEqualTo(1);
-//    }
-
-//    @Test
-//    void getAllFilmsPaginated_exceptionThrown_shouldThrowResourceNotFoundException() {
-//        int page = 0;
-//        int limit = 10;
-//        Pageable pageable = PageRequest.of(page, limit, Sort.by(Sort.Direction.ASC, "id"));
-//        when(filmRepository.findAllListItemFilms(any(Pageable.class))).thenThrow(new RuntimeException("Database error"));
-//
-//        assertThatThrownBy(() -> filmService.getAllFilmsPaginated(page, limit, "id_asc", null, null, null, null))
-//                .isInstanceOf(ResourceNotFoundException.class)
-//                .hasMessageContaining("Error fetching paginated films");
-//    }
 
     @Test
     void createFilm_success() {

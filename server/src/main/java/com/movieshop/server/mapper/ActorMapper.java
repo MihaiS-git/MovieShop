@@ -4,6 +4,7 @@ import com.movieshop.server.domain.Actor;
 import com.movieshop.server.domain.Film;
 import com.movieshop.server.model.ActorRequestDTO;
 import com.movieshop.server.model.ActorResponseDTO;
+import com.movieshop.server.model.ActorResponseForFilmDTO;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -17,6 +18,16 @@ public class ActorMapper {
                 .lastName(actor.getLastName())
                 .filmIds(actor.getFilms() == null ? null :
                         actor.getFilms().stream().map(Film::getId).toList())
+                .lastUpdate(actor.getLastUpdate())
+                .build();
+    }
+
+    public ActorResponseForFilmDTO toFilmResponseDto(Actor actor) {
+        if (actor == null) return null;
+        return ActorResponseForFilmDTO.builder()
+                .id(actor.getId())
+                .firstName(actor.getFirstName())
+                .lastName(actor.getLastName())
                 .lastUpdate(actor.getLastUpdate())
                 .build();
     }

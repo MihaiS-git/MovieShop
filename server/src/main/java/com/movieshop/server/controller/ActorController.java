@@ -2,6 +2,7 @@ package com.movieshop.server.controller;
 
 import com.movieshop.server.model.ActorRequestDTO;
 import com.movieshop.server.model.ActorResponseDTO;
+import com.movieshop.server.model.ActorResponseForFilmDTO;
 import com.movieshop.server.service.IActorService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,11 @@ public class ActorController {
     @GetMapping("/{id}")
     public ResponseEntity<ActorResponseDTO> getActorById(@PathVariable Integer id) {
         return ResponseEntity.ok(actorService.getActorById(id));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<ActorResponseForFilmDTO>> searchActorsByName(@RequestParam String searchName) {
+        return ResponseEntity.ok(actorService.searchActorsByName(searchName));
     }
 
     @PostMapping

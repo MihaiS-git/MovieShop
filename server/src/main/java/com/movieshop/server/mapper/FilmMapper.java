@@ -33,6 +33,33 @@ public class FilmMapper {
                 .build();
     }
 
+    public FilmFullResponseDTO toFullResponseDto(Film film) {
+        if (film == null) {
+            return null;
+        }
+        return FilmFullResponseDTO.builder()
+                .id(film.getId())
+                .title(film.getTitle())
+                .description(film.getDescription())
+                .releaseYear(film.getReleaseYear())
+                .language(film.getLanguage() == null ? null :
+                        film.getLanguage().getName())
+                .originalLanguage(film.getOriginalLanguage() == null ? null :
+                        film.getOriginalLanguage().getName())
+                .rentalDuration(film.getRentalDuration())
+                .rentalRate(film.getRentalRate())
+                .length(film.getLength())
+                .replacementCost(film.getReplacementCost())
+                .rating(film.getRating())
+                .actors(film.getActors().stream().map(actor -> ActorResponseForFilmDTO.builder()
+                        .id(actor.getId())
+                        .firstName(actor.getFirstName())
+                        .lastName(actor.getLastName())
+                        .build()).toList())
+                .categories(film.getCategories().stream().map(Category::getName).toList())
+                .build();
+    }
+
     public FilmUpdateResponseDTO toUpdateResponseDto(Film film) {
         if (film == null) {
             return null;

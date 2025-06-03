@@ -1,29 +1,14 @@
-import { AppDispatch } from "../app/store";
+import { ErrorResponse } from "react-router-dom";
 import { login } from "../features/auth/authSlice";
-
-// Interfaces for error handling and response formatting
-interface ErrorResponse {
-  status: number;
-  data: string;
-}
+import { ApiRequestParams } from "@/types/ApiRequestParams";
 
 interface RefreshResponse {
   token: string;
 }
 
-// Params for API requests
-interface ApiRequestParams {
-  url: string;
-  method?: string;
-  data?: Record<string, unknown>; // Body data
-  params?: Record<string, string | number>; // URL query params
-  requiresAuth?: boolean; // Whether authentication is required
-  dispatch?: AppDispatch; // Dispatch for updating Redux state
-}
-
 // Standard API response structure
-interface ApiResponse {
-  data?: unknown;
+interface ApiResponse<T = unknown> {
+  data?: T;
   error?: ErrorResponse;
 }
 
@@ -38,7 +23,12 @@ const fetchApi = async ({
   requiresAuth = true,
   dispatch,
 }: ApiRequestParams): Promise<ApiResponse> => {
-  const auth = JSON.parse(localStorage.getItem("auth") || "{}");
+  let auth;
+  try {
+    auth = JSON.parse(localStorage.getItem("auth") || "{}");
+  } catch {
+    auth = {};
+  }
   const headers: HeadersInit = {
     "Content-Type": "application/json",
   };
@@ -49,7 +39,12 @@ const fetchApi = async ({
   }
 
   const queryString = params
-    ? `?${new URLSearchParams(params as Record<string, string>).toString()}`
+    ? `?${new URLSearchParams(
+        Object.entries(params).reduce((acc, [key, value]) => {
+          acc[key] = String(value);
+          return acc;
+        }, {} as Record<string, string>)
+      ).toString()}`
     : "";
   const requestUrl = `${BASE_URL}${url}${queryString}`;
 
@@ -64,15 +59,24 @@ const fetchApi = async ({
     if (!response.ok) {
       if (response.status === 401) {
         // Handle token expiration or invalidation
-        return handleUnauthorizedError(response, { url, method, data, params, dispatch });
+        return handleUnauthorizedError(response, {
+          url,
+          method,
+          data,
+          params,
+          dispatch,
+        });
       }
-      throw new Error("Request failed");
+      const errorText = await response.text();
+      return {
+        data: { status: response.status, data: errorText || "Request failed" },
+      };
     }
 
     return { data: await response.json() };
   } catch (error) {
     const err = error as { status?: number; message: string };
-    return { error: { status: err.status || 500, data: err.message } };
+    return { data: { status: err.status || 500, data: err.message } };
   }
 };
 
@@ -109,7 +113,14 @@ const handleUnauthorizedError = async (
     dispatch?.(login(updatedAuth)); // Make sure `login` updates the state
 
     // Retry the original request with the new token
-    return fetchApi({ url, method, data, params, dispatch });
+    return fetchApi({
+      url,
+      method,
+      data,
+      params,
+      dispatch,
+      requiresAuth: true,
+    });
   } catch (error) {
     console.error("Token refresh failed:", error);
     localStorage.clear();

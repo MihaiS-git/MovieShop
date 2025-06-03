@@ -5,7 +5,7 @@ import com.movieshop.server.model.*;
 import java.util.List;
 
 public interface IFilmService {
-    FilmResponseDTO getFilmById(Integer id);
+    FilmFullResponseDTO getFilmById(Integer id);
 
     FilmResponseDTO getFilmByTitle(String title);
 

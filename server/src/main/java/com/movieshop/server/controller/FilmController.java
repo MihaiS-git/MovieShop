@@ -37,7 +37,7 @@ public class FilmController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FilmResponseDTO> getFilmById(@PathVariable Integer id) {
+    public ResponseEntity<FilmFullResponseDTO> getFilmById(@PathVariable Integer id) {
         return ResponseEntity.ok(filmService.getFilmById(id));
     }
 

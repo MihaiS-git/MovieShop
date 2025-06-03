@@ -6,6 +6,7 @@ import com.movieshop.server.exception.ResourceNotFoundException;
 import com.movieshop.server.mapper.ActorMapper;
 import com.movieshop.server.model.ActorRequestDTO;
 import com.movieshop.server.model.ActorResponseDTO;
+import com.movieshop.server.model.ActorResponseForFilmDTO;
 import com.movieshop.server.repository.ActorRepository;
 import com.movieshop.server.repository.FilmRepository;
 import org.springframework.stereotype.Service;
@@ -43,6 +44,19 @@ public class ActorServiceImpl implements IActorService {
     public ActorResponseDTO getActorById(Integer id) {
         Actor actor = getActorByIdOrElseThrow(id);
         return actorMapper.toResponseDto(actor);
+    }
+
+    @Override
+    public List<ActorResponseForFilmDTO> searchActorsByName(String searchName) {
+        List<Actor> actors = actorRepository.searchByName(searchName);
+        if (actors.isEmpty()) {
+            throw new ResourceNotFoundException("No actors found with name: " + searchName);
+        }
+        List<ActorResponseForFilmDTO> actorResponses = actors.stream()
+                .limit(3)
+                .map(actorMapper::toFilmResponseDto)
+                .toList();
+         return actorResponses;
     }
 
     @Override
