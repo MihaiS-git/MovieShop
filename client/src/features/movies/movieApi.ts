@@ -89,7 +89,7 @@ export const movieApi = createApi({
       query: ({ id, category }): ApiRequestParams => ({
         url: `/films/${id}/categories`,
         method: "POST",
-        data: { category },
+        data: {category},  
       }),
       invalidatesTags: (_result, _error, { id }) => [{ type: "Movie", id }],
     }),
@@ -105,7 +105,7 @@ export const movieApi = createApi({
         query: ({ id, actorId }): ApiRequestParams => ({
           url: `/films/${id}/actors`,
           method: "POST",
-          data: { actorId },
+          data: {actorId},
         }),
         invalidatesTags: (_result, _error, { id }) => [{ type: "Movie", id }],
       }

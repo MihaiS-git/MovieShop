@@ -1,11 +1,15 @@
 package com.movieshop.server.service;
 
 import com.movieshop.server.FilmSpecifications;
+import com.movieshop.server.domain.Actor;
+import com.movieshop.server.domain.Category;
 import com.movieshop.server.domain.Film;
 import com.movieshop.server.domain.Language;
 import com.movieshop.server.exception.ResourceNotFoundException;
 import com.movieshop.server.mapper.FilmMapper;
 import com.movieshop.server.model.*;
+import com.movieshop.server.repository.ActorRepository;
+import com.movieshop.server.repository.CategoryRepository;
 import com.movieshop.server.repository.FilmRepository;
 import com.movieshop.server.repository.LanguageRepository;
 import jakarta.transaction.Transactional;
@@ -28,15 +32,19 @@ public class FilmServiceImpl implements IFilmService {
     private final FilmRepository filmRepository;
     private final FilmMapper filmMapper;
     private final LanguageRepository languageRepository;
+    private final CategoryRepository categoryRepository;
+    private final ActorRepository actorRepository;
 
     public FilmServiceImpl(
             FilmRepository filmRepository,
             FilmMapper filmMapper,
-            LanguageRepository languageRepository
+            LanguageRepository languageRepository, CategoryRepository categoryRepository, ActorRepository actorRepository
     ) {
         this.filmRepository = filmRepository;
         this.filmMapper = filmMapper;
         this.languageRepository = languageRepository;
+        this.categoryRepository = categoryRepository;
+        this.actorRepository = actorRepository;
     }
 
     @Override
@@ -172,6 +180,62 @@ public class FilmServiceImpl implements IFilmService {
         return films.stream()
                 .map(filmMapper::toSearchResponseDto)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    @Override
+    public FilmFullResponseDTO addCategoryToFilm(Integer id, AddCategoryToFilmRequestDTO categoryDTO) {
+        Film existentFilm = filmRepository.findByIdWithAllRelations(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Film not found with id: " + id));
+        Category categoryToAdd = categoryRepository.findByNameIgnoreCase(categoryDTO.getCategory())
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with name: " + categoryDTO.getCategory()));
+        existentFilm.addCategory(categoryToAdd);
+        Film updatedFilm = filmRepository.save(existentFilm);
+        return filmMapper.toFullResponseDto(updatedFilm);
+    }
+
+    @Transactional
+    @Override
+    public FilmFullResponseDTO removeCategoryFromFilm(Integer id, String category) {
+        Film existentFilm = filmRepository.findByIdWithAllRelations(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Film not found with id: " + id));
+        Category categoryToRemove = categoryRepository.findByNameIgnoreCase(category)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with name: " + category));
+        if (existentFilm.getCategories().contains(categoryToRemove)) {
+            existentFilm.removeCategory(categoryToRemove);
+            Film updatedFilm = filmRepository.save(existentFilm);
+            return filmMapper.toFullResponseDto(updatedFilm);
+        } else {
+            throw new ResourceNotFoundException("Category not found in film with id: " + id);
+        }
+    }
+
+    @Transactional
+    @Override
+    public FilmFullResponseDTO addActorToFilm(Integer id, AddActorToFilmRequestDTO actorDTO) {
+        Film existentFilm = filmRepository.findByIdWithAllRelations(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Film not found with id: " + id));
+        Actor actorToAdd = actorRepository.findById(actorDTO.getActorId())
+                .orElseThrow(() -> new ResourceNotFoundException("Actor not found with id: " + actorDTO.getActorId()));
+        existentFilm.addActor(actorToAdd);
+        Film updatedFilm = filmRepository.save(existentFilm);
+        return filmMapper.toFullResponseDto(updatedFilm);
+    }
+
+    @Transactional
+    @Override
+    public FilmFullResponseDTO removeActorFromFilm(Integer id, Integer actorId) {
+        Film existentFilm = filmRepository.findByIdWithAllRelations(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Film not found with id: " + id));
+        Actor actorToRemove = actorRepository.findById(actorId)
+                .orElseThrow(() -> new ResourceNotFoundException("Actor not found with id: " + actorId));
+        if (existentFilm.getActors().contains(actorToRemove)) {
+            existentFilm.removeActor(actorToRemove);
+            Film updatedFilm = filmRepository.save(existentFilm);
+            return filmMapper.toFullResponseDto(updatedFilm);
+        } else {
+            throw new ResourceNotFoundException("Actor not found in film with id: " + id);
+        }
     }
 }
 

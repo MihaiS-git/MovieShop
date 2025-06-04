@@ -53,6 +53,26 @@ public class FilmController {
         return ResponseEntity.ok(filmService.updateFilm(id, filmRequestDTO));
     }
 
+    @PostMapping("/{id}/categories")
+    public ResponseEntity<FilmFullResponseDTO> addCategoryToFilm(@PathVariable Integer id, @RequestBody AddCategoryToFilmRequestDTO categoryDTO){
+        return ResponseEntity.ok(filmService.addCategoryToFilm(id, categoryDTO));
+    }
+
+    @DeleteMapping("/{id}/categories/{category}")
+    public ResponseEntity<FilmFullResponseDTO> removeCategoryFromFilm(@PathVariable Integer id, @PathVariable String category) {
+        return ResponseEntity.ok(filmService.removeCategoryFromFilm(id, category));
+    }
+
+    @PostMapping("/{id}/actors")
+    public ResponseEntity<FilmFullResponseDTO> addActorToFilm(@PathVariable Integer id, @RequestBody AddActorToFilmRequestDTO actorDTO) {
+        return ResponseEntity.ok(filmService.addActorToFilm(id, actorDTO));
+    }
+
+    @DeleteMapping("/{id}/actors/{actorId}")
+    public ResponseEntity<FilmFullResponseDTO> removeActorFromFilm(@PathVariable Integer id, @PathVariable Integer actorId) {
+        return ResponseEntity.ok(filmService.removeActorFromFilm(id, actorId));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteFilm(@PathVariable Integer id) {
         filmService.deleteFilm(id);

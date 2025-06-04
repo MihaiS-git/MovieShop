@@ -4,6 +4,8 @@ import com.movieshop.server.domain.*;
 import com.movieshop.server.exception.ResourceNotFoundException;
 import com.movieshop.server.mapper.FilmMapper;
 import com.movieshop.server.model.*;
+import com.movieshop.server.repository.ActorRepository;
+import com.movieshop.server.repository.CategoryRepository;
 import com.movieshop.server.repository.FilmRepository;
 import com.movieshop.server.repository.LanguageRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -26,6 +28,12 @@ class FilmServiceImplTest {
     private FilmRepository filmRepository;
 
     @Mock
+    private CategoryRepository categoryRepository;
+
+    @Mock
+    private ActorRepository actorRepository;
+
+    @Mock
     private FilmMapper filmMapper;
 
     @Mock
@@ -44,6 +52,9 @@ class FilmServiceImplTest {
     }
 
     private Film sampleFilm() {
+        Category category1 = new Category(1, "A");
+        Actor actor1 = new Actor(1, "John", "Doe");
+
         Film film = new Film();
         film.setId(1);
         film.setTitle("Test Movie");
@@ -56,6 +67,8 @@ class FilmServiceImplTest {
         film.setLength(120);
         film.setReplacementCost(Double.parseDouble("20.00"));
         film.setRating(Rating.valueOf("PG"));
+        film.setCategories(new HashSet<>(List.of(category1)));
+        film.setActors(new HashSet<>(List.of(actor1)));
         return film;
     }
 
@@ -288,6 +301,161 @@ class FilmServiceImplTest {
         assertThat(result.getLanguage()).isEqualTo("English");
         assertThat(result.getOriginalLanguage()).isEqualTo("French");
     }
+
+    @Test
+    void addCategoryToFilm_success() {
+        Film film = sampleFilm();
+        Category category = new Category();
+        category.setName("Action");
+
+        FilmFullResponseDTO dto = sampleFullFilmDTO();
+
+        when(filmRepository.findByIdWithAllRelations(1)).thenReturn(Optional.of(film));
+        when(categoryRepository.findByNameIgnoreCase("Action")).thenReturn(Optional.of(category));
+        when(filmRepository.save(film)).thenReturn(film);
+        when(filmMapper.toFullResponseDto(film)).thenReturn(dto);
+
+        AddCategoryToFilmRequestDTO categoryDto = new AddCategoryToFilmRequestDTO("Action");
+
+        FilmFullResponseDTO result = filmService.addCategoryToFilm(1, categoryDto);
+
+        verify(filmRepository).save(film);
+        assertThat(result).isEqualTo(dto);
+    }
+
+    @Test
+    void addCategoryToFilm_filmNotFound_throws() {
+        when(filmRepository.findById(1)).thenReturn(Optional.empty());
+        AddCategoryToFilmRequestDTO categoryDto = new AddCategoryToFilmRequestDTO("Action");
+
+        assertThatThrownBy(() -> filmService.addCategoryToFilm(1, categoryDto))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessageContaining("Film not found");
+    }
+
+    @Test
+    void addCategoryToFilm_categoryNotFound_throws() {
+        Film film = sampleFilm();
+        when(filmRepository.findByIdWithAllRelations(1)).thenReturn(Optional.of(film));
+        when(categoryRepository.findByNameIgnoreCase("Action")).thenReturn(Optional.empty());
+        AddCategoryToFilmRequestDTO categoryDto = new AddCategoryToFilmRequestDTO();
+
+        assertThatThrownBy(() -> filmService.addCategoryToFilm(1, categoryDto))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessageContaining("Category not found");
+    }
+
+    @Test
+    void removeCategoryFromFilm_success() {
+        Film film = sampleFilm();
+        Category category = new Category();
+        category.setName("Action");
+        film.getCategories().add(category);
+
+        FilmFullResponseDTO dto = sampleFullFilmDTO();
+
+        when(filmRepository.findByIdWithAllRelations(1)).thenReturn(Optional.of(film));
+        when(categoryRepository.findByNameIgnoreCase("Action")).thenReturn(Optional.of(category));
+        when(filmRepository.save(film)).thenReturn(film);
+        when(filmMapper.toFullResponseDto(film)).thenReturn(dto);
+
+        FilmFullResponseDTO result = filmService.removeCategoryFromFilm(1, "Action");
+
+        verify(filmRepository).save(film);
+        assertThat(result).isEqualTo(dto);
+    }
+
+    @Test
+    void removeCategoryFromFilm_categoryNotInFilm_throws() {
+        Film film = sampleFilm();
+        Category category = new Category();
+        category.setName("Action");
+
+        when(filmRepository.findByIdWithAllRelations(1)).thenReturn(Optional.of(film));
+        when(categoryRepository.findByNameIgnoreCase("Action")).thenReturn(Optional.of(category));
+
+        assertThatThrownBy(() -> filmService.removeCategoryFromFilm(1, "Action"))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessageContaining("Category not found in film");
+    }
+
+    @Test
+    void addActorToFilm_success() {
+        Film film = sampleFilm();
+        Actor actor = new Actor();
+        actor.setId(1);
+
+        FilmFullResponseDTO dto = sampleFullFilmDTO();
+
+        when(filmRepository.findByIdWithAllRelations(1)).thenReturn(Optional.of(film));
+        when(actorRepository.findById(1)).thenReturn(Optional.of(actor));
+        when(filmRepository.save(film)).thenReturn(film);
+        when(filmMapper.toFullResponseDto(film)).thenReturn(dto);
+        AddActorToFilmRequestDTO actorDto = new AddActorToFilmRequestDTO(1);
+
+        FilmFullResponseDTO result = filmService.addActorToFilm(1, actorDto);
+
+        verify(filmRepository).save(film);
+        assertThat(result).isEqualTo(dto);
+    }
+
+    @Test
+    void addActorToFilm_filmNotFound_throws() {
+        when(filmRepository.findById(1)).thenReturn(Optional.empty());
+        AddActorToFilmRequestDTO actorDto = new AddActorToFilmRequestDTO(1);
+
+        assertThatThrownBy(() -> filmService.addActorToFilm(1, actorDto))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessageContaining("Film not found");
+    }
+
+    @Test
+    void addActorToFilm_actorNotFound_throws() {
+        Film film = sampleFilm();
+        when(filmRepository.findByIdWithAllRelations(1)).thenReturn(Optional.of(film));
+        when(actorRepository.findById(1)).thenReturn(Optional.empty());
+        AddActorToFilmRequestDTO actorDto = new AddActorToFilmRequestDTO(1);
+
+
+        assertThatThrownBy(() -> filmService.addActorToFilm(1, actorDto))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessageContaining("Actor not found");
+    }
+
+    @Test
+    void removeActorFromFilm_success() {
+        Film film = sampleFilm();
+        Actor actor = new Actor();
+        actor.setId(1);
+        film.getActors().add(actor);
+
+        FilmFullResponseDTO dto = sampleFullFilmDTO();
+
+        when(filmRepository.findByIdWithAllRelations(1)).thenReturn(Optional.of(film));
+        when(actorRepository.findById(1)).thenReturn(Optional.of(actor));
+        when(filmRepository.save(film)).thenReturn(film);
+        when(filmMapper.toFullResponseDto(film)).thenReturn(dto);
+
+        FilmFullResponseDTO result = filmService.removeActorFromFilm(1, 1);
+
+        verify(filmRepository).save(film);
+        assertThat(result).isEqualTo(dto);
+    }
+
+    @Test
+    void removeActorFromFilm_actorNotInFilm_throws() {
+        Film film = sampleFilm();
+        Actor actor = new Actor();
+        actor.setId(1);
+
+        when(filmRepository.findByIdWithAllRelations(1)).thenReturn(Optional.of(film));
+        when(actorRepository.findById(1)).thenReturn(Optional.of(actor));
+
+        assertThatThrownBy(() -> filmService.removeActorFromFilm(1, 1))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessageContaining("Actor not found in film");
+    }
+
 
 
     @Test
