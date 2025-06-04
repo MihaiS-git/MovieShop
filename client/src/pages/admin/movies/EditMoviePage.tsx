@@ -194,11 +194,19 @@ const EditMoviePage = () => {
   const handleSelectedCategoryChange = (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    setSelectedCategory(e.target.value);
+    if (e.target.value !== "None") {
+      setSelectedCategory(e.target.value);
+    } else {
+      setSelectedCategory("");
+    }
   };
 
   const handleAddCategory = async (category: string) => {
-    await addCategoryToMovie({ id: movie!.id, category });
+    if (category !== "") {
+      await addCategoryToMovie({ id: movie!.id, category });
+    } else {
+      alert("Please select a valid category.");
+    }
   };
 
   const handleDeleteCategory = async (category: string) => {
@@ -239,43 +247,48 @@ const EditMoviePage = () => {
         />
 
         <div className="flex flex-col text-sm 2xl:w-1/3">
-          <div className="flex flex-col gap-2 text-sm border border-charcoal-800 rounded-sm p-2 mb-2">
+          <div className="flex flex-col justify-between text-sm border border-charcoal-800 rounded-sm p-2 mb-2">
             <form onSubmit={handleFormSubmit}>
-              <h3 className="bg-gray-300 p-2 font-semibold">
+              <h3 className="bg-gray-300 p-2 font-semibold my-1">
                 GENERAL INFORMATIONS
               </h3>
-              <label htmlFor="title">
-                Title:{" "}
-                <input
-                  id="title"
-                  name="title"
-                  type="text"
-                  value={title}
-                  onChange={handleChangeTitle}
-                  className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
-                  minLength={1}
-                  required
-                />
-              </label>
-              <label htmlFor="description">
-                Description:{" "}
-                <textarea
-                  name="description"
-                  id="description"
-                  value={description}
-                  onChange={handleChangeDescription}
-                  className="h-15 bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
-                  minLength={1}
-                  required
-                ></textarea>
-              </label>
-              <label htmlFor="language">
-                Language:{" "}
+              <div className="my-1">
+                <label htmlFor="title">
+                  Title:{" "}
+                  <input
+                    id="title"
+                    name="title"
+                    type="text"
+                    value={title}
+                    onChange={handleChangeTitle}
+                    className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full my-1"
+                    minLength={1}
+                    required
+                  />
+                </label>
+              </div>
+              <div className="my-1">
+                <label htmlFor="description">
+                  Description:{" "}
+                  <textarea
+                    name="description"
+                    id="description"
+                    value={description}
+                    onChange={handleChangeDescription}
+                    className="h-15 bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
+                    minLength={1}
+                    required
+                  ></textarea>
+                </label>
+              </div>
+              <div className="my-1 flex flex-row justify-between">
+                <label htmlFor="language">Language: </label>
                 <select
                   name="language"
                   id="language"
                   onChange={handleChangeLanguage}
                   value={language}
+                  className="w-4/7 bg-gray-300 rounded-sm p-1 border-charcoal-800"
                   required
                 >
                   <option value="" disabled>
@@ -287,14 +300,15 @@ const EditMoviePage = () => {
                     </option>
                   ))}
                 </select>
-              </label>
-              <label htmlFor="originalLanguage">
-                Original language:{" "}
+              </div>
+              <div className="my-1 flex flex-row justify-between">
+                <label htmlFor="originalLanguage">Original language: </label>
                 <select
                   name="originalLanguage"
                   id="originalLanguage"
                   onChange={handleChangeOriginalLanguage}
                   value={originalLanguage ?? ""}
+                  className="w-4/7 bg-gray-300 rounded-sm p-1 border-charcoal-800"
                 >
                   <option value="">Select Language</option>
                   {LANGUAGES.map((lang) => (
@@ -303,93 +317,105 @@ const EditMoviePage = () => {
                     </option>
                   ))}
                 </select>
-              </label>
-              <label htmlFor="length">
-                Length:{" "}
-                <input
-                  id="length"
-                  name="length"
-                  type="number"
-                  value={length}
-                  onChange={handleChangeLength}
-                  className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
-                  min={1}
-                  required
-                />
-              </label>
-              <label htmlFor="rating">
-                Rating:{" "}
-                <select
-                  name="rating"
-                  id="rating"
-                  className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
-                  value={rating}
-                  onChange={handleRatingChange}
-                  required
-                >
-                  <option value="G">G</option>
-                  <option value="PG">PG</option>
-                  <option value="PG13">PG-13</option>
-                  <option value="R">R</option>
-                  <option value="NC17">NC-17</option>
-                </select>
-              </label>
-              <label htmlFor="releaseYear">
-                Release Year:{" "}
-                <input
-                  id="releaseYear"
-                  name="releaseYear"
-                  type="number"
-                  value={releaseYear}
-                  onChange={handleChangeReleaseYear}
-                  className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
-                  min={MIN_RELEASE_YEAR}
-                  max={Number(new Date().getFullYear())}
-                  required
-                />
-              </label>
-              <label htmlFor="rentalDuration">
-                Rental Duration:{" "}
-                <input
-                  id="rentalDuration"
-                  name="rentalDuration"
-                  type="number"
-                  value={rentalDuration}
-                  onChange={handleChangeRentalDuration}
-                  className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
-                  min={1}
-                  step="1"
-                  required
-                />
-              </label>
-              <label htmlFor="rentalRate">
-                Rental Rate:{" "}
-                <input
-                  id="rentalRate"
-                  name="rentalRate"
-                  type="number"
-                  value={rentalRate}
-                  onChange={handleChangeRentalRate}
-                  className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
-                  min={0.0}
-                  required
-                  step="0.01"
-                />
-              </label>
-              <label htmlFor="replacementCost">
-                Replacement Cost:{" "}
-                <input
-                  id="replacementCost"
-                  name="replacementCost"
-                  type="number"
-                  value={replacementCost}
-                  onChange={handleChangeReplacementCost}
-                  className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
-                  min={0.0}
-                  required
-                  step="0.01"
-                />
-              </label>
+              </div>
+              <div className="my-1">
+                <label htmlFor="length">
+                  Length:{" "}
+                  <input
+                    id="length"
+                    name="length"
+                    type="number"
+                    value={length}
+                    onChange={handleChangeLength}
+                    className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
+                    min={1}
+                    required
+                  />
+                </label>
+              </div>
+              <div className="my-1">
+                <label htmlFor="rating">
+                  Rating:{" "}
+                  <select
+                    name="rating"
+                    id="rating"
+                    className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
+                    value={rating}
+                    onChange={handleRatingChange}
+                    required
+                  >
+                    <option value="G">G</option>
+                    <option value="PG">PG</option>
+                    <option value="PG13">PG-13</option>
+                    <option value="R">R</option>
+                    <option value="NC17">NC-17</option>
+                  </select>
+                </label>
+              </div>
+              <div className="my-1">
+                <label htmlFor="releaseYear">
+                  Release Year:{" "}
+                  <input
+                    id="releaseYear"
+                    name="releaseYear"
+                    type="number"
+                    value={releaseYear}
+                    onChange={handleChangeReleaseYear}
+                    className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
+                    min={MIN_RELEASE_YEAR}
+                    max={Number(new Date().getFullYear())}
+                    required
+                  />
+                </label>
+              </div>
+              <div className="my-1">
+                <label htmlFor="rentalDuration">
+                  Rental Duration:{" "}
+                  <input
+                    id="rentalDuration"
+                    name="rentalDuration"
+                    type="number"
+                    value={rentalDuration}
+                    onChange={handleChangeRentalDuration}
+                    className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
+                    min={1}
+                    step="1"
+                    required
+                  />
+                </label>
+              </div>
+              <div className="my-1">
+                <label htmlFor="rentalRate">
+                  Rental Rate:{" "}
+                  <input
+                    id="rentalRate"
+                    name="rentalRate"
+                    type="number"
+                    value={rentalRate}
+                    onChange={handleChangeRentalRate}
+                    className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
+                    min={0.0}
+                    required
+                    step="0.01"
+                  />
+                </label>
+              </div>
+              <div className="my-1">
+                <label htmlFor="replacementCost">
+                  Replacement Cost:{" "}
+                  <input
+                    id="replacementCost"
+                    name="replacementCost"
+                    type="number"
+                    value={replacementCost}
+                    onChange={handleChangeReplacementCost}
+                    className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
+                    min={0.0}
+                    required
+                    step="0.01"
+                  />
+                </label>
+              </div>
               <div className="flex flex-col items-center">
                 <button
                   type="submit"
@@ -439,6 +465,7 @@ const EditMoviePage = () => {
                   className="bg-gray-300 w-full me-2"
                   onChange={handleSelectedCategoryChange}
                 >
+                  <option value="None">None</option>
                   {CATEGORIES.filter(
                     (category) => !movieCategories.includes(category)
                   ).map((category) => (
