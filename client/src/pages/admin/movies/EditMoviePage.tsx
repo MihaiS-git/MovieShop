@@ -427,128 +427,119 @@ const EditMoviePage = () => {
               </div>
             </form>
           </div>
-          {movieCategories && (
-            <div className="flex flex-col gap-0.75 text-sm border border-charcoal-800 rounded-sm p-2 w-full 2xl:h-full">
-              <h3 className="bg-gray-300 p-2 text-sm mb-2 font-semibold">
-                CATEGORIES
-              </h3>
-              <div className="w-full flex flex-row justify-between">
-                <ul
-                  id="categoriesList"
-                  className="flex flex-col items-stretch bg-gray-300 w-full"
-                >
-                  {movie.categories.map((category) => (
+
+          <div className="flex flex-col gap-0.75 text-sm border border-charcoal-800 rounded-sm p-2 w-full 2xl:h-full">
+            <h3 className="bg-gray-300 p-2 text-sm mb-2 font-semibold">
+              CATEGORIES
+            </h3>
+            <div className="w-full flex flex-row justify-between">
+              <ul
+                id="categoriesList"
+                className="flex flex-col items-stretch bg-gray-300 w-full"
+              >
+                {movie?.categories.map((category) => (
+                  <li
+                    key={category}
+                    value={category}
+                    className="w-full flex flex-row justify-between items-center px-2 m-1"
+                  >
+                    <p>{category}</p>
+                    <button onClick={() => handleDeleteCategory(category)}>
+                      <CiSquareMinus className="text-red-700 size-5 hover:text-red-400 cursor-pointer" />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <hr className="border-charcoal-800 my-2" />
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleAddCategory(selectedCategory);
+              }}
+              className="flex flex-row justify-between"
+            >
+              <select
+                name="newCategory"
+                id="newCategory"
+                className="bg-gray-300 w-full me-2"
+                onChange={handleSelectedCategoryChange}
+              >
+                <option value="None">None</option>
+                {CATEGORIES.filter(
+                  (category) => !movieCategories?.includes(category)
+                ).map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+              <button>
+                <CiSquarePlus className="text-green-700 size-5 hover:text-green-400 cursor-pointer" />
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2 text-sm border border-charcoal-800 rounded-sm p-2 w-full 2xl:w-1/3">
+          <h3 className="bg-gray-300 p-2 text-sm mb-2 font-semibold">ACTORS</h3>
+          <ul>
+            {movie?.actors.map((actor) => (
+              <li key={actor.id} className="flex flex-row justify-between m-1">
+                <p>
+                  {actor.firstName} {actor.lastName}
+                </p>
+                <button onClick={() => handleDeleteActor(actor.id)}>
+                  <CiSquareMinus className="text-red-700 size-5 hover:text-red-400 cursor-pointer" />
+                </button>
+              </li>
+            ))}
+          </ul>
+          <hr className="border-charcoal-800 my-2" />
+          <div>
+            <form
+              className="flex flex-row justify-between items-center"
+              onSubmit={handleSearchActor}
+            >
+              <label htmlFor="searchActor" className="w-4/5 me-2">
+                <input
+                  id="searchActor"
+                  type="text"
+                  name="searchName"
+                  className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 px-2 w-full"
+                  placeholder="Search actor by name..."
+                  onChange={handleSearchNameChange}
+                />
+              </label>
+              <button
+                type="submit"
+                className="bg-green-600 hover:bg-green-500 rounded-sm p-1 w-1/5 cursor-pointer"
+              >
+                Search
+              </button>
+            </form>
+            {actorsResult.length > 0 && (
+              <>
+                <h4 className="text-base font-semibold mt-4">Search Result:</h4>
+                <ul>
+                  {actorsResult.map((actor) => (
                     <li
-                      key={category}
-                      value={category}
-                      className="w-full flex flex-row justify-between items-center px-2 m-1"
+                      key={actor.id}
+                      className="flex flex-row justify-between m-1"
                     >
-                      <p>{category}</p>
-                      <button onClick={() => handleDeleteCategory(category)}>
-                        <CiSquareMinus className="text-red-700 size-5 hover:text-red-400 cursor-pointer" />
+                      <p>
+                        {actor.firstName} {actor.lastName}
+                      </p>
+                      <button onClick={() => handleAddActor(actor.id)}>
+                        <CiSquarePlus className="text-green-700 size-5 hover:text-green-400 cursor-pointer" />
                       </button>
                     </li>
                   ))}
                 </ul>
-              </div>
-              <hr className="border-charcoal-800 my-2" />
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleAddCategory(selectedCategory);
-                }}
-                className="flex flex-row justify-between"
-              >
-                <select
-                  name="newCategory"
-                  id="newCategory"
-                  className="bg-gray-300 w-full me-2"
-                  onChange={handleSelectedCategoryChange}
-                >
-                  <option value="None">None</option>
-                  {CATEGORIES.filter(
-                    (category) => !movieCategories.includes(category)
-                  ).map((category) => (
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </select>
-                <button>
-                  <CiSquarePlus className="text-green-700 size-5 hover:text-green-400 cursor-pointer" />
-                </button>
-              </form>
-            </div>
-          )}
-        </div>
-
-        {movie?.actors?.length !== 0 && (
-          <div className="flex flex-col gap-2 text-sm border border-charcoal-800 rounded-sm p-2 w-full 2xl:w-1/3">
-            <h3 className="bg-gray-300 p-2 text-sm mb-2 font-semibold">
-              ACTORS
-            </h3>
-            <ul>
-              {movie?.actors.map((actor) => (
-                <li
-                  key={actor.id}
-                  className="flex flex-row justify-between m-1"
-                >
-                  <p>
-                    {actor.firstName} {actor.lastName}
-                  </p>
-                  <button onClick={() => handleDeleteActor(actor.id)}>
-                    <CiSquareMinus className="text-red-700 size-5 hover:text-red-400 cursor-pointer" />
-                  </button>
-                </li>
-              ))}
-            </ul>
-            <hr className="border-charcoal-800 my-2" />
-            <div>
-              <form
-                className="flex flex-row justify-between items-center"
-                onSubmit={handleSearchActor}
-              >
-                <label htmlFor="searchActor" className="w-4/5 me-2">
-                  <input
-                    type="text"
-                    name="searchName"
-                    className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 px-2 w-full"
-                    placeholder="Search actor by name..."
-                    onChange={handleSearchNameChange}
-                  />
-                </label>
-                <button
-                  type="submit"
-                  className="bg-green-600 hover:bg-green-500 rounded-sm p-1 w-1/5 cursor-pointer"
-                >
-                  Search
-                </button>
-              </form>
-              {actorsResult.length > 0 && (
-                <>
-                  <h4 className="text-base font-semibold mt-4">
-                    Search Result:
-                  </h4>
-                  <ul>
-                    {actorsResult.map((actor) => (
-                      <li
-                        key={actor.id}
-                        className="flex flex-row justify-between m-1"
-                      >
-                        <p>
-                          {actor.firstName} {actor.lastName}
-                        </p>
-                        <button onClick={() => handleAddActor(actor.id)}>
-                          <CiSquarePlus className="text-green-700 size-5 hover:text-green-400 cursor-pointer" />
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
-            </div>
+              </>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </PageContent>
   );

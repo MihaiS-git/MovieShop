@@ -25,7 +25,8 @@ public class LanguageLoader {
                 new Language("Italian"),
                 new Language("Japanese"),
                 new Language("Mandarin"),
-                new Language("Spanish")
+                new Language("Spanish"),
+                new Language("Unknown")
         );
 
         languageRepository.saveAll(languages);

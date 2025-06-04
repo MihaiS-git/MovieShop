@@ -42,7 +42,7 @@ public class FilmLoader {
 
             film.setLanguage(
                     ParsingUtils.safeFindById(
-                            ParsingUtils.parseIntSafe(filmCsv.getLanguage()),
+                            ParsingUtils.parseIntSafe(filmCsv.getLanguage()) != null ? ParsingUtils.parseIntSafe(filmCsv.getLanguage()) : 8,
                             languageRepository,
                             "Language not found: " + filmCsv.getLanguage()
                     )
@@ -50,7 +50,7 @@ public class FilmLoader {
 
             film.setOriginalLanguage(
                     ParsingUtils.safeFindById(
-                            ParsingUtils.parseIntSafe(filmCsv.getOriginalLanguage()),
+                            ParsingUtils.parseIntSafe(filmCsv.getOriginalLanguage()) != null ? ParsingUtils.parseIntSafe(filmCsv.getOriginalLanguage()) : 8,
                             languageRepository,
                             "Language not found: " + filmCsv.getOriginalLanguage()
                     )

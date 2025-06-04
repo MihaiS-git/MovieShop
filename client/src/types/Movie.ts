@@ -58,6 +58,7 @@ export enum Language {
   JAPANESE = "Japanese",
   MANDARIN = "Mandarin",
   SPANISH = "Spanish",
+  UNKNOWN = "Unknown",
 }
 
 export const LANGUAGES = [
@@ -68,6 +69,7 @@ export const LANGUAGES = [
   "Japanese",
   "Mandarin",
   "Spanish",
+  "Unknown",
 ];
 
 export interface Movie {
