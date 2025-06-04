@@ -1,32 +1,47 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import fetchApi from "../../util/api";
-import { MovieDto, Movie, MovieItem } from "../../types/Movie";
+import { MovieDto, Movie, MovieItem, MovieDetails } from "../../types/Movie";
+import rtkBaseQuery from "../rtkBaseQuery";
+import { ApiRequestParams } from "@/types/ApiRequestParams";
 
 export const movieApi = createApi({
   reducerPath: "movieApi",
-  baseQuery: async ({ url, method = "GET", data, params }, api) => {
-    const { dispatch } = api;
-    const result = await fetchApi({ url, method, data, params, dispatch });
-
-    if (result.error) return { error: result.error };
-    return { data: result.data };
-  },
+  baseQuery: rtkBaseQuery,
   tagTypes: ["Movie"],
   endpoints: (builder) => ({
     getMovies: builder.query<
       { movies: MovieItem[]; totalCount: number },
-      { page: number; limit: number; orderBy?: string; ratingFilter?: string, yearFilter?: number, categoryFilter?: string, titleFilter?: string }
+      {
+        page: number;
+        limit: number;
+        orderBy?: string;
+        ratingFilter?: string;
+        yearFilter?: number;
+        categoryFilter?: string;
+        titleFilter?: string;
+      }
     >({
-      query: ({ page, limit, orderBy, ratingFilter, yearFilter, categoryFilter, titleFilter }) => ({
+      query: ({
+        page,
+        limit,
+        orderBy,
+        ratingFilter,
+        yearFilter,
+        categoryFilter,
+        titleFilter,
+      }) => ({
         url: "/films",
         params: {
           page,
           limit,
           ...(orderBy ? { orderBy } : {}),
-          ...(ratingFilter && ratingFilter.toLowerCase() !== "all" ? { ratingFilter } : {}),
-          ...(yearFilter && yearFilter > 0 ? {yearFilter} : {}),
-          ...(categoryFilter && categoryFilter.toLowerCase() !== "all" ? {categoryFilter} : {}),
-          ...(titleFilter?.trim() ? {titleFilter} : {}),
+          ...(ratingFilter && ratingFilter.toLowerCase() !== "all"
+            ? { ratingFilter }
+            : {}),
+          ...(yearFilter && yearFilter > 0 ? { yearFilter } : {}),
+          ...(categoryFilter && categoryFilter.toLowerCase() !== "all"
+            ? { categoryFilter }
+            : {}),
+          ...(titleFilter?.trim() ? { titleFilter } : {}),
         },
       }),
       providesTags: (result) =>
@@ -41,7 +56,7 @@ export const movieApi = createApi({
           : [{ type: "Movie", id: "LIST" }],
       keepUnusedDataFor: 300,
     }),
-    getMovieById: builder.query<Movie, number>({
+    getMovieById: builder.query<MovieDetails, number>({
       query: (id) => ({
         url: `/films/${id}`,
       }),
@@ -49,7 +64,7 @@ export const movieApi = createApi({
       keepUnusedDataFor: 300,
     }),
     createMovie: builder.mutation<Movie, MovieDto>({
-      query: (data: MovieDto) => ({
+      query: (data: MovieDto): ApiRequestParams => ({
         url: "/films",
         method: "POST",
         data,
@@ -57,7 +72,7 @@ export const movieApi = createApi({
       invalidatesTags: [{ type: "Movie", id: "LIST" }],
     }),
     updateMovie: builder.mutation<Movie, { id: number; data: MovieDto }>({
-      query: ({ id, data }) => ({
+      query: ({ id, data }): ApiRequestParams => ({
         url: `/films/${id}`,
         method: "PUT",
         data,
@@ -67,18 +82,47 @@ export const movieApi = createApi({
         { type: "Movie", id: "LIST" },
       ],
     }),
+    addCategoryToMovie: builder.mutation<
+      Movie,
+      { id: number; category: string }
+    >({
+      query: ({ id, category }): ApiRequestParams => ({
+        url: `/films/${id}/categories`,
+        method: "POST",
+        data: {category},  
+      }),
+      invalidatesTags: (_result, _error, { id }) => [{ type: "Movie", id }],
+    }),
+    removeCategoryFromMovie: builder.mutation<Movie, { id: number; category: string }>({
+      query: ({ id, category }) => ({
+        url: `/films/${id}/categories/${category}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: (_result, _error, { id }) => [{ type: "Movie", id }],
+    }),
+    addActorToMovie: builder.mutation<Movie, { id: number; actorId: number }>(
+      {
+        query: ({ id, actorId }): ApiRequestParams => ({
+          url: `/films/${id}/actors`,
+          method: "POST",
+          data: {actorId},
+        }),
+        invalidatesTags: (_result, _error, { id }) => [{ type: "Movie", id }],
+      }
+    ),
+    removeActorFromMovie: builder.mutation<Movie, {id: number, actorId: number}>({
+      query: ({id, actorId}) => ({
+        url: `/films/${id}/actors/${actorId}`,
+        method: "DELETE"
+      }),
+      invalidatesTags: (_result, _error, {id}) => [{type: "Movie", id}],
+    }),
     deleteMovieById: builder.mutation<void, number>({
       query: (id) => ({
         url: `/films/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: [{ type: "Movie", id: "LIST" }],
-    }),
-    searchMoviesByTitle: builder.query<MovieItem[], string>({
-      query: (title) => ({
-        url: `/films/search`,
-        params: { title },
-      }),
     }),
   }),
 });
@@ -89,6 +133,8 @@ export const {
   useCreateMovieMutation,
   useUpdateMovieMutation,
   useDeleteMovieByIdMutation,
-  useSearchMoviesByTitleQuery,
-  useLazySearchMoviesByTitleQuery,
+  useAddCategoryToMovieMutation,
+  useRemoveCategoryFromMovieMutation,
+  useAddActorToMovieMutation,
+  useRemoveActorFromMovieMutation,
 } = movieApi;

@@ -1,5 +1,6 @@
 package com.movieshop.server.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -42,8 +43,8 @@ public class Actor {
     @ManyToMany(mappedBy = "actors", fetch = FetchType.LAZY)
     private Set<Film> films = new HashSet<>();
 
-    public Actor(int d, String firstName, String lastName) {
-        this.id = d;
+    public Actor(int id, String firstName, String lastName) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
     }

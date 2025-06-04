@@ -5,7 +5,7 @@ import com.movieshop.server.model.*;
 import java.util.List;
 
 public interface IFilmService {
-    FilmResponseDTO getFilmById(Integer id);
+    FilmFullResponseDTO getFilmById(Integer id);
 
     FilmResponseDTO getFilmByTitle(String title);
 
@@ -20,4 +20,13 @@ public interface IFilmService {
     void deleteFilm(Integer id);
 
     List<FilmSearchResponseDTO> searchFilmsByTitle(String searchTerm);
+
+    FilmFullResponseDTO addCategoryToFilm(Integer id, AddCategoryToFilmRequestDTO category);
+
+    FilmFullResponseDTO removeCategoryFromFilm(Integer id, String category);
+
+    FilmFullResponseDTO addActorToFilm(Integer id, AddActorToFilmRequestDTO actorId);
+
+    FilmFullResponseDTO removeActorFromFilm(Integer id, Integer actorId);
 }
+

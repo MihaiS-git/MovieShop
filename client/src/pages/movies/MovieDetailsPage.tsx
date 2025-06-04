@@ -1,4 +1,4 @@
-import MovieDetails from "@/components/movie/MovieDetails";
+import MovieInfo from "@/components/movie/MovieInfo";
 import PageContent from "@/PageContent";
 import { useParams } from "react-router-dom";
 import { useGetMovieByIdQuery } from "@/features/movies/movieApi";
@@ -14,8 +14,8 @@ const MovieDetailsPage = () => {
   if(!movie) return <p>Movie not found.</p>
 
   return (
-    <PageContent className="flex flex-col items-center justify-center mx-auto px-6 py-24 w-full">
-      <MovieDetails movie={movie}/>
+    <PageContent className="flex flex-col w-full min-h-screen py-24">
+      <MovieInfo movie={movie}/>
     </PageContent>
   );
 };

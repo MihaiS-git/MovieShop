@@ -1,3 +1,5 @@
+import { Actor } from "./Actor";
+
 export enum Rating {
   G = "G",
   PG = "PG",
@@ -56,6 +58,7 @@ export enum Language {
   JAPANESE = "Japanese",
   MANDARIN = "Mandarin",
   SPANISH = "Spanish",
+  UNKNOWN = "Unknown",
 }
 
 export const LANGUAGES = [
@@ -66,6 +69,7 @@ export const LANGUAGES = [
   "Japanese",
   "Mandarin",
   "Spanish",
+  "Unknown",
 ];
 
 export interface Movie {
@@ -82,6 +86,7 @@ export interface Movie {
   rating: Rating;
   lastUpdate: string;
   categories: string[];
+  actorIds: number[];
 }
 
 export interface MovieItem {
@@ -109,4 +114,21 @@ export interface MovieDto {
   replacementCost: number;
   rating: Rating;
   lastUpdate: string;
+}
+
+export interface MovieDetails {
+  id: number;
+  title: string;
+  description: string;
+  releaseYear: number;
+  language: string;
+  originalLanguage?: string;
+  rentalDuration: number;
+  rentalRate: number;
+  length: number;
+  replacementCost: number;
+  rating: Rating;
+  lastUpdate: string;
+  categories: string[];
+  actors: Actor[];
 }
