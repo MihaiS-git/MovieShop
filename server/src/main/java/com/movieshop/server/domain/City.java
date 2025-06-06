@@ -35,6 +35,11 @@ public class City {
     @Column(name = "last_update")
     private OffsetDateTime lastUpdate;
 
+    public City(String name, Country country) {
+        this.name = name;
+        this.country = country;
+    }
+
     @PrePersist
     @PreUpdate
     private void updateTimeStamps(){

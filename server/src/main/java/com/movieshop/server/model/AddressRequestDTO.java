@@ -14,10 +14,10 @@ public class AddressRequestDTO {
     @Size(min = 2, max = 50)
     private String address;
 
-    @NotNull
-    @Size(min = 2, max = 50)
+    @Size(min = 0, max = 50)
     private String address2;
 
+    @NotNull
     @Size(min = 2, max = 50)
     private String district;
 
@@ -25,9 +25,18 @@ public class AddressRequestDTO {
     @Size(min = 2, max = 50)
     private String city;
 
+    @NotNull
     @Size(min = 2, max = 50)
+    private String country;
+
+    @NotNull
+    @Size(min = 6, max = 10)
     private String postalCode;
 
-    @Size(min = 2, max = 50)
+    @NotNull
+    @Size(min = 10, max = 16)
     private String phone;
+
+    @NotNull
+    private Integer userId;
 }

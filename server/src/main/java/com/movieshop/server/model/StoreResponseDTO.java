@@ -1,6 +1,5 @@
 package com.movieshop.server.model;
 
-import com.movieshop.server.domain.Inventory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

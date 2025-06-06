@@ -3,14 +3,15 @@ package com.movieshop.server.model;
 import lombok.*;
 
 import java.time.OffsetDateTime;
-import java.util.List;
 
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
+@ToString
 @Builder
-public class UserResponseDTO {
+public class UserResponseWithAddressAndStoreDTO {
 
     private Integer id;
 
@@ -22,13 +23,11 @@ public class UserResponseDTO {
 
     private String lastName;
 
-    private Integer addressId;
+    private AddressResponseDTO address;
 
-    private Integer storeId;
+    private CustomerStoreResponseDTO store;
 
     private String picture;
-
-//    private List<Integer> rentalIds;
 
     private boolean accountNonExpired;
 
@@ -41,9 +40,4 @@ public class UserResponseDTO {
     private OffsetDateTime createAt;
 
     private OffsetDateTime lastUpdate;
-
-//    private List<Integer> customerPaymentIds;
-
-//    private List<Integer> staffPaymentIds;
-
 }

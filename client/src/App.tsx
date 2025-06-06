@@ -20,6 +20,7 @@ import AddMovie from "./pages/admin/movies/AddMovie";
 import EditReviews from "./pages/admin/reviews/EditReviews";
 import AddReview from "./pages/admin/reviews/AddReview";
 import EditMoviePage from "./pages/admin/movies/EditMoviePage";
+import UserAccountPage from "./pages/account/UserAccountPage";
 
 const router = createBrowserRouter([
   {
@@ -111,6 +112,10 @@ const router = createBrowserRouter([
       {
         path: "movies/:id",
         element: <MovieDetailsPage />,
+      },
+      {
+        path: "account",
+        element: <UserAccountPage />
       },
     ],
   },

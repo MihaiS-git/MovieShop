@@ -2,12 +2,20 @@ package com.movieshop.server.service;
 
 import com.movieshop.server.domain.Address;
 import com.movieshop.server.domain.City;
+import com.movieshop.server.domain.Country;
+import com.movieshop.server.domain.User;
 import com.movieshop.server.exception.ResourceNotFoundException;
 import com.movieshop.server.mapper.AddressMapper;
+import com.movieshop.server.mapper.CityMapper;
+import com.movieshop.server.mapper.CountryMapper;
 import com.movieshop.server.model.AddressRequestDTO;
 import com.movieshop.server.model.AddressResponseDTO;
+import com.movieshop.server.model.CityResponseDTO;
+import com.movieshop.server.model.CountryResponseDTO;
 import com.movieshop.server.repository.AddressRepository;
 import com.movieshop.server.repository.CityRepository;
+import com.movieshop.server.repository.CountryRepository;
+import com.movieshop.server.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +41,18 @@ class AddressServiceImplTest {
 
     @Mock
     private CityRepository cityRepository;
+
+    @Mock
+    private CountryRepository countryRepository;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private CityMapper cityMapper;
+
+    @Mock
+    private CountryMapper countryMapper;
 
     @InjectMocks
     private AddressServiceImpl addressService;
@@ -95,11 +115,19 @@ class AddressServiceImplTest {
         // Arrange
         AddressRequestDTO dto = AddressRequestDTO.builder()
                 .city("New York")
+                .country("USA")
                 .address("123 Test St")
+                .userId(1)
                 .build();
 
         City city = new City();
         city.setName("New York");
+
+        Country country = new Country();
+        country.setName("USA");
+
+        User user = new User();
+        user.setId(1);
 
         Address addressEntity = new Address();
         addressEntity.setAddress("123 Test St");
@@ -110,23 +138,38 @@ class AddressServiceImplTest {
         savedAddress.setAddress("123 Test St");
         savedAddress.setCity(city);
 
+        CountryResponseDTO countryResponseDTO = CountryResponseDTO.builder()
+                .id(1)
+                .name("USA")
+                .build();
+
+        CityResponseDTO cityResponseDTO = CityResponseDTO.builder()
+                .id(1)
+                .name("New York")
+                .country(countryResponseDTO)
+                .build();
+
         AddressResponseDTO responseDTO = AddressResponseDTO.builder()
                 .id(1)
                 .address("123 Test St")
-                .city("New York")
+                .city(cityResponseDTO)
                 .build();
 
-        when(cityRepository.findByName("New York")).thenReturn(Optional.of(city));
+        when(cityRepository.findByNameAndCountry("New York", country)).thenReturn(Optional.of(city));
+        when(countryRepository.findByName("USA")).thenReturn(Optional.of(country));
         when(addressMapper.toEntity(dto)).thenReturn(addressEntity);
+        when(cityMapper.toResponseDto(city)).thenReturn(cityResponseDTO);
         when(addressRepository.save(addressEntity)).thenReturn(savedAddress);
         when(addressMapper.toResponseDto(savedAddress)).thenReturn(responseDTO);
+        when(userRepository.findById(1)).thenReturn(Optional.of(user));
 
         // Act
         AddressResponseDTO result = addressService.createAddress(dto);
 
         // Assert
         assertEquals(responseDTO, result);
-        verify(cityRepository).findByName("New York");
+        verify(countryRepository, times(2)).findByName("USA");
+        verify(cityRepository).findByNameAndCountry("New York", country);
         verify(addressMapper).toEntity(dto);
         verify(addressRepository).save(addressEntity);
         verify(addressMapper).toResponseDto(savedAddress);
@@ -151,25 +194,44 @@ class AddressServiceImplTest {
                 .address2("Suite 100")
                 .district("Central")
                 .city("New York")
+                .country("USA")
                 .postalCode("12345")
                 .phone("555-1234")
                 .build();
 
+
         Address existing = new Address();
         City city = new City();
+        Country country = new Country();
+
+        CountryResponseDTO countryResponseDTO = CountryResponseDTO.builder()
+                .id(1)
+                .name("USA")
+                .build();
+
+        CityResponseDTO cityResponseDTO = CityResponseDTO.builder()
+                .id(1)
+                .name("New York")
+                .country(countryResponseDTO)
+                .build();
+
         AddressResponseDTO responseDTO = AddressResponseDTO.builder()
                 .address("123 Main St")
                 .address2("Suite 100")
                 .district("Central")
-                .city("New York")
+                .city(cityResponseDTO)
                 .postalCode("12345")
                 .phone("555-1234")
                 .build();
 
         when(addressRepository.findById(1)).thenReturn(Optional.of(existing));
         when(cityRepository.findByName("New York")).thenReturn(Optional.of(city));
+        when(countryRepository.findByName("USA")).thenReturn(Optional.of(country));
+        when(addressMapper.toEntity(dto)).thenReturn(existing);
+        when(cityMapper.toResponseDto(city)).thenReturn(cityResponseDTO);
+        when(countryMapper.toResponseDto(country)).thenReturn(countryResponseDTO);
         when(addressRepository.save(existing)).thenReturn(existing);
-        when(addressMapper.toResponseDto(existing)).thenReturn(responseDTO); // 👈 CRITICAL
+        when(addressMapper.toResponseDto(existing)).thenReturn(responseDTO);
 
         AddressResponseDTO result = addressService.updateAddress(1, dto);
 
@@ -178,7 +240,7 @@ class AddressServiceImplTest {
         assertEquals("Central", result.getDistrict());
         assertEquals("555-1234", result.getPhone());
         assertEquals("12345", result.getPostalCode());
-        assertEquals("New York", result.getCity());
+        assertEquals("New York", result.getCity().getName());
     }
 
 

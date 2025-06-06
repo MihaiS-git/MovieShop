@@ -1,19 +1,21 @@
 package com.movieshop.server.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.OffsetDateTime;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 @Builder
-public class CountryResponseDTO {
+public class CustomerStoreResponseDTO {
 
     private Integer id;
 
-    private String name;
+    private Integer managerStaffId;
 
     private OffsetDateTime lastUpdate;
 }

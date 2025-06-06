@@ -1,14 +1,16 @@
 package com.movieshop.server.mapper;
 
 import com.movieshop.server.domain.Address;
-import com.movieshop.server.domain.Store;
-import com.movieshop.server.domain.User;
 import com.movieshop.server.model.AddressRequestDTO;
 import com.movieshop.server.model.AddressResponseDTO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+@RequiredArgsConstructor
 @Component
 public class AddressMapper {
+
+    public final CityMapper cityMapper;
 
     public AddressResponseDTO toResponseDto(Address address) {
         if (address == null) {
@@ -19,12 +21,10 @@ public class AddressMapper {
                 .address(address.getAddress())
                 .address2(address.getAddress2())
                 .district(address.getDistrict())
-                .city(address.getCity().getName())
+                .city(cityMapper.toResponseDto(address.getCity()))
                 .postalCode(address.getPostalCode())
                 .phone(address.getPhone())
                 .lastUpdate(address.getLastUpdate())
-                .userIds(address.getUsers() != null ? address.getUsers().stream().map(User::getId).toList() : null)
-                .storeIds(address.getStores() != null ? address.getStores().stream().map(Store::getId).toList() : null)
                 .build();
     }
 

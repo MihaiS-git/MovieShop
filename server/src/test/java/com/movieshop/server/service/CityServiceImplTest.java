@@ -6,9 +6,11 @@ import com.movieshop.server.exception.ResourceNotFoundException;
 import com.movieshop.server.mapper.CityMapper;
 import com.movieshop.server.model.CityRequestDTO;
 import com.movieshop.server.model.CityResponseDTO;
+import com.movieshop.server.model.CountryResponseDTO;
 import com.movieshop.server.repository.AddressRepository;
 import com.movieshop.server.repository.CityRepository;
 import com.movieshop.server.repository.CountryRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
@@ -35,6 +37,11 @@ class CityServiceImplTest {
         closeable = MockitoAnnotations.openMocks(this);
     }
 
+    @AfterEach
+    void tearDown() throws Exception {
+        closeable.close();
+    }
+
     @Test
     void getAllCities_ShouldReturnList() {
         List<City> cities = List.of(new City(), new City());
@@ -54,9 +61,13 @@ class CityServiceImplTest {
         city.setName("Berlin");
         city.setCountry(country);
 
+        CountryResponseDTO countryResponseDTO = CountryResponseDTO.builder()
+                .name("Germany")
+                .build();
+
         CityResponseDTO expectedDto = CityResponseDTO.builder()
                 .name("Berlin")
-                .country("Germany")
+                .country(countryResponseDTO)
                 .build();
 
         when(cityRepository.findById(1)).thenReturn(Optional.of(city));
@@ -66,7 +77,7 @@ class CityServiceImplTest {
 
         assertNotNull(result);
         assertEquals("Berlin", result.getName());
-        assertEquals("Germany", result.getCountry());
+        assertEquals("Germany", result.getCountry().getName());
 
         verify(cityRepository).findById(1);
         verify(cityMapper).toResponseDto(city);
@@ -95,9 +106,13 @@ class CityServiceImplTest {
         City cityEntity = new City();
         cityEntity.setName("Berlin");
 
+        CountryResponseDTO countryResponseDTO = CountryResponseDTO.builder()
+                .name("Germany")
+                .build();
+
         CityResponseDTO expectedDto = CityResponseDTO.builder()
                 .name("Berlin")
-                .country("Germany")
+                .country(countryResponseDTO)
                 .build();
 
         when(countryRepository.findByName("Germany")).thenReturn(Optional.of(country));
@@ -155,9 +170,13 @@ class CityServiceImplTest {
         savedCity.setName("UpdatedCity");
         savedCity.setCountry(country);
 
+        CountryResponseDTO countryResponseDTO = CountryResponseDTO.builder()
+                .name("France")
+                .build();
+
         CityResponseDTO expectedDto = CityResponseDTO.builder()
                 .name("UpdatedCity")
-                .country("France")
+                .country(countryResponseDTO)
                 .build();
 
         when(cityRepository.findById(1)).thenReturn(Optional.of(existingCity));
@@ -169,7 +188,7 @@ class CityServiceImplTest {
 
         assertNotNull(result);
         assertEquals("UpdatedCity", result.getName());
-        assertEquals("France", result.getCountry());
+        assertEquals("France", result.getCountry().getName());
 
         assertEquals("UpdatedCity", existingCity.getName());
         assertSame(country, existingCity.getCountry());

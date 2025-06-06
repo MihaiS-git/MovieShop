@@ -3,9 +3,9 @@ package com.movieshop.server.model;
 import lombok.*;
 
 import java.time.OffsetDateTime;
-import java.util.List;
 
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
@@ -20,15 +20,11 @@ public class AddressResponseDTO {
 
     private String district;
 
-    private String city;
+    private CityResponseDTO city;
 
     private String postalCode;
 
     private String phone;
 
     private OffsetDateTime lastUpdate;
-
-    private List<Integer> userIds;
-
-    private List<Integer> storeIds;
 }

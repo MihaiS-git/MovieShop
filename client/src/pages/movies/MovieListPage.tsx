@@ -120,7 +120,7 @@ const MovieListPage = () => {
   if (error) return <p>Error loading movies</p>;
 
   return (
-    <PageContent className="flex flex-col items-center justify-center mx-auto px-6 py-24 w-full h-min-screen">
+    <PageContent className="flex flex-col items-center justify-center mx-auto px-6 py-24">
       <MovieList
         moviePagination={{
           totalPages,

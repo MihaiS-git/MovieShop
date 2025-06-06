@@ -24,7 +24,7 @@ const MovieList: React.FC<Props> = ({
   const loaderRef = useInfiniteScroll(loadMore, hasMore);
 
   return (
-    <div className="flex flex-col justify-around align-middle text-center w-full">
+    <div className="flex flex-col justify-around align-middle text-center w-full xl:max-w-11/12 2xl:max-w-4/5">
       <h1 className="font-bold text-2xl mb-4 text-charcoal-800 dark:text-gold-500">
         Available Movies
       </h1>
@@ -37,7 +37,7 @@ const MovieList: React.FC<Props> = ({
         </p>
       ) : (
         <>
-          <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
+          <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
             {movies?.map((movie: MovieItem) => (
               <li key={movie.id} className="group px-0">
                 <div className="transition-transform duration-300 ease-in-out hover:-translate-y-1">

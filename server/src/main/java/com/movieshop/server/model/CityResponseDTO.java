@@ -1,11 +1,12 @@
 package com.movieshop.server.model;
 
+import com.movieshop.server.domain.Country;
 import lombok.*;
 
 import java.time.OffsetDateTime;
-import java.util.List;
 
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
@@ -16,9 +17,7 @@ public class CityResponseDTO {
 
     private String name;
 
-    private String country;
-
-    private List<Integer> addressIds;
+    private CountryResponseDTO country;
 
     private OffsetDateTime lastUpdate;
 }

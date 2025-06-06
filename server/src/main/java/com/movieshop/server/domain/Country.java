@@ -37,6 +37,10 @@ public class Country {
         lastUpdate = OffsetDateTime.now();
     }
 
+    public Country(String name) {
+        this.name = name;
+    }
+
     public void addCity(City city) {
         cities.add(city);
         city.setCountry(this);

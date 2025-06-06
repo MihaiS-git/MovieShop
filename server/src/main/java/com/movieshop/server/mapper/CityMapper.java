@@ -1,15 +1,16 @@
 package com.movieshop.server.mapper;
 
-import com.movieshop.server.domain.Address;
 import com.movieshop.server.domain.City;
 import com.movieshop.server.model.CityRequestDTO;
 import com.movieshop.server.model.CityResponseDTO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-
+@RequiredArgsConstructor
 @Component
 public class CityMapper {
+
+    public final CountryMapper countryMapper;
 
     public CityResponseDTO toResponseDto(City city) {
         if (city == null) {
@@ -18,12 +19,8 @@ public class CityMapper {
         return CityResponseDTO.builder()
                 .id(city.getId())
                 .name(city.getName())
-                .country(city.getCountry().getName())
-                .addressIds(city.getAddresses() != null
-                        ? (city.getAddresses().stream()
-                        .map(Address::getId)
-                        .toList())
-                        : Collections.emptyList())
+                .country(countryMapper.toResponseDto(city.getCountry()))
+                .lastUpdate(city.getLastUpdate())
                 .build();
     }
 

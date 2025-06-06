@@ -184,7 +184,7 @@ const EditMoviePage = () => {
           lastUpdate: new Date().toISOString(),
         },
       }).unwrap();
-      alert("Movie updated successfully");
+      alert("Movie updated successfully.");
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Unknown error";
       alert(`Update failed: ${message}`);

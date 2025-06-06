@@ -1,6 +1,7 @@
 package com.movieshop.server.controller;
 
 import com.movieshop.server.model.UserResponseDTO;
+import com.movieshop.server.model.UserResponseWithAddressAndStoreDTO;
 import com.movieshop.server.model.UserUpdateRequestDTO;
 import com.movieshop.server.service.IUserService;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,12 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Integer id) {
         UserResponseDTO user = userService.getUserById(id);
+        return ResponseEntity.ok(user);
+    }
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity<UserResponseWithAddressAndStoreDTO> getUserDetailsByEmail(@PathVariable String email) {
+        UserResponseWithAddressAndStoreDTO user = userService.getUserDetailsByEmail(email);
         return ResponseEntity.ok(user);
     }
 
