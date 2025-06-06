@@ -3,14 +3,10 @@ import { CustomerStore } from "./Store";
 
 export interface User {
   email: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   role: string;
   picture: string;
-}
-
-export interface AuthResponse {
-  token: string | null;
-  user: User | null;
 }
 
 export enum Role {

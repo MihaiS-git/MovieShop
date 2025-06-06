@@ -1,6 +1,5 @@
 package com.movieshop.server.model;
 
-import com.movieshop.server.domain.RefreshToken;
 import lombok.*;
 
 @Getter

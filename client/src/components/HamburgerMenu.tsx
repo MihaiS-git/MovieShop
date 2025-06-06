@@ -35,7 +35,7 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ openState, handleClose })
               </NavLink>
             </li>
             <li>
-              <NavLink to="#" onClick={handleClose}>
+              <NavLink to="/account" onClick={handleClose}>
                 Account
               </NavLink>
             </li>

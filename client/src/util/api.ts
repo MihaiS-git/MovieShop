@@ -1,9 +1,12 @@
 import { ErrorResponse } from "react-router-dom";
-import { login } from "../features/auth/authSlice";
+import { login, logout } from "../features/auth/authSlice";
 import { ApiRequestParams } from "@/types/ApiRequestParams";
+import { User } from "@/types/User";
 
 interface RefreshResponse {
   token: string;
+  refreshToken: string;
+  user: User;
 }
 
 // Standard API response structure
@@ -103,14 +106,18 @@ const handleUnauthorizedError = async (
     }
 
     // Parse the new token from the response
-    const { token } = (await refreshResponse.json()) as RefreshResponse;
-    const updatedAuth = { ...auth, token };
+    const { token, refreshToken: newRefreshToken, user } = (await refreshResponse.json()) as RefreshResponse;
+    const updatedAuth = {
+      user,
+      token,
+      refreshToken: newRefreshToken,
+    };
 
     // Save the new token to localStorage
     localStorage.setItem("auth", JSON.stringify(updatedAuth));
 
     // Dispatch the updated auth data to the Redux store
-    dispatch?.(login(updatedAuth)); // Make sure `login` updates the state
+    dispatch?.(login(updatedAuth));
 
     // Retry the original request with the new token
     return fetchApi({
@@ -124,6 +131,7 @@ const handleUnauthorizedError = async (
   } catch (error) {
     console.error("Token refresh failed:", error);
     localStorage.clear();
+    dispatch?.(logout());
     window.location.href = "/signin"; // Redirect to sign-in if token refresh fails
     return Promise.reject("Unauthorized");
   }

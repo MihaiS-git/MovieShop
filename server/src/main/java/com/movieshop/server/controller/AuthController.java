@@ -8,6 +8,7 @@ import com.movieshop.server.service.AuthenticationService;
 import com.movieshop.server.service.IRefreshTokenService;
 import com.movieshop.server.service.IUserService;
 import com.movieshop.server.service.JwtService;
+import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -84,16 +85,24 @@ public class AuthController {
         return ResponseEntity.ok(userDTO);
     }
 
+    @Transactional
     @PostMapping("/refresh-token")
     public ResponseEntity<AuthResponse> refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
         if (!refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken())) {
             throw new InvalidAuthException("Invalid or expired refresh token");
         }
 
-        RefreshToken refreshToken = refreshTokenService.findByToken(refreshTokenRequest.getRefreshToken())
+        RefreshToken oldToken = refreshTokenService.findByToken(refreshTokenRequest.getRefreshToken())
                 .orElseThrow(() -> new InvalidAuthException("Refresh token not found"));
 
-        User user = refreshToken.getUser();
+        User user = oldToken.getUser();
+
+        // Delete the old token
+        refreshTokenService.deleteRefreshToken(refreshTokenRequest.getRefreshToken());
+
+        // Generate new token
+        String newAccessToken = jwtService.generateToken(user);
+        RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(user);
 
         UserDTO userDTO = UserDTO.builder()
                 .email(user.getEmail())
@@ -103,11 +112,7 @@ public class AuthController {
                 .picture(user.getPicture())
                 .build();
 
-        String newAccessToken = jwtService.generateToken(user);
-        RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(user);
-
-        refreshTokenService.deleteRefreshToken(refreshTokenRequest.getRefreshToken());
-
         return ResponseEntity.ok(new AuthResponse(newAccessToken, newRefreshToken.getToken(), userDTO));
     }
+
 }

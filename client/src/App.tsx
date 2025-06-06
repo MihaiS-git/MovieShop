@@ -21,6 +21,8 @@ import EditReviews from "./pages/admin/reviews/EditReviews";
 import AddReview from "./pages/admin/reviews/AddReview";
 import EditMoviePage from "./pages/admin/movies/EditMoviePage";
 import UserAccountPage from "./pages/account/UserAccountPage";
+import RequireNoAuth from "./components/auth/RequireNoAuth";
+import RequireAuth from "./components/auth/RequireAuth";
 
 const router = createBrowserRouter([
   {
@@ -33,39 +35,71 @@ const router = createBrowserRouter([
       },
       {
         path: "home",
-        element: <HomePage />,
+        element: (
+          <RequireNoAuth>
+            <HomePage />
+          </RequireNoAuth>
+        ),
       },
       {
         path: "signin",
-        element: <SigninPage />,
+        element: (
+          <RequireNoAuth>
+            <SigninPage />
+          </RequireNoAuth>
+        ),
       },
       {
         path: "oauth2/redirect",
-        element: <OAuthRedirectHandler />,
+        element: (
+          <RequireNoAuth>
+            <OAuthRedirectHandler />
+          </RequireNoAuth>
+        ),
       },
       {
         path: "register",
-        element: <RegisterPage />,
+        element: (
+          <RequireNoAuth>
+            <RegisterPage />
+          </RequireNoAuth>
+        ),
       },
       {
         path: "admin",
-        element: <AdminLayout />,
+        element: (
+          <RequireAuth>
+            <AdminLayout />
+          </RequireAuth>
+        ),
         children: [
           {
             path: "movies",
             children: [
               {
                 path: "edit",
-                element: <AdminMoviesListPage/>,
+                element: (
+                  <RequireAuth>
+                    <AdminMoviesListPage />
+                  </RequireAuth>
+                ),
               },
               {
                 path: "edit/:id",
-                element: <EditMoviePage />
+                element: (
+                  <RequireAuth>
+                    <EditMoviePage />
+                  </RequireAuth>
+                ),
               },
               {
                 path: "add",
-                element: <AddMovie/>
-              }
+                element: (
+                  <RequireAuth>
+                    <AddMovie />
+                  </RequireAuth>
+                ),
+              },
             ],
           },
           {
@@ -73,49 +107,81 @@ const router = createBrowserRouter([
             children: [
               {
                 path: "edit",
-                element: <AdminUsers/>
+                element: (
+                  <RequireAuth>
+                    <AdminUsers />
+                  </RequireAuth>
+                ),
               },
             ],
           },
           {
             path: "orders",
-                        children: [
+            children: [
               {
                 path: "edit",
-                element: <AdminOrders/>
+                element: (
+                  <RequireAuth>
+                    <AdminOrders />
+                  </RequireAuth>
+                ),
               },
             ],
           },
           {
             path: "reviews",
-                        children: [
+            children: [
               {
                 path: "edit",
-                element: <EditReviews/>
+                element: (
+                  <RequireAuth>
+                    <EditReviews />
+                  </RequireAuth>
+                ),
               },
               {
                 path: "add",
-                element: <AddReview/>
-              }
+                element: (
+                  <RequireAuth>
+                    <AddReview />
+                  </RequireAuth>
+                ),
+              },
             ],
           },
           {
             path: "dashboard",
-            element: <AdminDashboard />,
+            element: (
+              <RequireAuth>
+                <AdminDashboard />
+              </RequireAuth>
+            ),
           },
         ],
       },
       {
         path: "movies",
-        element: <MovieListPage />,
+        element: (
+          <RequireNoAuth>
+            <MovieListPage />
+          </RequireNoAuth>
+        ),
       },
       {
         path: "movies/:id",
-        element: <MovieDetailsPage />,
+        element: (
+          <RequireNoAuth>
+            <MovieDetailsPage />
+          </RequireNoAuth>
+        ),
       },
       {
         path: "account",
-        element: <UserAccountPage />
+        element: (
+          <RequireAuth>
+            <UserAccountPage />
+          </RequireAuth>
+        ),
       },
     ],
   },
