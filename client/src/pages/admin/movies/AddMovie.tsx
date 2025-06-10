@@ -125,7 +125,7 @@ const AddMovie = () => {
       </h1>
       <div className="flex flex-col items-center lg:flex-row pb-24 w-full justify-center gap-4">
         <form
-          className="bg-gray-200 text-sm flex flex-col gap-1  w-10/12 lg:w-full max-w-md border border-charcoal-800 py-2 px-4"
+          className=" text-sm flex flex-col gap-1 w-10/12 lg:w-full max-w-md border py-2 px-4 bg-gray-300 dark:bg-charcoal-800 border-charcoal-800 dark:border-gray-600 text-charcoal-800 dark:text-gray-200"
           onSubmit={handleFormSubmit}
         >
           <label htmlFor="title">
@@ -136,7 +136,7 @@ const AddMovie = () => {
               type="text"
               value={title || ""}
               onChange={handleChangeTitle}
-              className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
+              className="bg-gray-300 dark:bg-gray-700 border border-charcoal-800 rounded-sm p-1 w-full"
               min={1}
               required
             />
@@ -148,18 +148,19 @@ const AddMovie = () => {
               id="description"
               value={description || ""}
               onChange={handleChangeDescription}
-              className="h-15 bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
+              className="h-15 bg-gray-300 dark:bg-gray-700 border border-charcoal-800 rounded-sm p-1 w-full"
               minLength={1}
               required
             ></textarea>
           </label>
-          <label htmlFor="language">
+          <label htmlFor="language" className="w-full flex flex-row justify-between">
             Language:{" "}
             <select
               id="language"
               name="language"
               onChange={handleChangeLanguage}
               value={language}
+              className="bg-gray-300 dark:bg-gray-700 border border-charcoal-800 rounded-sm p-1 w-2/3"
               required
             >
               <option value="">Select language</option>
@@ -170,13 +171,14 @@ const AddMovie = () => {
               ))}
             </select>
           </label>
-          <label htmlFor="originalLanguage">
+          <label htmlFor="originalLanguage" className="w-full flex flex-row justify-between">
             Original language:{" "}
             <select
               id="originalLanguage"
               name="originalLanguage"
               onChange={handleChangeOriginalLanguage}
               value={originalLanguage}
+              className="bg-gray-300 dark:bg-gray-700 border border-charcoal-800 rounded-sm p-1 w-2/3"
               required
             >
               <option value="">Select language</option>
@@ -195,7 +197,7 @@ const AddMovie = () => {
               type="number"
               value={length || ""}
               onChange={handleChangeLength}
-              className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
+              className="bg-gray-300 dark:bg-gray-700 border border-charcoal-800 rounded-sm p-1 w-full"
               min={1}
               required
             />
@@ -205,7 +207,7 @@ const AddMovie = () => {
             <select
               name="rating"
               id="rating"
-              className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
+              className="bg-gray-300 dark:bg-gray-700 border border-charcoal-800 rounded-sm p-1 w-full"
               value={rating}
               onChange={handleRatingChange}
               required
@@ -225,7 +227,7 @@ const AddMovie = () => {
               type="number"
               value={releaseYear || ""}
               onChange={handleChangeReleaseYear}
-              className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
+              className="bg-gray-300 dark:bg-gray-700 border border-charcoal-800 rounded-sm p-1 w-full"
               min={1930}
               max={Number(new Date().getFullYear())}
               required
@@ -239,7 +241,7 @@ const AddMovie = () => {
               type="number"
               value={rentalDuration || ""}
               onChange={handleChangeRentalDuration}
-              className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
+              className="bg-gray-300 dark:bg-gray-700 border border-charcoal-800 rounded-sm p-1 w-full"
               min={1}
               required
             />
@@ -252,7 +254,7 @@ const AddMovie = () => {
               type="number"
               value={rentalRate || ""}
               onChange={handleChangeRentalRate}
-              className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
+              className="bg-gray-300 dark:bg-gray-700 border border-charcoal-800 rounded-sm p-1 w-full"
               min={0.0}
               required
               step="0.01"
@@ -266,7 +268,7 @@ const AddMovie = () => {
               type="number"
               value={replacementCost || ""}
               onChange={handleChangeReplacementCost}
-              className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
+              className="bg-gray-300 dark:bg-gray-700 border border-charcoal-800 rounded-sm p-1 w-full"
               min={0}
               required
               step="0.01"
@@ -274,7 +276,7 @@ const AddMovie = () => {
           </label>
           <button
             type="submit"
-            className="bg-green-600 hover:bg-green-500 rounded-sm mt-2 p-1"
+            className="bg-green-600 hover:bg-green-500 rounded-sm mt-2 p-1 cursor-pointer px-15"
           >
             Save Changes
           </button>

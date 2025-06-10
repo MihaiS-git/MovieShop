@@ -235,21 +235,21 @@ const EditMoviePage = () => {
   if (error) return <p>Error loading movie.</p>;
 
   return (
-    <PageContent className="flex flex-col items-center justify-items-center 2xl:justify-items-start pt-4 w-full min-h-screen text-charcoal-800 2xl:pb-56">
+    <PageContent className="flex flex-col items-center justify-items-center 2xl:justify-items-start pt-4 w-full min-h-screen 2xl:pb-56">
       <h1 className="bg-charcoal-800 dark:bg-red-500 text-red-500 dark:text-charcoal-800 text-base lg:text-lg text-center w-50 p-2 mb-4 rounded-2xl">
         Edit Movie
       </h1>
-      <div className="flex flex-col items-start justify-evenly gap-4 2xl:flex-row mb-24 w-full sm:w-8/12 lg:w-1/2 2xl:w-11/12 bg-gray-200 p-2">
+      <div className="flex flex-col items-center 2xl:items-start justify-evenly gap-4 2xl:flex-row mb-24 w-full sm:w-8/12 lg:w-1/2 2xl:w-11/12 bg-gray-200 dark:bg-charcoal-800 text-charcoal-800 dark:text-gray-200 p-2 border border-charcoal-800 dark:border-gray-600">
         <img
           src="/movie_placeholder.png"
           alt="Movie Poster"
-          className="h-120 lg:h-160 mb-0 shadow-charcoal-800 shadow-[8px_8px_10px_-3px_rgba(0,0,0,0.3)] 2xl:w-1/3 2xl:h-full mx-auto"
+          className="h-120 lg:h-160  shadow-charcoal-800 dark:shadow-gray-600 shadow-[8px_8px_10px_-3px_rgba(0,0,0,0.3)] 2xl:w-1/3 2xl:h-full mx-auto"
         />
 
-        <div className="flex flex-col text-sm 2xl:w-1/3">
-          <div className="flex flex-col justify-between text-sm border border-charcoal-800 rounded-sm p-2 mb-2">
+        <div className="flex flex-col w-full text-sm 2xl:w-1/3">
+          <div className="flex flex-col justify-between text-sm border border-charcoal-800 dark:border-gray-600 rounded-sm p-2">
             <form onSubmit={handleFormSubmit}>
-              <h3 className="bg-gray-300 p-2 font-semibold my-1">
+              <h3 className="bg-gray-300 dark:bg-gray-700 p-2 font-semibold my-1">
                 GENERAL INFORMATIONS
               </h3>
               <div className="my-1">
@@ -261,7 +261,7 @@ const EditMoviePage = () => {
                     type="text"
                     value={title}
                     onChange={handleChangeTitle}
-                    className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full my-1"
+                    className="bg-gray-300 dark:bg-gray-700 border border-charcoal-800 dark:border-gray-600 rounded-sm p-1 w-full my-1"
                     minLength={1}
                     required
                   />
@@ -275,7 +275,7 @@ const EditMoviePage = () => {
                     id="description"
                     value={description}
                     onChange={handleChangeDescription}
-                    className="h-15 bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
+                    className="h-15 bg-gray-300 dark:bg-gray-700  border border-charcoal-800 rounded-sm p-1 w-full"
                     minLength={1}
                     required
                   ></textarea>
@@ -288,7 +288,7 @@ const EditMoviePage = () => {
                   id="language"
                   onChange={handleChangeLanguage}
                   value={language}
-                  className="w-4/7 bg-gray-300 rounded-sm p-1 border-charcoal-800"
+                  className="w-4/7 bg-gray-300 dark:bg-gray-700 rounded-sm p-1 border-charcoal-800"
                   required
                 >
                   <option value="" disabled>
@@ -308,7 +308,7 @@ const EditMoviePage = () => {
                   id="originalLanguage"
                   onChange={handleChangeOriginalLanguage}
                   value={originalLanguage ?? ""}
-                  className="w-4/7 bg-gray-300 rounded-sm p-1 border-charcoal-800"
+                  className="w-4/7 bg-gray-300 dark:bg-gray-700 rounded-sm p-1 border-charcoal-800"
                 >
                   <option value="">Select Language</option>
                   {LANGUAGES.map((lang) => (
@@ -327,7 +327,7 @@ const EditMoviePage = () => {
                     type="number"
                     value={length}
                     onChange={handleChangeLength}
-                    className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
+                    className="bg-gray-300 dark:bg-gray-700 border border-charcoal-800 rounded-sm p-1 w-full"
                     min={1}
                     required
                   />
@@ -339,7 +339,7 @@ const EditMoviePage = () => {
                   <select
                     name="rating"
                     id="rating"
-                    className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
+                    className="bg-gray-300 dark:bg-gray-700 border border-charcoal-800 rounded-sm p-1 w-full"
                     value={rating}
                     onChange={handleRatingChange}
                     required
@@ -361,7 +361,7 @@ const EditMoviePage = () => {
                     type="number"
                     value={releaseYear}
                     onChange={handleChangeReleaseYear}
-                    className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
+                    className="bg-gray-300 dark:bg-gray-700 border border-charcoal-800 rounded-sm p-1 w-full"
                     min={MIN_RELEASE_YEAR}
                     max={Number(new Date().getFullYear())}
                     required
@@ -377,7 +377,7 @@ const EditMoviePage = () => {
                     type="number"
                     value={rentalDuration}
                     onChange={handleChangeRentalDuration}
-                    className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
+                    className="bg-gray-300 dark:bg-gray-700 border border-charcoal-800 rounded-sm p-1 w-full"
                     min={1}
                     step="1"
                     required
@@ -393,7 +393,7 @@ const EditMoviePage = () => {
                     type="number"
                     value={rentalRate}
                     onChange={handleChangeRentalRate}
-                    className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
+                    className="bg-gray-300 dark:bg-gray-700 border border-charcoal-800 rounded-sm p-1 w-full"
                     min={0.0}
                     required
                     step="0.01"
@@ -409,7 +409,7 @@ const EditMoviePage = () => {
                     type="number"
                     value={replacementCost}
                     onChange={handleChangeReplacementCost}
-                    className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 w-full"
+                    className="bg-gray-300 dark:bg-gray-700 border border-charcoal-800 rounded-sm p-1 w-full"
                     min={0.0}
                     required
                     step="0.01"
@@ -427,15 +427,17 @@ const EditMoviePage = () => {
               </div>
             </form>
           </div>
+        </div>
 
-          <div className="flex flex-col gap-0.75 text-sm border border-charcoal-800 rounded-sm p-2 w-full 2xl:h-full">
-            <h3 className="bg-gray-300 p-2 text-sm mb-2 font-semibold">
+        <div className="flex flex-col w-full text-sm gap-4 2xl:w-1/3">
+          <div className="flex flex-col gap-0.75 text-sm border border-charcoal-800 dark:border-gray-600 rounded-sm p-2 w-full 2xl:h-full">
+            <h3 className="bg-gray-300 dark:bg-gray-700 p-2 text-sm font-semibold">
               CATEGORIES
             </h3>
             <div className="w-full flex flex-row justify-between">
               <ul
                 id="categoriesList"
-                className="flex flex-col items-stretch bg-gray-300 w-full"
+                className="flex flex-col items-stretch bg-gray-300 dark:bg-gray-700 w-full"
               >
                 {movie?.categories.map((category) => (
                   <li
@@ -445,7 +447,7 @@ const EditMoviePage = () => {
                   >
                     <p>{category}</p>
                     <button onClick={() => handleDeleteCategory(category)}>
-                      <CiSquareMinus className="text-red-700 size-5 hover:text-red-400 cursor-pointer" />
+                      <CiSquareMinus className="text-red-600 size-5 hover:text-red-400 cursor-pointer" />
                     </button>
                   </li>
                 ))}
@@ -462,7 +464,7 @@ const EditMoviePage = () => {
               <select
                 name="newCategory"
                 id="newCategory"
-                className="bg-gray-300 w-full me-2"
+                className="bg-gray-300 dark:bg-gray-700 w-full me-2"
                 onChange={handleSelectedCategoryChange}
               >
                 <option value="None">None</option>
@@ -475,69 +477,74 @@ const EditMoviePage = () => {
                 ))}
               </select>
               <button>
-                <CiSquarePlus className="text-green-700 size-5 hover:text-green-400 cursor-pointer" />
+                <CiSquarePlus className="text-green-600 size-5 hover:text-green-400 cursor-pointer" />
               </button>
             </form>
           </div>
-        </div>
 
-        <div className="flex flex-col gap-2 text-sm border border-charcoal-800 rounded-sm p-2 w-full 2xl:w-1/3">
-          <h3 className="bg-gray-300 p-2 text-sm mb-2 font-semibold">ACTORS</h3>
-          <ul>
-            {movie?.actors.map((actor) => (
-              <li key={actor.id} className="flex flex-row justify-between m-1">
-                <p>
-                  {actor.firstName} {actor.lastName}
-                </p>
-                <button onClick={() => handleDeleteActor(actor.id)}>
-                  <CiSquareMinus className="text-red-700 size-5 hover:text-red-400 cursor-pointer" />
-                </button>
-              </li>
-            ))}
-          </ul>
-          <hr className="border-charcoal-800 my-2" />
-          <div>
-            <form
-              className="flex flex-row justify-between items-center"
-              onSubmit={handleSearchActor}
-            >
-              <label htmlFor="searchActor" className="w-4/5 me-2">
-                <input
-                  id="searchActor"
-                  type="text"
-                  name="searchName"
-                  className="bg-gray-300 border border-charcoal-800 rounded-sm p-1 px-2 w-full"
-                  placeholder="Search actor by name..."
-                  onChange={handleSearchNameChange}
-                />
-              </label>
-              <button
-                type="submit"
-                className="bg-green-600 hover:bg-green-500 rounded-sm p-1 w-1/5 cursor-pointer"
+          <div className="flex flex-col gap-2 text-sm border border-charcoal-800 dark:border-gray-600 rounded-sm p-2 w-full">
+            <h3 className="bg-gray-300 dark:bg-gray-700 p-2 text-sm font-semibold">
+              ACTORS
+            </h3>
+            <ul className="bg-gray-300 dark:bg-gray-700">
+              {movie?.actors.map((actor) => (
+                <li
+                  key={actor.id}
+                  className="flex flex-row justify-between m-1"
+                >
+                  <p>
+                    {actor.firstName} {actor.lastName}
+                  </p>
+                  <button onClick={() => handleDeleteActor(actor.id)}>
+                    <CiSquareMinus className="text-red-600 size-5 hover:text-red-400 cursor-pointer" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <hr className="border-charcoal-800 my-2" />
+            <div>
+              <form
+                className="flex flex-row justify-between items-center"
+                onSubmit={handleSearchActor}
               >
-                Search
-              </button>
-            </form>
-            {actorsResult.length > 0 && (
-              <>
-                <h4 className="text-base font-semibold mt-4">Search Result:</h4>
-                <ul>
-                  {actorsResult.map((actor) => (
-                    <li
-                      key={actor.id}
-                      className="flex flex-row justify-between m-1"
-                    >
-                      <p>
-                        {actor.firstName} {actor.lastName}
-                      </p>
-                      <button onClick={() => handleAddActor(actor.id)}>
-                        <CiSquarePlus className="text-green-700 size-5 hover:text-green-400 cursor-pointer" />
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
+                  <input
+                    id="searchActor"
+                    type="text"
+                    name="searchName"
+                    className="bg-gray-300 dark:bg-gray-700 border border-charcoal-800 rounded-sm p-1 px-2 me-2 w-full"
+                    placeholder="Search actor by name..."
+                    onChange={handleSearchNameChange}
+                  />
+                <button
+                  type="submit"
+                  className="bg-green-600 hover:bg-green-500 rounded-sm p-1 w-1/5 cursor-pointer"
+                >
+                  Search
+                </button>
+              </form>
+              {actorsResult.length > 0 && (
+                <div className="bg-gray-300 dark:bg-gray-700">
+                  <h4 className="text-base font-semibold mt-4">
+                    Search Result:
+                  </h4>
+                  <ul>
+                    {actorsResult.map((actor) => (
+                      <li
+                        key={actor.id}
+                        className="flex flex-row justify-between m-1"
+                      >
+                        <p>
+                          {actor.firstName} {actor.lastName}
+                        </p>
+                        <button onClick={() => handleAddActor(actor.id)}>
+                          <CiSquarePlus className="text-green-700 size-5 hover:text-green-400 cursor-pointer" />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
