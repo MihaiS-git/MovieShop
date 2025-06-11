@@ -1,5 +1,6 @@
 package com.movieshop.server.controller;
 
+import com.movieshop.server.model.UserPageResponse;
 import com.movieshop.server.model.UserResponseDTO;
 import com.movieshop.server.model.UserResponseWithAddressAndStoreDTO;
 import com.movieshop.server.model.UserUpdateRequestDTO;
@@ -19,10 +20,26 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
         List<UserResponseDTO> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
+    }
+
+    @GetMapping
+    public ResponseEntity<UserPageResponse> getAllUsersPaginated(
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "20") Integer limit,
+            @RequestParam(defaultValue = "id_asc") String orderBy,
+            @RequestParam(required = false) String roleFilter,
+            @RequestParam(required = false) String searchFilter,
+            @RequestParam(required = false) Boolean enabledFilter,
+            @RequestParam(required = false) Boolean accountNonExpiredFilter,
+            @RequestParam(required = false) Boolean accountNonLockedFilter,
+            @RequestParam(required = false) Boolean credentialsNonExpiredFilter
+            ) {
+
+        return ResponseEntity.ok(userService.getAllUsersPaginated(page, limit, orderBy, roleFilter, searchFilter, enabledFilter, accountNonExpiredFilter, accountNonLockedFilter, credentialsNonExpiredFilter));
     }
 
     @GetMapping("/{id}")

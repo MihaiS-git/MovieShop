@@ -1,6 +1,7 @@
 package com.movieshop.server.service;
 
 import com.movieshop.server.domain.User;
+import com.movieshop.server.model.UserPageResponse;
 import com.movieshop.server.model.UserResponseDTO;
 import com.movieshop.server.model.UserResponseWithAddressAndStoreDTO;
 import com.movieshop.server.model.UserUpdateRequestDTO;
@@ -19,4 +20,9 @@ public interface IUserService {
     void deleteUser(Integer id);
 
     UserResponseWithAddressAndStoreDTO getUserDetailsByEmail(String email);
+
+    UserPageResponse getAllUsersPaginated(Integer page, Integer limit, String orderBy,
+                                          String roleFilter, String searchFilter,
+                                          Boolean enabledFilter, Boolean accountNonExpiredFilter,
+                                          Boolean accountNonLockedFilter, Boolean credentialsNonExpiredFilter);
 }

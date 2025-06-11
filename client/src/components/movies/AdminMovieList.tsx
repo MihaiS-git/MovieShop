@@ -1,15 +1,16 @@
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { MovieItem } from "../../types/Movie";
 
-import MoviesPagination from "./MoviesPagination";
 import AdminMovieCard from "./AdminMovieCard";
 import MovieListFiltersBlock from "../movie/MovieListFiltersBlock";
 import AdminMobileMovieCard from "./AdminMobileMovieCard";
-import { MovieFilters, MoviePagination } from "@/types/MovieFilters";
+import { MovieFilters } from "@/types/MovieFilters";
 import useInfiniteScroll from "@/hooks/useInfiniteScroll";
+import { ItemsPagination } from "@/types/ItemsPagination";
+import ListItemsPagination from "../ui/ListItemsPagination";
 
 type Props = {
-  moviePagination: MoviePagination;
+  moviePagination: ItemsPagination;
   movieFilters: MovieFilters;
   movies: MovieItem[];
   handleDelete: (id: number) => void;
@@ -116,7 +117,7 @@ const AdminMovieList: React.FC<Props> = ({
             )
           ) : (
             totalPages > 1 && (
-              <MoviesPagination moviePagination={moviePagination} />
+              <ListItemsPagination listItemsPagination={moviePagination} />
             )
           )}
         </>

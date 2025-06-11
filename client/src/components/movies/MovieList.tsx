@@ -2,13 +2,14 @@ import { useIsMobile } from "@/hooks/useIsMobile";
 import { MovieItem } from "../../types/Movie";
 
 import MovieCard from "./MovieCard";
-import MoviesPagination from "./MoviesPagination";
 import MovieListFiltersBlock from "../movie/MovieListFiltersBlock";
-import { MovieFilters, MoviePagination } from "@/types/MovieFilters";
+import { MovieFilters } from "@/types/MovieFilters";
 import useInfiniteScroll from "@/hooks/useInfiniteScroll";
+import ListItemsPagination from "../ui/ListItemsPagination";
+import { ItemsPagination } from "@/types/ItemsPagination";
 
 type Props = {
-  moviePagination: MoviePagination;
+  moviePagination: ItemsPagination;
   movieFilters: MovieFilters;
   movies: MovieItem[];
 };
@@ -81,7 +82,7 @@ const MovieList: React.FC<Props> = ({
             )
           ) : (
             totalPages > 1 && (
-              <MoviesPagination moviePagination={moviePagination} />
+              <ListItemsPagination listItemsPagination={moviePagination} />
             )
           )}
         </>

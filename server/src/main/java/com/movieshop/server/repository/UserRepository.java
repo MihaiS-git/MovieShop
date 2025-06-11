@@ -3,6 +3,9 @@ package com.movieshop.server.repository;
 import com.movieshop.server.domain.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -22,4 +25,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             """)
     Optional<User> findByEmailWithAddressAndStore(@Email @NotBlank String email);
 
+    Page<User> findAll(Specification<User> spec, Pageable pageable);
 }

@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import rtkBaseQuery from "../rtkBaseQuery";
-import { UserDetails, UserUpdateRequestDto } from "@/types/User";
+import { UserDetails, UserItem, UserUpdateRequestDto } from "@/types/User";
 import { ApiRequestParams } from "@/types/ApiRequestParams";
 
 export const userApi = createApi({
@@ -29,10 +29,66 @@ export const userApi = createApi({
         { type: "User", id: "LIST" },
       ],
     }),
+    getUsers: builder.query<
+      { users: UserItem[]; totalCount: number },
+      {
+        page: number;
+        limit: number;
+        orderBy?: string;
+        roleFilter?: string;
+        searchFilter?: string;
+        enabledFilter?: string;
+        accountNonExpiredFilter?: string;
+        accountNonLockedFilter?: string;
+        credentialsNonExpiredFilter?: string;
+      }
+    >({
+      query: ({
+        page,
+        limit,
+        orderBy,
+        roleFilter,
+        searchFilter,
+        enabledFilter,
+        accountNonExpiredFilter,
+        accountNonLockedFilter,
+        credentialsNonExpiredFilter,
+      }) => ({
+        url: "/users",
+        params: {
+          page,
+          limit,
+          ...(orderBy ? { orderBy } : {}),
+          ...(roleFilter && roleFilter.toLowerCase() !== "all"
+            ? { roleFilter }
+            : {}),
+          ...(searchFilter && searchFilter.trim() !== ""
+            ? { searchFilter }
+            : {}),
+          ...(enabledFilter ? { enabledFilter } : {}),
+          ...(accountNonExpiredFilter ? { accountNonExpiredFilter } : {}),
+          ...(accountNonLockedFilter ? { accountNonLockedFilter } : {}),
+          ...(credentialsNonExpiredFilter
+            ? { credentialsNonExpiredFilter }
+            : {}),
+        },
+      }),
+      providesTags: ["User"],
+      keepUnusedDataFor: 300,
+    }),
+    deleteUserById: builder.mutation<void, number>({
+      query: (id) => ({
+        url: `/users/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: [{type: "User", id: "LIST"}],
+    }),
   }),
 });
 
-export const { 
+export const {
   useGetUserByEmailQuery,
   useUpdateUserMutation,
+  useGetUsersQuery,
+  useDeleteUserByIdMutation,
 } = userApi;

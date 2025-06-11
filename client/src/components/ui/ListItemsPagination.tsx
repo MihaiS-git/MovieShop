@@ -7,15 +7,15 @@ import {
     PaginationLink,
     PaginationNext,
     PaginationPrevious,
-  } from "../ui/pagination";
-import { MoviePagination } from "@/types/MovieFilters";
+  } from "./pagination";
+import { ItemsPagination } from "@/types/ItemsPagination";
   
   type Props = {
-    moviePagination: MoviePagination
+    listItemsPagination: ItemsPagination
   };
   
-  const MoviesPagination: React.FC<Props> = ({ moviePagination }) => {
-    const { page, totalPages, onPageChange, handlePrevPage, handleNextPage } = moviePagination;
+  const ListItemsPagination: React.FC<Props> = ({ listItemsPagination }) => {
+    const { page, totalPages, onPageChange, handlePrevPage, handleNextPage } = listItemsPagination;
   
     const getPageNumbers = () => {
       const pages = new Set<number>();
@@ -79,5 +79,5 @@ import { MoviePagination } from "@/types/MovieFilters";
     );
   };
   
-  export default MoviesPagination;
+  export default ListItemsPagination;
   

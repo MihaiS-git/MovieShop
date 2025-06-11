@@ -80,7 +80,7 @@ public class FilmServiceImpl implements IFilmService {
         Pageable pageable = PageRequest.of(page, limit, sort);
 
         Specification<Film> spec = Specification
-                .where(FilmSpecifications.hasRating((ratingFilter)))
+                .where(FilmSpecifications.hasRating(ratingFilter))
                 .and(FilmSpecifications.titleContains(titleFilter))
                 .and(FilmSpecifications.releaseYearEquals(yearFilter))
                 .and(FilmSpecifications.inCategory(categoryFilter));

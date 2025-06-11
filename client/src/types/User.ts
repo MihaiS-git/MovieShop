@@ -15,6 +15,8 @@ export enum Role {
   STAFF
 }
 
+export const ROLE = ["ADMIN", "CUSTOMER", "STAFF"];
+
 export interface UserDetails {
     id: number;
     email: string;
@@ -25,6 +27,20 @@ export interface UserDetails {
     store: CustomerStore;
     picture: string;
     rentals: number[];
+    accountNonExpired: boolean;
+    accountNonLocked: boolean;
+    credentialsNonExpired: boolean;
+    enabled: boolean;
+    createAt: string;
+    lastUpdate: string;
+}
+
+export interface UserItem {
+    id: number;
+    email: string;
+    role: Role;
+    firstName: string;
+    lastName: string;
     accountNonExpired: boolean;
     accountNonLocked: boolean;
     credentialsNonExpired: boolean;
