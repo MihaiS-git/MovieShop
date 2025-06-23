@@ -36,9 +36,7 @@ const router = createBrowserRouter([
       {
         path: "home",
         element: (
-          <RequireNoAuth>
             <HomePage />
-          </RequireNoAuth>
         ),
       },
       {
@@ -162,17 +160,13 @@ const router = createBrowserRouter([
       {
         path: "movies",
         element: (
-          <RequireNoAuth>
             <MovieListPage />
-          </RequireNoAuth>
         ),
       },
       {
         path: "movies/:id",
         element: (
-          <RequireNoAuth>
             <MovieDetailsPage />
-          </RequireNoAuth>
         ),
       },
       {
