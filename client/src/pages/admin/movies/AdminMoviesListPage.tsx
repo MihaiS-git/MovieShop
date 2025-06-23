@@ -2,9 +2,14 @@ import { useDeleteMovieByIdMutation } from "@/features/movies/movieApi";
 
 import PageContent from "@/PageContent";
 import AdminMovieList from "@/components/movies/AdminMovieList";
-import usePaginatedMovies from "@/hooks/usePaginatedMovies";
+import {usePaginatedMovies} from "@/hooks/usePaginatedMovies";
+import { useEffect } from "react";
 
 const AdminMoviesListPage = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const {
     totalPages,
     page,
@@ -27,7 +32,7 @@ const AdminMoviesListPage = () => {
     searchTerm,
     handleSearchTermChange,
     setMovies,
-    resetAllFilters
+    resetAllFilters,
   } = usePaginatedMovies();
 
   const [deleteMovie] = useDeleteMovieByIdMutation();
@@ -67,7 +72,7 @@ const AdminMoviesListPage = () => {
           setCategoryFilter,
           searchTerm,
           handleSearchTermChange,
-          resetAllFilters
+          resetAllFilters,
         }}
         movies={movies}
         handleDelete={handleDelete}

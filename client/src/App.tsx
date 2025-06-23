@@ -14,7 +14,7 @@ import MovieDetailsPage from "./pages/movies/MovieDetailsPage";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/dashboard/AdminDashboard";
 import AdminOrders from "./pages/admin/orders/AdminOrders";
-import AdminUsers from "./pages/admin/users/AdminUsers";
+import AdminUsersListPage from "./pages/admin/users/AdminUsersListPage";
 import AdminMoviesListPage from "./pages/admin/movies/AdminMoviesListPage";
 import AddMovie from "./pages/admin/movies/AddMovie";
 import EditReviews from "./pages/admin/reviews/EditReviews";
@@ -109,7 +109,7 @@ const router = createBrowserRouter([
                 path: "edit",
                 element: (
                   <RequireAuth>
-                    <AdminUsers />
+                    <AdminUsersListPage />
                   </RequireAuth>
                 ),
               },

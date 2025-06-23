@@ -73,7 +73,17 @@ export const userApi = createApi({
             : {}),
         },
       }),
-      providesTags: ["User"],
+      /* providesTags: ["User"], */
+      providesTags: (result) => 
+        result?.users
+      ? [
+        ...result.users.map((u) => ({
+          type: "User" as const,
+          id: u.id,
+        })),
+        {type: "User", id: "LIST"},
+      ]
+      : [{type: "User", id: "LIST"}],
       keepUnusedDataFor: 300,
     }),
     deleteUserById: builder.mutation<void, number>({

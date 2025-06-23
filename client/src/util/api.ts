@@ -62,7 +62,7 @@ const fetchApi = async ({
     if (!response.ok) {
       if (response.status === 401) {
         // Handle token expiration or invalidation
-        return handleUnauthorizedError(response, {
+        return handleUnauthorizedError({
           url,
           method,
           data,
@@ -84,10 +84,13 @@ const fetchApi = async ({
 };
 
 // Function to handle unauthorized errors (token expiration or invalidation)
-const handleUnauthorizedError = async (
-  response: Response,
-  { url, method, data, params, dispatch }: ApiRequestParams
-): Promise<ApiResponse> => {
+const handleUnauthorizedError = async ({
+  url,
+  method,
+  data,
+  params,
+  dispatch,
+}: ApiRequestParams): Promise<ApiResponse> => {
   const auth = JSON.parse(localStorage.getItem("auth") || "{}");
   const refreshToken = auth?.refreshToken;
 

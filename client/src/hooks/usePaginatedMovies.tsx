@@ -3,7 +3,7 @@ import { useIsMobile } from "./useIsMobile";
 import { useGetMoviesQuery } from "@/features/movies/movieApi";
 import { MovieItem } from "@/types/Movie";
 
-const usePaginatedMovies = () => {
+export function usePaginatedMovies (){
   const limit = 16;
   const isMobile = useIsMobile();
 
@@ -122,6 +122,4 @@ const usePaginatedMovies = () => {
     handleSearchTermChange,
     resetAllFilters,
   };
-};
-
-export default usePaginatedMovies;
+}
