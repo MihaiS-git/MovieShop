@@ -5,7 +5,6 @@ import { FaArrowRightArrowLeft } from "react-icons/fa6";
 import { useEffect, useState } from "react";
 
 const AdminLayout = () => {
-  console.log("AdminLayout");
   const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(true);
   const [isSmallerScreen, setIsSmallerScreen] = useState(false);
 

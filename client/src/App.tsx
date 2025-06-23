@@ -23,6 +23,7 @@ import EditMoviePage from "./pages/admin/movies/EditMoviePage";
 import UserAccountPage from "./pages/account/UserAccountPage";
 import RequireNoAuth from "./components/auth/RequireNoAuth";
 import RequireAuth from "./components/auth/RequireAuth";
+import RequireAdmin from "./components/auth/RequireAdmin";
 
 const router = createBrowserRouter([
   {
@@ -35,9 +36,7 @@ const router = createBrowserRouter([
       },
       {
         path: "home",
-        element: (
-            <HomePage />
-        ),
+        element: <HomePage />,
       },
       {
         path: "signin",
@@ -66,9 +65,9 @@ const router = createBrowserRouter([
       {
         path: "admin",
         element: (
-          <RequireAuth>
-            <AdminLayout />
-          </RequireAuth>
+            <RequireAdmin>
+              <AdminLayout />
+            </RequireAdmin>
         ),
         children: [
           {
@@ -77,25 +76,25 @@ const router = createBrowserRouter([
               {
                 path: "edit",
                 element: (
-                  <RequireAuth>
-                    <AdminMoviesListPage />
-                  </RequireAuth>
+                    <RequireAdmin>
+                      <AdminMoviesListPage />
+                    </RequireAdmin>
                 ),
               },
               {
                 path: "edit/:id",
                 element: (
-                  <RequireAuth>
-                    <EditMoviePage />
-                  </RequireAuth>
+                    <RequireAdmin>
+                      <EditMoviePage />
+                    </RequireAdmin>
                 ),
               },
               {
                 path: "add",
                 element: (
-                  <RequireAuth>
-                    <AddMovie />
-                  </RequireAuth>
+                    <RequireAdmin>
+                      <AddMovie />
+                    </RequireAdmin>
                 ),
               },
             ],
@@ -106,9 +105,9 @@ const router = createBrowserRouter([
               {
                 path: "edit",
                 element: (
-                  <RequireAuth>
-                    <AdminUsersListPage />
-                  </RequireAuth>
+                    <RequireAdmin>
+                      <AdminUsersListPage />
+                    </RequireAdmin>
                 ),
               },
             ],
@@ -119,9 +118,9 @@ const router = createBrowserRouter([
               {
                 path: "edit",
                 element: (
-                  <RequireAuth>
-                    <AdminOrders />
-                  </RequireAuth>
+                    <RequireAdmin>
+                      <AdminOrders />
+                    </RequireAdmin>
                 ),
               },
             ],
@@ -132,17 +131,17 @@ const router = createBrowserRouter([
               {
                 path: "edit",
                 element: (
-                  <RequireAuth>
-                    <EditReviews />
-                  </RequireAuth>
+                    <RequireAdmin>
+                      <EditReviews />
+                    </RequireAdmin>
                 ),
               },
               {
                 path: "add",
                 element: (
-                  <RequireAuth>
-                    <AddReview />
-                  </RequireAuth>
+                    <RequireAdmin>
+                      <AddReview />
+                    </RequireAdmin>
                 ),
               },
             ],
@@ -150,24 +149,20 @@ const router = createBrowserRouter([
           {
             path: "dashboard",
             element: (
-              <RequireAuth>
-                <AdminDashboard />
-              </RequireAuth>
+                <RequireAdmin>
+                  <AdminDashboard />
+                </RequireAdmin>
             ),
           },
         ],
       },
       {
         path: "movies",
-        element: (
-            <MovieListPage />
-        ),
+        element: <MovieListPage />,
       },
       {
         path: "movies/:id",
-        element: (
-            <MovieDetailsPage />
-        ),
+        element: <MovieDetailsPage />,
       },
       {
         path: "account",
