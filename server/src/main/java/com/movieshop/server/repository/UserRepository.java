@@ -20,10 +20,9 @@ public interface UserRepository extends JpaRepository<User, Integer> {
                 LEFT JOIN FETCH u.address a
                 LEFT JOIN FETCH a.city c
                 LEFT JOIN FETCH c.country
-                LEFT JOIN FETCH u.store
                 WHERE u.email = :email
             """)
-    Optional<User> findByEmailWithAddressAndStore(@Email @NotBlank String email);
+    Optional<User> findByEmailWithAddress(@Email @NotBlank String email);
 
     Page<User> findAll(Specification<User> spec, Pageable pageable);
 }

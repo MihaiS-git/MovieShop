@@ -8,15 +8,14 @@ import java.time.OffsetDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
 @ToString
 @Builder
-public class CityResponseDTO {
+public class UserManagerResponseDTO {
 
     private Integer id;
 
-    private String name;
+    private String firstName;
 
-    private CountryResponseDTO country;
-
-    private OffsetDateTime lastUpdate;
+    private String lastName;
 }

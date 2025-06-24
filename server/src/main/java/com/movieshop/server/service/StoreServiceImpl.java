@@ -1,50 +1,61 @@
 package com.movieshop.server.service;
 
-import com.movieshop.server.domain.Address;
-import com.movieshop.server.domain.Store;
-import com.movieshop.server.domain.User;
+import com.movieshop.server.StoreSpecifications;
+import com.movieshop.server.domain.*;
 import com.movieshop.server.exception.ResourceNotFoundException;
+import com.movieshop.server.mapper.AddressMapper;
+import com.movieshop.server.mapper.CountryMapper;
 import com.movieshop.server.mapper.StoreMapper;
-import com.movieshop.server.model.StoreRequestDTO;
-import com.movieshop.server.model.StoreResponseDTO;
-import com.movieshop.server.repository.AddressRepository;
-import com.movieshop.server.repository.StoreRepository;
-import com.movieshop.server.repository.UserRepository;
+import com.movieshop.server.model.*;
+import com.movieshop.server.repository.*;
+import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
+@Slf4j
 @Service
-public class StoreServiceImpl implements IStoreService{
+public class StoreServiceImpl implements IStoreService {
 
     private final StoreRepository storeRepository;
     private final StoreMapper storeMapper;
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
+    private final AddressMapper addressMapper;
+    private final CityRepository cityRepository;
+    private final CountryRepository countryRepository;
+    private final CountryMapper countryMapper;
 
     public StoreServiceImpl(
             StoreRepository storeRepository,
             StoreMapper storeMapper,
             UserRepository userRepository,
-            AddressRepository addressRepository
+            AddressRepository addressRepository,
+            AddressMapper addressMapper, CityRepository cityRepository, CountryRepository countryRepository, CountryMapper countryMapper
     ) {
         this.storeRepository = storeRepository;
         this.storeMapper = storeMapper;
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
+        this.addressMapper = addressMapper;
+        this.cityRepository = cityRepository;
+        this.countryRepository = countryRepository;
+        this.countryMapper = countryMapper;
     }
 
+    @Transactional
     @Override
-    public List<StoreResponseDTO> getAllStores() {
-        List<Store> stores = storeRepository.findAll();
-        return stores.stream().map(storeMapper::toResponseDto).toList();
-    }
-
-    @Override
-    public StoreResponseDTO getStoreById(Integer storeId) {
-        Store store = storeRepository.findById(storeId).orElseThrow(() ->
+    public StoreCompleteResponseDTO getStoreById(Integer storeId) {
+        Store store = storeRepository.findByIdWithDetails(storeId).orElseThrow(() ->
                 new ResourceNotFoundException("Store not found with id: " + storeId));
-        return storeMapper.toResponseDto(store);
+        return storeMapper.toResponseWithDetailsDto(store);
     }
 
     @Override
@@ -81,5 +92,66 @@ public class StoreServiceImpl implements IStoreService{
         Store store = storeRepository.findById(storeId).orElseThrow(() ->
                 new ResourceNotFoundException("Store not found with id: " + storeId));
         storeRepository.deleteById(storeId);
+    }
+
+    @Override
+    public StorePageResponse getAllStoresPaginated(int page, int limit, String orderBy, String countryFilter, String cityFilter) {
+        Sort sort = parseOrderBy(orderBy);
+
+        Pageable pageable = PageRequest.of(page, limit, sort);
+
+        Specification<Store> spec = Specification
+                .where(StoreSpecifications.hasCountry(countryFilter))
+                .and(StoreSpecifications.hasCity(cityFilter));
+
+        Page<Store> storesPage = storeRepository.findAll(spec, pageable);
+
+        List<StoreDetailsResponseDTO> storeDTOs = storesPage.getContent().stream()
+                .map(store -> {
+                    User manager = store.getManagerStaff();
+                    UserManagerResponseDTO managerDto = null;
+                    if (manager != null) {
+                        managerDto = UserManagerResponseDTO.builder()
+                                .id(manager.getId())
+                                .firstName(manager.getFirstName())
+                                .lastName(manager.getLastName())
+                                .build();
+                    }
+
+                    AddressResponseDTO addressDto = null;
+                    if (store.getAddress() != null) {
+                        addressDto = addressMapper.toResponseDto(store.getAddress());
+                    }
+
+                    return StoreDetailsResponseDTO.builder()
+                            .id(store.getId())
+                            .managerStaff(managerDto)
+                            .address(addressDto)
+                            .lastUpdate(store.getLastUpdate())
+                            .build();
+                }).toList();
+
+        return new StorePageResponse(storeDTOs, storesPage.getTotalElements());
+    }
+
+    private Sort parseOrderBy(String orderBy) {
+        if (orderBy == null || orderBy.isBlank() || orderBy.equalsIgnoreCase("None")) {
+            return Sort.by(Sort.Direction.ASC, "id");
+        }
+
+        String[] parts = orderBy.split("_", 2);
+        if (parts.length != 2) {
+            log.warn("Invalid orderBy format '{}', falling back to id_asc", orderBy);
+            return Sort.by(Sort.Direction.ASC, "id");
+        }
+        String field = parts[0];
+        Sort.Direction direction;
+        try {
+            direction = Sort.Direction.fromString(parts[1]);
+        } catch (IllegalArgumentException e) {
+            log.warn("Invalid sort direction '{}', defaulting to ASC", parts[1]);
+            direction = Sort.Direction.ASC;
+        }
+        return Sort.by(direction, field);
     }
 }

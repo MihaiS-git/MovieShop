@@ -53,3 +53,9 @@ export interface UserUpdateRequestDto{
     firstName: string;
     lastName: string;
 }
+
+export interface ManagerItem{
+  id: number;
+  firstName: string;
+  lastName: string;
+}

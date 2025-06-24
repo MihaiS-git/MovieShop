@@ -3,20 +3,23 @@ package com.movieshop.server.model;
 import lombok.*;
 
 import java.time.OffsetDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 @Builder
-public class CityResponseDTO {
+public class StoreCompleteResponseDTO {
 
     private Integer id;
 
-    private String name;
+    private UserResponseWithAddressDTO managerStaff;
 
-    private CountryResponseDTO country;
+    private AddressResponseDTO address;
+
+    private Set<InventoryResponseDTO> inventories;
 
     private OffsetDateTime lastUpdate;
+
 }

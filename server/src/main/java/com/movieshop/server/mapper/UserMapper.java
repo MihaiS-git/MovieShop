@@ -1,10 +1,7 @@
 package com.movieshop.server.mapper;
 
 import com.movieshop.server.domain.User;
-import com.movieshop.server.model.UserRequestDTO;
-import com.movieshop.server.model.UserResponseDTO;
-import com.movieshop.server.model.UserResponseItemDTO;
-import com.movieshop.server.model.UserResponseWithAddressAndStoreDTO;
+import com.movieshop.server.model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +10,6 @@ import org.springframework.stereotype.Component;
 public class UserMapper {
 
     private final AddressMapper addressMapper;
-    private final StoreMapper storeMapper;
 
     public UserResponseDTO toResponseDto(User user) {
         if (user == null) {
@@ -37,11 +33,11 @@ public class UserMapper {
                 .build();
     }
 
-    public UserResponseWithAddressAndStoreDTO toResponseWithAddressAndStoreDto(User user) {
+    public UserResponseWithAddressDTO toResponseWithAddressDto(User user) {
         if (user == null) {
             return null;
         }
-        return UserResponseWithAddressAndStoreDTO.builder()
+        return UserResponseWithAddressDTO.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .role((user.getRole().toString()))
@@ -55,7 +51,6 @@ public class UserMapper {
                 .createAt(user.getCreateAt())
                 .lastUpdate(user.getLastUpdate())
                 .address(user.getAddress() != null ? addressMapper.toResponseDto(user.getAddress()) : null)
-                .store(user.getStore() != null ? storeMapper.toCustomerResponseDto(user.getStore()) : null)
                 .build();
     }
 

@@ -13,7 +13,6 @@ import MovieListPage from "./pages/movies/MovieListPage";
 import MovieDetailsPage from "./pages/movies/MovieDetailsPage";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/dashboard/AdminDashboard";
-import AdminOrders from "./pages/admin/orders/AdminOrders";
 import AdminUsersListPage from "./pages/admin/users/AdminUsersListPage";
 import AdminMoviesListPage from "./pages/admin/movies/AdminMoviesListPage";
 import AddMovie from "./pages/admin/movies/AddMovie";
@@ -24,6 +23,8 @@ import UserAccountPage from "./pages/account/UserAccountPage";
 import RequireNoAuth from "./components/auth/RequireNoAuth";
 import RequireAuth from "./components/auth/RequireAuth";
 import RequireAdmin from "./components/auth/RequireAdmin";
+import AdminStoresListPage from "./pages/admin/stores/AdminStoresListPage";
+import AdminStorePage from "./pages/admin/stores/AdminStorePage";
 
 const router = createBrowserRouter([
   {
@@ -113,14 +114,22 @@ const router = createBrowserRouter([
             ],
           },
           {
-            path: "orders",
+            path: "stores",
             children: [
               {
                 path: "edit",
                 element: (
                     <RequireAdmin>
-                      <AdminOrders />
+                      <AdminStoresListPage />
                     </RequireAdmin>
+                ),
+              },
+              {
+                path: "edit/:id",
+                element: (
+                  <RequireAdmin>
+                    <AdminStorePage/>
+                  </RequireAdmin>
                 ),
               },
             ],

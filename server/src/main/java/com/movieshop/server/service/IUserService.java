@@ -1,10 +1,7 @@
 package com.movieshop.server.service;
 
 import com.movieshop.server.domain.User;
-import com.movieshop.server.model.UserPageResponse;
-import com.movieshop.server.model.UserResponseDTO;
-import com.movieshop.server.model.UserResponseWithAddressAndStoreDTO;
-import com.movieshop.server.model.UserUpdateRequestDTO;
+import com.movieshop.server.model.*;
 
 import java.util.List;
 
@@ -19,7 +16,7 @@ public interface IUserService {
 
     void deleteUser(Integer id);
 
-    UserResponseWithAddressAndStoreDTO getUserDetailsByEmail(String email);
+    UserResponseWithAddressDTO getUserDetailsByEmail(String email);
 
     UserPageResponse getAllUsersPaginated(Integer page, Integer limit, String orderBy,
                                           String roleFilter, String searchFilter,

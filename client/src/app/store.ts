@@ -7,6 +7,7 @@ import { userApi } from '@/features/users/userApi';
 import { movieApi } from "../features/movies/movieApi";
 import { addressApi } from '@/features/addresses/addressApi';
 import { countryApi } from '@/features/countries/countryApi';
+import { storeApi } from '@/features/stores/storeApi';
 
 export const store: EnhancedStore = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store: EnhancedStore = configureStore({
     [userApi.reducerPath]: userApi.reducer,
     [addressApi.reducerPath]: addressApi.reducer,
     [countryApi.reducerPath]: countryApi.reducer,
+    [storeApi.reducerPath]: storeApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
@@ -23,9 +25,10 @@ export const store: EnhancedStore = configureStore({
   .concat(actorApi.middleware)
   .concat(userApi.middleware)
   .concat(addressApi.middleware)
-  .concat(countryApi.middleware),
+  .concat(countryApi.middleware)
+  .concat(storeApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
-export { movieApi, actorApi, userApi, addressApi, countryApi };
+export { movieApi, actorApi, userApi, addressApi, countryApi, storeApi };

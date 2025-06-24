@@ -71,11 +71,11 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public UserResponseWithAddressAndStoreDTO getUserDetailsByEmail(String email) {
-        User user = userRepository.findByEmailWithAddressAndStore(email)
+    public UserResponseWithAddressDTO getUserDetailsByEmail(String email) {
+        User user = userRepository.findByEmailWithAddress(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
 
-        return userMapper.toResponseWithAddressAndStoreDto(user);
+        return userMapper.toResponseWithAddressDto(user);
     }
 
     @Override

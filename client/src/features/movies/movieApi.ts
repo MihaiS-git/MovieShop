@@ -79,7 +79,7 @@ export const movieApi = createApi({
       }),
       invalidatesTags: (_result, _error, { id }) => [
         { type: "Movie", id },
-        { type: "Movie", id: "LIST" },
+        /* { type: "Movie", id: "LIST" }, */
       ],
     }),
     addCategoryToMovie: builder.mutation<

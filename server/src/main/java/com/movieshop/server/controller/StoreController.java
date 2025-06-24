@@ -1,14 +1,15 @@
 package com.movieshop.server.controller;
 
-import com.movieshop.server.domain.Store;
+import com.movieshop.server.model.StoreCompleteResponseDTO;
+import com.movieshop.server.model.StorePageResponse;
 import com.movieshop.server.model.StoreRequestDTO;
 import com.movieshop.server.model.StoreResponseDTO;
 import com.movieshop.server.service.IStoreService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
+@Slf4j
 @RestController
 @RequestMapping("/api/v0/stores")
 public class StoreController {
@@ -20,14 +21,20 @@ public class StoreController {
     }
 
     @GetMapping
-    public ResponseEntity<List<StoreResponseDTO>> getAllStores() {
-        List<StoreResponseDTO> stores = storeService.getAllStores();
-        return ResponseEntity.ok(stores);
+    public ResponseEntity<StorePageResponse> getAllStoresPaginated(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int limit,
+            @RequestParam(defaultValue = "id_asc") String orderBy,
+            @RequestParam(required = false) String countryFilter,
+            @RequestParam(required = false) String cityFilter
+    ){
+        return ResponseEntity.ok(storeService.getAllStoresPaginated(page, limit, orderBy, countryFilter, cityFilter));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<StoreResponseDTO> getStoreById(Integer id) {
-        StoreResponseDTO store = storeService.getStoreById(id);
+    public ResponseEntity<StoreCompleteResponseDTO> getStoreById(@PathVariable Integer id) {
+        log.info("ID: {}", id);
+        StoreCompleteResponseDTO store = storeService.getStoreById(id);
         return ResponseEntity.ok(store);
     }
 
