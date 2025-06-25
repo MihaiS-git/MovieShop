@@ -48,7 +48,6 @@ public class StoreMapper {
                 .id(store.getId())
                 .managerStaff(userMapper.toResponseWithAddressDto(store.getManagerStaff()))
                 .address(addressMapper.toResponseDto(store.getAddress()))
-                .inventories(store.getInventories().stream().map(inventoryMapper::toResponseDto).collect(Collectors.toSet()))
                 .lastUpdate(store.getLastUpdate())
                 .build();
 

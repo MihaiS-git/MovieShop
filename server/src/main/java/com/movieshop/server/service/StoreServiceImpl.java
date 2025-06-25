@@ -4,7 +4,6 @@ import com.movieshop.server.StoreSpecifications;
 import com.movieshop.server.domain.*;
 import com.movieshop.server.exception.ResourceNotFoundException;
 import com.movieshop.server.mapper.AddressMapper;
-import com.movieshop.server.mapper.CountryMapper;
 import com.movieshop.server.mapper.StoreMapper;
 import com.movieshop.server.model.*;
 import com.movieshop.server.repository.*;
@@ -18,7 +17,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @Service
@@ -29,25 +27,19 @@ public class StoreServiceImpl implements IStoreService {
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
     private final AddressMapper addressMapper;
-    private final CityRepository cityRepository;
-    private final CountryRepository countryRepository;
-    private final CountryMapper countryMapper;
 
     public StoreServiceImpl(
             StoreRepository storeRepository,
             StoreMapper storeMapper,
             UserRepository userRepository,
             AddressRepository addressRepository,
-            AddressMapper addressMapper, CityRepository cityRepository, CountryRepository countryRepository, CountryMapper countryMapper
+            AddressMapper addressMapper
     ) {
         this.storeRepository = storeRepository;
         this.storeMapper = storeMapper;
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
         this.addressMapper = addressMapper;
-        this.cityRepository = cityRepository;
-        this.countryRepository = countryRepository;
-        this.countryMapper = countryMapper;
     }
 
     @Transactional

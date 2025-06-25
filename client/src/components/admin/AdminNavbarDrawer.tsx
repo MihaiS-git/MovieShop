@@ -63,7 +63,7 @@ const AdminNavbarDrawer: React.FC<AdminNavDrawerProps> = ({
                   ? "text-red-500 font-bold"
                   : "text-gray-300 hover:text-red-500"
               }
-              to="/admin/stores/edit"
+              to="/admin/stores"
             >
               Stores List
             </NavLink>

@@ -3,7 +3,6 @@ package com.movieshop.server.model;
 import lombok.*;
 
 import java.time.OffsetDateTime;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -17,8 +16,6 @@ public class StoreCompleteResponseDTO {
     private UserResponseWithAddressDTO managerStaff;
 
     private AddressResponseDTO address;
-
-    private Set<InventoryResponseDTO> inventories;
 
     private OffsetDateTime lastUpdate;
 

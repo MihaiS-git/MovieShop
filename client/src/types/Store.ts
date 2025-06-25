@@ -1,5 +1,4 @@
 import { Address } from "./Address";
-import { Inventory } from "./Inventory";
 import { ManagerItem, UserDetails } from "./User";
 
 export interface CustomerStore {
@@ -26,6 +25,5 @@ export interface StoreDetails {
   id: number;
   managerStaff: UserDetails;
   address: Address;
-  inventories: Inventory[];
   lastUpdate: string;
 }

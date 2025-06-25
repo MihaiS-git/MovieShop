@@ -33,7 +33,6 @@ public class StoreController {
 
     @GetMapping("/{id}")
     public ResponseEntity<StoreCompleteResponseDTO> getStoreById(@PathVariable Integer id) {
-        log.info("ID: {}", id);
         StoreCompleteResponseDTO store = storeService.getStoreById(id);
         return ResponseEntity.ok(store);
     }

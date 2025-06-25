@@ -117,7 +117,7 @@ const router = createBrowserRouter([
             path: "stores",
             children: [
               {
-                path: "edit",
+                path: "",
                 element: (
                     <RequireAdmin>
                       <AdminStoresListPage />
@@ -125,7 +125,7 @@ const router = createBrowserRouter([
                 ),
               },
               {
-                path: "edit/:id",
+                path: ":id",
                 element: (
                   <RequireAdmin>
                     <AdminStorePage/>

@@ -29,7 +29,6 @@ public interface StoreRepository extends JpaRepository<Store, Integer>, JpaSpeci
             LEFT JOIN FETCH s.address a
             LEFT JOIN FETCH a.city ac
             LEFT JOIN FETCH ac.country
-            LEFT JOIN FETCH s.inventories i
             WHERE s.id = :id
             """)
     Optional<Store> findByIdWithDetails(@Param("id") Integer id);
