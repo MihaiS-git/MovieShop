@@ -1,9 +1,8 @@
+import EditStoreModal from "@/components/stores/EditStoreModal";
 import { useGetStoreByIdQuery } from "@/features/stores/storeApi";
 import PageContent from "@/PageContent";
-import { Address } from "@/types/Address";
-import { UserDetails } from "@/types/User";
 import { formatDate } from "@/util/formatDate";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 const AdminStorePage = () => {
@@ -11,19 +10,11 @@ const AdminStorePage = () => {
   const { id } = useParams();
   const storeId = Number(id);
 
-  const { data, isLoading, error } = useGetStoreByIdQuery(storeId, {
+  const { data, isLoading, error, refetch } = useGetStoreByIdQuery(storeId, {
     refetchOnMountOrArgChange: true,
   });
 
-  const [managerStaff, setManagerStaff] = useState<UserDetails>();
-  const [address, setAddress] = useState<Address>();
-
-  useEffect(() => {
-    if (data) {
-      setManagerStaff(data.managerStaff);
-      setAddress(data.address);
-    }
-  }, [data]);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   const handleInventoryClick = () => {
     navigate("inventory");
@@ -32,13 +23,15 @@ const AdminStorePage = () => {
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error loading store data.</p>;
 
+  const managerStaff = data?.managerStaff;
+  const address = data?.address;
+
   return (
     <PageContent className="flex flex-col items-center justify-items-center 2xl:justify-items-start pt-4 w-full min-h-screen 2xl:pb-56">
       <h1 className="bg-charcoal-800 dark:bg-red-500 text-red-500 dark:text-charcoal-800 text-base lg:text-lg text-center w-50 p-2 mb-4 rounded-2xl">
         Store Details
       </h1>
       <div className="flex flex-col items-center 2xl:items-start justify-evenly gap-4 2xl:grid 2xl:grid-cols-2 mb-24 w-full sm:w-8/12 lg:w-1/2 2xl:w-11/12 bg-gray-200 dark:bg-charcoal-800 text-charcoal-800 dark:text-gray-200 p-2 border border-charcoal-800 dark:border-gray-600 text-xs md:text-base">
-
         <div className="flex-1 self-stretch bg-gray-200 dark:bg-charcoal-800 text-charcoal-800 dark:text-gray-200 p-8 border border-charcoal-800 dark:border-gray-600">
           <div className="flex flex-row justify-between">
             <h2 className="text-sm md:text-xl pb-4">Store Manager</h2>
@@ -141,7 +134,7 @@ const AdminStorePage = () => {
           </button>
           <button
             className="bg-green-500 hover:bg-green-600 text-charcoal-800 cursor-pointer p-1.5 m-1 rounded-sm"
-            onClick={handleInventoryClick}
+            onClick={() => setShowEditModal(true)}
           >
             Edit Store
           </button>
@@ -153,6 +146,13 @@ const AdminStorePage = () => {
           </button>
         </div>
       </div>
+      {showEditModal && address && (
+        <EditStoreModal
+          address={address}
+          onClose={() => setShowEditModal(false)}
+          refetchStore={refetch}
+        />
+      )}
     </PageContent>
   );
 };
