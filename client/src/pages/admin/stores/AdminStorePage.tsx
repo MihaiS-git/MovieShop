@@ -1,33 +1,58 @@
 import EditStoreModal from "@/components/stores/EditStoreModal";
+import { useLazyGetInventoriesByStoreIdQuery } from "@/features/stores/inventoryApi";
 import { useGetStoreByIdQuery } from "@/features/stores/storeApi";
 import PageContent from "@/PageContent";
+import { formatCurrency } from "@/util/formatCurrency";
 import { formatDate } from "@/util/formatDate";
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 const AdminStorePage = () => {
-  const navigate = useNavigate();
   const { id } = useParams();
   const storeId = Number(id);
 
-  const { data, isLoading, error, refetch } = useGetStoreByIdQuery(storeId, {
+  const {
+    data: store,
+    isLoading,
+    error,
+    refetch,
+  } = useGetStoreByIdQuery(storeId, {
     refetchOnMountOrArgChange: true,
   });
 
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showInventory, setShowInventory] = useState(false);
+  const [
+    fetchInventories,
+    {
+      data: inventoriesData,
+      isLoading: isLoadingInventories,
+      isFetching: IsFetchingInventories,
+      error: inventoriesError,
+    },
+  ] = useLazyGetInventoriesByStoreIdQuery();
 
-  const handleInventoryClick = () => {
-    navigate("inventory");
+  const inventories = inventoriesData?.inventories;
+
+  const handleInventoryClick = async () => {
+    setShowInventory((prev) => !prev);
+    if (store?.id) {
+      await fetchInventories({
+        storeId: store.id,
+        page: 0,
+        limit: 20,
+      });
+    }
   };
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error loading store data.</p>;
 
-  const managerStaff = data?.managerStaff;
-  const address = data?.address;
+  const managerStaff = store?.managerStaff;
+  const address = store?.address;
 
   return (
-    <PageContent className="flex flex-col items-center justify-items-center 2xl:justify-items-start pt-4 w-full min-h-screen 2xl:pb-56">
+    <PageContent className="flex flex-col items-center justify-items-center 2xl:justify-items-start pt-4 w-full min-h-screen pb-56">
       <h1 className="bg-charcoal-800 dark:bg-red-500 text-red-500 dark:text-charcoal-800 text-base lg:text-lg text-center w-50 p-2 mb-4 rounded-2xl">
         Store Details
       </h1>
@@ -83,9 +108,9 @@ const AdminStorePage = () => {
           <div className="flex flex-row justify-between">
             <h2 className="text-sm md:text-xl pb-4">Store</h2>
             <h2 className="font-bold text-sm md:text-xl pb-4">
-              #{data?.id}{" "}
+              #{store?.id}{" "}
               <span className="text-xs font-light">
-                ({formatDate(data!.lastUpdate)})
+                ({formatDate(store!.lastUpdate)})
               </span>
             </h2>
           </div>
@@ -128,7 +153,7 @@ const AdminStorePage = () => {
         <div className="2xl:col-span-2 2xl:mx-auto">
           <button
             className="bg-gray-500 hover:bg-gray-600 text-charcoal-800 cursor-pointer p-1.5 m-1 rounded-sm"
-            onClick={handleInventoryClick}
+            onClick={() => handleInventoryClick()}
           >
             Inventory
           </button>
@@ -146,12 +171,39 @@ const AdminStorePage = () => {
           </button>
         </div>
       </div>
+
       {showEditModal && address && (
         <EditStoreModal
           address={address}
           onClose={() => setShowEditModal(false)}
           refetchStore={refetch}
         />
+      )}
+
+      {showInventory && (
+        <div className="flex flex-col items-center 2xl:items-start justify-evenly gap-4 mb-24 w-full sm:w-8/12 lg:w-1/2 2xl:w-11/12 bg-gray-200 dark:bg-charcoal-800 text-charcoal-800 dark:text-gray-200 p-2 border border-charcoal-800 dark:border-gray-600 text-xs md:text-base">
+          <div className="flex flex-col justify-center items-center w-full bg-gray-200 dark:bg-charcoal-800 text-charcoal-800 dark:text-gray-200 p-4 border border-charcoal-800 dark:border-gray-600">
+            <h1 className="bg-charcoal-800 dark:bg-red-500 text-red-500 dark:text-charcoal-800 text-base lg:text-lg text-center w-50 py-1 px-2 rounded-xs">
+              Store #{store?.id} Inventory
+            </h1>
+            {inventoriesError && (
+              <p>An error occurred while fetching inventories.</p>
+            )}
+            {(isLoadingInventories || IsFetchingInventories) && (
+              <p>Loading...</p>
+            )}
+            {inventories ? (
+              // TODO
+              <ul>
+                {inventories.map((inventory) => (
+                  <li key={inventory.id}>{inventory.id}{" "}{inventory.storeId}{" "}{inventory.film.title}{" "}{inventory.film.releaseYear}{" "}{formatCurrency(inventory.film.rentalRate)}{" "}{formatCurrency(inventory.film.replacementCost)}{" "}{formatDate(inventory.lastUpdate)}</li>
+                ))}
+              </ul>
+            ) : (
+              <p>No inventories found for the selected store.</p>
+            )}
+          </div>
+        </div>
       )}
     </PageContent>
   );

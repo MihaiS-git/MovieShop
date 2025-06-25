@@ -5,15 +5,21 @@ import com.movieshop.server.domain.Inventory;
 import com.movieshop.server.domain.Store;
 import com.movieshop.server.exception.ResourceNotFoundException;
 import com.movieshop.server.mapper.InventoryMapper;
-import com.movieshop.server.model.InventoryRequestDTO;
-import com.movieshop.server.model.InventoryResponseDTO;
+import com.movieshop.server.model.*;
 import com.movieshop.server.repository.FilmRepository;
 import com.movieshop.server.repository.InventoryRepository;
 import com.movieshop.server.repository.StoreRepository;
+import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 public class InventoryServiceImpl implements IInventoryService {
 
@@ -82,5 +88,49 @@ public class InventoryServiceImpl implements IInventoryService {
         Inventory inventory = inventoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Inventory not found by id: " + id));
         inventoryRepository.deleteById(id);
+    }
+
+    @Transactional
+    @Override
+    public InventoryPageResponse getAllInventoriesByStoreIdPaginated(Integer storeId, Integer page, Integer limit, String orderBy) {
+        Sort sort = parseOrderBy(orderBy);
+        Pageable pageable = PageRequest.of(page, limit, sort);
+
+        Page<Inventory> inventoriesPage = inventoryRepository.findAllByStoreId(storeId, pageable);
+
+        List<Inventory> inventories = inventoriesPage.getContent();
+
+        List<InventoryItemDTO> inventoryDtos = inventoriesPage.getContent().stream()
+                .map(inventoryMapper::toInventoryItemDTO)
+                .toList();
+
+        return new InventoryPageResponse(
+                inventoryDtos,
+                (int) inventoriesPage.getTotalElements(),
+                inventoriesPage.getNumber(),
+                inventoriesPage.getSize(),
+                inventoriesPage.getTotalPages(),
+                inventoriesPage.isLast()
+        );
+    }
+
+    private Sort parseOrderBy(String orderBy) {
+        if (orderBy == null || orderBy.isBlank()) {
+            return Sort.by(Sort.Direction.ASC, "id");
+        }
+        String[] parts = orderBy.split("_", 2);
+        if (parts.length != 2) {
+            log.warn("Invalid orderBy format '{}', falling back to id_asc", orderBy);
+            return Sort.by(Sort.Direction.ASC, "id");
+        }
+        String field = parts[0];
+        Sort.Direction direction;
+        try {
+            direction = Sort.Direction.fromString(parts[1]);
+        } catch (IllegalArgumentException e) {
+            log.warn("Invalid sort direction '{}', defaulting to ASC", parts[1]);
+            direction = Sort.Direction.ASC;
+        }
+        return Sort.by(direction, field);
     }
 }

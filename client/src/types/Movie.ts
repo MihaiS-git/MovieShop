@@ -132,3 +132,11 @@ export interface MovieDetails {
   categories: string[];
   actors: Actor[];
 }
+
+export interface MovieInventoryItem{
+  id: number;
+  title: string;
+  releaseYear: number;
+  rentalRate: number;
+  replacementCost: number;
+}

@@ -2,7 +2,7 @@ import { MovieItem } from "../../types/Movie";
 import { RootState } from "../../app/store";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { formatCurrency } from "@/util/formatcurrency";
+import { formatCurrency } from "@/util/formatCurrency";
 
 const MovieCard: React.FC<{ movie: MovieItem }> = ({ movie }) => {
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);

@@ -1,4 +1,4 @@
-import { formatCurrency } from "@/util/formatcurrency";
+import { formatCurrency } from "@/util/formatCurrency";
 import { MovieItem } from "../../types/Movie";
 import { useNavigate } from "react-router-dom";
 

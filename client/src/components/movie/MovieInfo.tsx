@@ -1,5 +1,5 @@
 import { MovieDetails } from "@/types/Movie";
-import { formatCurrency } from "@/util/formatcurrency";
+import { formatCurrency } from "@/util/formatCurrency";
 import React from "react";
 import BadgeXS from "../ui/BadgeXS";
 import { useNavigate } from "react-router-dom";

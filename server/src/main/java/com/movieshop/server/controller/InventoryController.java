@@ -1,5 +1,6 @@
 package com.movieshop.server.controller;
 
+import com.movieshop.server.model.InventoryPageResponse;
 import com.movieshop.server.model.InventoryRequestDTO;
 import com.movieshop.server.model.InventoryResponseDTO;
 import com.movieshop.server.service.IInventoryService;
@@ -30,6 +31,17 @@ public class InventoryController {
     public ResponseEntity<InventoryResponseDTO> getInventoryById(@PathVariable Integer id) {
         InventoryResponseDTO inventoryResponseDTO = inventoryService.getInventoryById(id);
         return ResponseEntity.ok(inventoryResponseDTO);
+    }
+
+    @GetMapping("/store/{storeId}")
+    public ResponseEntity<InventoryPageResponse> getInventoriesByStoreId(
+            @PathVariable Integer storeId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int limit,
+            @RequestParam(defaultValue = "id_asc") String orderBy
+    ){
+        InventoryPageResponse inventories = inventoryService.getAllInventoriesByStoreIdPaginated(storeId, page, limit, orderBy);
+        return ResponseEntity.ok(inventories);
     }
 
     @PostMapping

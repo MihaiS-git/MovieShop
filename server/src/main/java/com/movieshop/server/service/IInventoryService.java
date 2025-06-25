@@ -1,5 +1,6 @@
 package com.movieshop.server.service;
 
+import com.movieshop.server.model.InventoryPageResponse;
 import com.movieshop.server.model.InventoryRequestDTO;
 import com.movieshop.server.model.InventoryResponseDTO;
 
@@ -15,4 +16,6 @@ public interface IInventoryService {
     InventoryResponseDTO updateInventory(Integer id, InventoryRequestDTO inventoryRequestDTO);
 
     void deleteInventory(Integer id);
+
+    InventoryPageResponse getAllInventoriesByStoreIdPaginated(Integer storeId, Integer page, Integer limit, String orderBy);
 }
