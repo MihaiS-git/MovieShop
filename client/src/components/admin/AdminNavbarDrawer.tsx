@@ -71,39 +71,6 @@ const AdminNavbarDrawer: React.FC<AdminNavDrawerProps> = ({
             <hr className="border-t border-gray-400 my-2" />
           </div>
         </li>
-
-        <li onClick={toggleAdminMenu}>
-          <div className="flex flex-col ">
-            <h1 className="pb-2 text-xl">Reviews</h1>
-            <NavLink
-              className={({ isActive }) =>
-                isActive
-                  ? "text-red-500 font-bold"
-                  : "text-gray-300 hover:text-red-500"
-              }
-              to="/admin/reviews/edit"
-            >
-              Reviews List
-            </NavLink>
-            <hr className="border-t border-gray-400 my-2" />
-          </div>
-        </li>
-
-        <li onClick={toggleAdminMenu}>
-          <div className="flex flex-col ">
-            <h1 className="pb-2 text-xl">Dashboard</h1>
-            <NavLink
-              className={({ isActive }) =>
-                isActive
-                  ? "text-red-500 font-bold"
-                  : "text-gray-300 hover:text-red-500"
-              }
-              to="/admin/dashboard"
-            >
-              Reports
-            </NavLink>
-          </div>
-        </li>
       </ul>
     </aside>
   );
