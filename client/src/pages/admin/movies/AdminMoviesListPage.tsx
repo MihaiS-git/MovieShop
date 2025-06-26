@@ -1,9 +1,9 @@
 import { useDeleteMovieByIdMutation } from "@/features/movies/movieApi";
 
 import PageContent from "@/PageContent";
-import AdminMovieList from "@/components/movies/AdminMovieList";
 import {usePaginatedMovies} from "@/hooks/usePaginatedMovies";
 import { useEffect } from "react";
+import AdminMovieList from "@/components/admin/movies/AdminMovieList";
 
 const AdminMoviesListPage = () => {
   useEffect(() => {
@@ -41,7 +41,7 @@ const AdminMoviesListPage = () => {
     try {
       await deleteMovie(movieId);
       setMovies((prev) => prev.filter((m) => m.id !== movieId));
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Failed to delete movie: ", err);
     }
   };

@@ -5,7 +5,7 @@ import AdminStoreCard from "./AdminStoreCard";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import StoresListFiltersBlock from "./StoresListFiltersBlock";
 import useInfiniteScroll from "@/hooks/useInfiniteScroll";
-import ListItemsPagination from "../ui/ListItemsPagination";
+import ListItemsPagination from "../../ui/ListItemsPagination";
 import { ItemsPagination } from "@/types/ItemsPagination";
 
 const AdminStoresList = () => {

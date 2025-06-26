@@ -1,4 +1,4 @@
-import AdminStoresList from "@/components/stores/AdminStoresList";
+import AdminStoresList from "@/components/admin/stores/AdminStoresList";
 import PageContent from "@/PageContent";
 import { useEffect } from "react";
 

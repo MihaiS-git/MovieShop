@@ -1,4 +1,4 @@
-import { MovieItem } from "../../types/Movie";
+import { MovieItem } from "@/types/Movie";
 import { useNavigate } from "react-router-dom";
 
 const AdminMobileMovieCard: React.FC<{

@@ -1,13 +1,13 @@
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { MovieItem } from "../../types/Movie";
 
 import AdminMovieCard from "./AdminMovieCard";
-import MovieListFiltersBlock from "../movie/MovieListFiltersBlock";
 import AdminMobileMovieCard from "./AdminMobileMovieCard";
 import { MovieFilters } from "@/types/MovieFilters";
 import useInfiniteScroll from "@/hooks/useInfiniteScroll";
 import { ItemsPagination } from "@/types/ItemsPagination";
-import ListItemsPagination from "../ui/ListItemsPagination";
+import { MovieItem } from "@/types/Movie";
+import MovieListFiltersBlock from "@/components/movie/MovieListFiltersBlock";
+import ListItemsPagination from "@/components/ui/ListItemsPagination";
 
 type Props = {
   moviePagination: ItemsPagination;

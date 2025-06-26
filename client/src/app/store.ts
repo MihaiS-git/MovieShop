@@ -8,7 +8,7 @@ import { movieApi } from "../features/movies/movieApi";
 import { addressApi } from '@/features/addresses/addressApi';
 import { countryApi } from '@/features/countries/countryApi';
 import { storeApi } from '@/features/stores/storeApi';
-import { inventoryApi } from '@/features/stores/inventoryApi';
+import { inventoryApi } from '@/features/inventories/inventoryApi';
 
 export const store: EnhancedStore = configureStore({
   reducer: {

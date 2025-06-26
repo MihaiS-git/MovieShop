@@ -1,8 +1,10 @@
-import EditStoreModal from "@/components/stores/EditStoreModal";
-import { useLazyGetInventoriesByStoreIdQuery } from "@/features/stores/inventoryApi";
-import { useGetStoreByIdQuery } from "@/features/stores/storeApi";
+import AdminStoreInventoriesSection from "@/components/admin/stores/AdminStoreInventoriesSection";
+import EditStoreModal from "@/components/admin/stores/EditStoreModal";
+import {
+  useDeleteStoreByIdMutation,
+  useGetStoreByIdQuery,
+} from "@/features/stores/storeApi";
 import PageContent from "@/PageContent";
-import { formatCurrency } from "@/util/formatCurrency";
 import { formatDate } from "@/util/formatDate";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
@@ -20,29 +22,22 @@ const AdminStorePage = () => {
     refetchOnMountOrArgChange: true,
   });
 
-  const [showEditModal, setShowEditModal] = useState(false);
   const [showInventory, setShowInventory] = useState(false);
-  const [
-    fetchInventories,
-    {
-      data: inventoriesData,
-      isLoading: isLoadingInventories,
-      isFetching: IsFetchingInventories,
-      error: inventoriesError,
-    },
-  ] = useLazyGetInventoriesByStoreIdQuery();
+  const [showEditModal, setShowEditModal] = useState(false);
 
-  const inventories = inventoriesData?.inventories;
+  const [deleteStore] = useDeleteStoreByIdMutation();
+
+  const handleDeleteClick = async (storeId: number) => {
+    try {
+      await deleteStore(storeId);
+      alert("Store successfully deleted.");
+    } catch (err: unknown) {
+      console.error("Failed to delete store: ", err);
+    }
+  };
 
   const handleInventoryClick = async () => {
     setShowInventory((prev) => !prev);
-    if (store?.id) {
-      await fetchInventories({
-        storeId: store.id,
-        page: 0,
-        limit: 20,
-      });
-    }
   };
 
   if (isLoading) return <p>Loading...</p>;
@@ -52,21 +47,21 @@ const AdminStorePage = () => {
   const address = store?.address;
 
   return (
-    <PageContent className="flex flex-col items-center justify-items-center 2xl:justify-items-start pt-4 w-full min-h-screen pb-56">
+    <PageContent className="flex flex-col items-center justify-items-center 2xl:justify-items-start pt-4 w-full min-h-screen pb-12">
       <h1 className="bg-charcoal-800 dark:bg-red-500 text-red-500 dark:text-charcoal-800 text-base lg:text-lg text-center w-50 p-2 mb-4 rounded-2xl">
         Store Details
       </h1>
-      <div className="flex flex-col items-center 2xl:items-start justify-evenly gap-4 2xl:grid 2xl:grid-cols-2 mb-24 w-full sm:w-8/12 lg:w-1/2 2xl:w-11/12 bg-gray-200 dark:bg-charcoal-800 text-charcoal-800 dark:text-gray-200 p-2 border border-charcoal-800 dark:border-gray-600 text-xs md:text-base">
-        <div className="flex-1 self-stretch bg-gray-200 dark:bg-charcoal-800 text-charcoal-800 dark:text-gray-200 p-8 border border-charcoal-800 dark:border-gray-600">
+      <div className="flex flex-col items-center 2xl:items-start justify-evenly gap-2 2xl:grid 2xl:grid-cols-2 mb-2 w-full sm:w-8/12 lg:w-1/2 2xl:w-11/12 bg-gray-200 dark:bg-charcoal-800 text-charcoal-800 dark:text-gray-200 p-2 border border-charcoal-800 dark:border-gray-600 text-xs md:text-sm">
+        <div className="flex-1 self-stretch bg-gray-200 dark:bg-charcoal-800 text-charcoal-800 dark:text-gray-200 p-2 border border-charcoal-800 dark:border-gray-600">
           <div className="flex flex-row justify-between">
-            <h2 className="text-sm md:text-xl pb-4">Store Manager</h2>
-            <h2 className="font-bold text-sm md:text-xl pb-4">
+            <h2 className="text-xs md:text-sm pb-1">Store Manager</h2>
+            <h2 className="font-bold text-xs md:text-sm pb-1">
               {managerStaff?.firstName} {managerStaff?.lastName}
             </h2>
           </div>
           <hr />
-          <h3 className="font-bold text-xs md:text-base pt-4 pb-1">Contact</h3>
-          <div className="bg-gray-100 dark:bg-gray-700 rounded-xl p-4 shadow-sm">
+          <h3 className="font-bold text-xs md:text-sm pt-1 pb-1">Contact</h3>
+          <div className="bg-gray-100 dark:bg-gray-700 p-2 shadow-sm">
             <div className="flex justify-between">
               <span className="font-semibold">E-mail:</span>
               <span>{managerStaff?.email}</span>
@@ -104,10 +99,10 @@ const AdminStorePage = () => {
           </div>
         </div>
 
-        <div className="flex-1 self-stretch bg-gray-200 dark:bg-charcoal-800 text-charcoal-800 dark:text-gray-200 p-8 border border-charcoal-800 dark:border-gray-600">
+        <div className="flex-1 self-stretch bg-gray-200 dark:bg-charcoal-800 text-charcoal-800 dark:text-gray-200 p-2 border border-charcoal-800 dark:border-gray-600">
           <div className="flex flex-row justify-between">
-            <h2 className="text-sm md:text-xl pb-4">Store</h2>
-            <h2 className="font-bold text-sm md:text-xl pb-4">
+            <h2 className="text-xl md:text-sm pb-1">Store</h2>
+            <h2 className="font-bold text-xs md:text-sm pb-1">
               #{store?.id}{" "}
               <span className="text-xs font-light">
                 ({formatDate(store!.lastUpdate)})
@@ -115,8 +110,8 @@ const AdminStorePage = () => {
             </h2>
           </div>
           <hr />
-          <h3 className="font-bold text-xs md:text-base pt-4 pb-1">Contact</h3>
-          <div className="bg-gray-100 dark:bg-gray-700 rounded-xl p-4 shadow-sm">
+          <h3 className="font-bold text-xs md:text-sm pt-1 pb-1">Contact</h3>
+          <div className="bg-gray-100 dark:bg-gray-700 p-2 shadow-sm">
             <div className="flex justify-between">
               <span className="font-semibold">Phone: </span>
               <span>{address?.phone}</span>
@@ -152,20 +147,20 @@ const AdminStorePage = () => {
 
         <div className="2xl:col-span-2 2xl:mx-auto">
           <button
-            className="bg-gray-500 hover:bg-gray-600 text-charcoal-800 cursor-pointer p-1.5 m-1 rounded-sm"
+            className="bg-gray-500 hover:bg-gray-600 text-charcoal-800 cursor-pointer p-1 m-1"
             onClick={() => handleInventoryClick()}
           >
             Inventory
           </button>
           <button
-            className="bg-green-500 hover:bg-green-600 text-charcoal-800 cursor-pointer p-1.5 m-1 rounded-sm"
+            className="bg-green-500 hover:bg-green-600 text-charcoal-800 cursor-pointer p-1 m-1"
             onClick={() => setShowEditModal(true)}
           >
             Edit Store
           </button>
           <button
-            className="bg-red-500 hover:bg-red-600 text-charcoal-800 cursor-pointer p-1.5 m-1 rounded-sm"
-            onClick={handleInventoryClick}
+            className="bg-red-500 hover:bg-red-600 text-charcoal-800 cursor-pointer p-1 m-1"
+            onClick={() => handleDeleteClick(storeId)}
           >
             Delete Store
           </button>
@@ -181,29 +176,7 @@ const AdminStorePage = () => {
       )}
 
       {showInventory && (
-        <div className="flex flex-col items-center 2xl:items-start justify-evenly gap-4 mb-24 w-full sm:w-8/12 lg:w-1/2 2xl:w-11/12 bg-gray-200 dark:bg-charcoal-800 text-charcoal-800 dark:text-gray-200 p-2 border border-charcoal-800 dark:border-gray-600 text-xs md:text-base">
-          <div className="flex flex-col justify-center items-center w-full bg-gray-200 dark:bg-charcoal-800 text-charcoal-800 dark:text-gray-200 p-4 border border-charcoal-800 dark:border-gray-600">
-            <h1 className="bg-charcoal-800 dark:bg-red-500 text-red-500 dark:text-charcoal-800 text-base lg:text-lg text-center w-50 py-1 px-2 rounded-xs">
-              Store #{store?.id} Inventory
-            </h1>
-            {inventoriesError && (
-              <p>An error occurred while fetching inventories.</p>
-            )}
-            {(isLoadingInventories || IsFetchingInventories) && (
-              <p>Loading...</p>
-            )}
-            {inventories ? (
-              // TODO
-              <ul>
-                {inventories.map((inventory) => (
-                  <li key={inventory.id}>{inventory.id}{" "}{inventory.storeId}{" "}{inventory.film.title}{" "}{inventory.film.releaseYear}{" "}{formatCurrency(inventory.film.rentalRate)}{" "}{formatCurrency(inventory.film.replacementCost)}{" "}{formatDate(inventory.lastUpdate)}</li>
-                ))}
-              </ul>
-            ) : (
-              <p>No inventories found for the selected store.</p>
-            )}
-          </div>
-        </div>
+        <AdminStoreInventoriesSection storeId={storeId} />
       )}
     </PageContent>
   );

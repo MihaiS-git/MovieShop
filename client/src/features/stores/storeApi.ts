@@ -52,10 +52,18 @@ export const storeApi = createApi({
       providesTags: (_result, _error, id) => [{type: "Store", id}],
       keepUnusedDataFor: 300,
     }),
+    deleteStoreById: builder.mutation<void, number>({
+      query: (id) => ({
+        url: `/stores/${id}`,
+        method: "DELETE"
+      }),
+      invalidatesTags: [{type: "Store", id: "LIST"}],
+    }),
   }),
 });
 
 export const { 
   useGetStoresQuery, 
-  useGetStoreByIdQuery 
+  useGetStoreByIdQuery,
+  useDeleteStoreByIdMutation,
 } = storeApi;
