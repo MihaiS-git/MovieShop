@@ -10,7 +10,7 @@ const AdminInventoryCard: React.FC<{ inventory: InventoryItem }> = ({
   const navigate = useNavigate();
 
   const handleDetailsClick = () => {
-    navigate(`/inventory/${inventory.id}`);
+    navigate(`inventory/${inventory.id}`);
   };
 
   return (

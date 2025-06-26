@@ -1,9 +1,6 @@
 import AdminStoreInventoriesSection from "@/components/admin/stores/AdminStoreInventoriesSection";
 import EditStoreModal from "@/components/admin/stores/EditStoreModal";
-import {
-  useDeleteStoreByIdMutation,
-  useGetStoreByIdQuery,
-} from "@/features/stores/storeApi";
+import {useGetStoreByIdQuery} from "@/features/stores/storeApi";
 import PageContent from "@/PageContent";
 import { formatDate } from "@/util/formatDate";
 import { useState } from "react";
@@ -24,17 +21,6 @@ const AdminStorePage = () => {
 
   const [showInventory, setShowInventory] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-
-  const [deleteStore] = useDeleteStoreByIdMutation();
-
-  const handleDeleteClick = async (storeId: number) => {
-    try {
-      await deleteStore(storeId);
-      alert("Store successfully deleted.");
-    } catch (err: unknown) {
-      console.error("Failed to delete store: ", err);
-    }
-  };
 
   const handleInventoryClick = async () => {
     setShowInventory((prev) => !prev);
@@ -156,13 +142,7 @@ const AdminStorePage = () => {
             className="bg-green-500 hover:bg-green-600 text-charcoal-800 cursor-pointer p-1 m-1"
             onClick={() => setShowEditModal(true)}
           >
-            Edit Store
-          </button>
-          <button
-            className="bg-red-500 hover:bg-red-600 text-charcoal-800 cursor-pointer p-1 m-1"
-            onClick={() => handleDeleteClick(storeId)}
-          >
-            Delete Store
+            Edit Address
           </button>
         </div>
       </div>

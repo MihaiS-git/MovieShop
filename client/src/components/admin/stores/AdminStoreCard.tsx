@@ -32,9 +32,6 @@ const AdminStoreCard: React.FC<{ store: StoreItem }> = ({
           >
             Details
           </button>
-          <button className="bg-red-400 hover:bg-red-500 text-charcoal-800 cursor-pointer p-1 w-12 m-1 rounded-sm">
-            Delete
-          </button>
         </div>
       </div>
     </>
