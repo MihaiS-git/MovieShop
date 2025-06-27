@@ -1,8 +1,11 @@
 package com.movieshop.server.mapper;
 
 import com.movieshop.server.domain.Address;
+import com.movieshop.server.domain.City;
+import com.movieshop.server.model.AddressProjection;
 import com.movieshop.server.model.AddressRequestDTO;
 import com.movieshop.server.model.AddressResponseDTO;
+import com.movieshop.server.model.UserWithAddressProjection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -39,5 +42,21 @@ public class AddressMapper {
         address.setPostalCode(addressRequestDTO.getPostalCode());
         address.setPhone(addressRequestDTO.getPhone());
         return address;
+    }
+
+    public AddressResponseDTO projectionToResponseDto(AddressProjection address) {
+        if (address == null) {
+            return null;
+        }
+        return AddressResponseDTO.builder()
+                .id(address.getId())
+                .address(address.getAddress())
+                .address2(address.getAddress2())
+                .district(address.getDistrict())
+                .city(cityMapper.projectionToResponseDto(address.getCity()))
+                .postalCode(address.getPostalCode())
+                .phone(address.getPhone())
+                .lastUpdate(address.getLastUpdate())
+                .build();
     }
 }

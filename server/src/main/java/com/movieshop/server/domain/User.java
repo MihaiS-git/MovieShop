@@ -8,16 +8,14 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(exclude = "password")
+@ToString(exclude = {"password", "rentals", "customerPayments", "staffPayments", "lastUpdate"} )
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "users")
 public class User implements UserDetails {
@@ -57,7 +55,7 @@ public class User implements UserDetails {
 
     @JsonIgnore
     @OneToMany(mappedBy = "staff", fetch = FetchType.LAZY)
-    private List<Rental> rentals = new ArrayList<>();
+    private Set<Rental> rentals = new HashSet<>();
 
     @Column(name="account_non_expired")
     private boolean accountNonExpired = true;
@@ -79,11 +77,14 @@ public class User implements UserDetails {
 
     @JsonIgnore
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
-    private List<Payment> customerPayments = new ArrayList<>();
+    private Set<Payment> customerPayments = new HashSet<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "staff", fetch = FetchType.LAZY)
-    private List<Payment> staffPayments = new ArrayList<>();
+    private Set<Payment> staffPayments = new HashSet<>();
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private RefreshToken refreshToken;
 
     @PrePersist
     public void onCreate() {

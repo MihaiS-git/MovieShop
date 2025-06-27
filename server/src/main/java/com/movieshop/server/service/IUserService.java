@@ -10,7 +10,7 @@ public interface IUserService {
 
     List<UserResponseDTO> getAllUsers();
 
-    UserResponseDTO getUserById(Integer id);
+    UserResponseWithAddressDTO getUserById(Integer id);
 
     UserResponseDTO updateUser(Integer id, UserUpdateRequestDTO userUpdateRequestDTO);
 
@@ -22,4 +22,6 @@ public interface IUserService {
                                           String roleFilter, String searchFilter,
                                           Boolean enabledFilter, Boolean accountNonExpiredFilter,
                                           Boolean accountNonLockedFilter, Boolean credentialsNonExpiredFilter);
+
+    UserResponseWithAddressDTO updateUserAccount(Integer id, UserAccountUpdateRequestDTO userRequestDTO);
 }

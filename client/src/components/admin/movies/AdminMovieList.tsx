@@ -31,7 +31,7 @@ const AdminMovieList: React.FC<Props> = ({
     <div className="flex flex-col justify-around align-middle text-center px-4">
       <div className="w-full h-full text-red-500 dark:text-charcoal-800 flex flex-col pb-4 items-center">
         <h1 className="bg-charcoal-800 dark:bg-red-500 text-base lg:text-lg text-center w-50 p-2 rounded-2xl">
-          Edit Movies
+          Movies List
         </h1>
       </div>
       <MovieListFiltersBlock movieFilters={movieFilters} />

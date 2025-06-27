@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import rtkBaseQuery from "../rtkBaseQuery";
-import { UserDetails, UserItem, UserUpdateRequestDto } from "@/types/User";
+import { UserAccountUpdateRequestDto, UserDetails, UserItem, UserUpdateRequestDto } from "@/types/User";
 import { ApiRequestParams } from "@/types/ApiRequestParams";
 
 export const userApi = createApi({
@@ -15,12 +15,33 @@ export const userApi = createApi({
       providesTags: (_result, _error, email) => [{ type: "User", email }],
       keepUnusedDataFor: 300,
     }),
+    getUserById: builder.query<UserDetails, number>({
+      query: (id) => ({
+        url: `/users/${id}`,
+      }),
+      providesTags: (_result, _error, id) => [{ type: "User", id }],
+      keepUnusedDataFor: 300,
+    }),
     updateUser: builder.mutation<
       UserDetails,
       { id: number; data: UserUpdateRequestDto }
     >({
       query: ({ id, data }): ApiRequestParams => ({
         url: `/users/${id}`,
+        method: "PUT",
+        data,
+      }),
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: "User", id },
+        { type: "User", id: "LIST" },
+      ],
+    }),
+    updateUserAccount: builder.mutation<
+      UserDetails,
+      { id: number; data: UserAccountUpdateRequestDto }
+    >({
+      query: ({ id, data }): ApiRequestParams => ({
+        url: `/users/account/${id}`,
         method: "PUT",
         data,
       }),
@@ -73,17 +94,16 @@ export const userApi = createApi({
             : {}),
         },
       }),
-      /* providesTags: ["User"], */
-      providesTags: (result) => 
+      providesTags: (result) =>
         result?.users
-      ? [
-        ...result.users.map((u) => ({
-          type: "User" as const,
-          id: u.id,
-        })),
-        {type: "User", id: "LIST"},
-      ]
-      : [{type: "User", id: "LIST"}],
+          ? [
+              ...result.users.map((u) => ({
+                type: "User" as const,
+                id: u.id,
+              })),
+              { type: "User", id: "LIST" },
+            ]
+          : [{ type: "User", id: "LIST" }],
       keepUnusedDataFor: 300,
     }),
     deleteUserById: builder.mutation<void, number>({
@@ -91,14 +111,16 @@ export const userApi = createApi({
         url: `/users/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: [{type: "User", id: "LIST"}],
+      invalidatesTags: [{ type: "User", id: "LIST" }],
     }),
   }),
 });
 
 export const {
   useGetUserByEmailQuery,
+  useGetUserByIdQuery,
   useUpdateUserMutation,
+  useUpdateUserAccountMutation,
   useGetUsersQuery,
   useDeleteUserByIdMutation,
 } = userApi;

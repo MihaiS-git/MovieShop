@@ -250,7 +250,7 @@ const EditMoviePage = () => {
           <div className="flex flex-col justify-between text-sm border border-charcoal-800 dark:border-gray-600 rounded-sm p-2">
             <form onSubmit={handleFormSubmit}>
               <h3 className="bg-gray-300 dark:bg-gray-700 p-2 font-semibold my-1">
-                GENERAL INFORMATIONS
+                GENERAL INFORMATION
               </h3>
               <div className="my-1">
                 <label htmlFor="title">

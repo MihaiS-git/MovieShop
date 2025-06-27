@@ -3,9 +3,11 @@ package com.movieshop.server.service;
 import com.movieshop.server.UserSpecifications;
 import com.movieshop.server.domain.User;
 import com.movieshop.server.exception.ResourceNotFoundException;
+import com.movieshop.server.mapper.AddressMapper;
 import com.movieshop.server.mapper.UserMapper;
 import com.movieshop.server.model.*;
 import com.movieshop.server.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,13 +24,15 @@ public class UserServiceImpl implements IUserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final AddressMapper addressMapper;
 
     public UserServiceImpl(
             UserRepository userRepository,
-            UserMapper userMapper
+            UserMapper userMapper, AddressMapper addressMapper
     ) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.addressMapper = addressMapper;
     }
 
     @Override
@@ -43,11 +47,36 @@ public class UserServiceImpl implements IUserService {
         return users.stream().map(userMapper::toResponseDto).toList();
     }
 
+
+    @Transactional
     @Override
-    public UserResponseDTO getUserById(Integer id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
-        return userMapper.toResponseDto(user);
+    public UserResponseWithAddressDTO getUserById(Integer userId) {
+        UserWithAddressProjection user = userRepository.findUserWithAddressById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+
+        List<Integer> rentalIds = userRepository.findRentalIdsByUserId(userId);
+        List<Integer> customerPaymentIds = userRepository.findCustomerPaymentIdsByUserId(userId);
+        List<Integer> staffPaymentIds = userRepository.findStaffPaymentIdsByUserId(userId);
+
+        return UserResponseWithAddressDTO.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .address(addressMapper.projectionToResponseDto(user.getAddress()))
+                .storeId(user.getStore().getId())
+                .picture(user.getPicture())
+                .accountNonExpired(user.isAccountNonExpired())
+                .accountNonLocked(user.isAccountNonLocked())
+                .credentialsNonExpired(user.isCredentialsNonExpired())
+                .enabled(user.isEnabled())
+                .createAt(user.getCreateAt())
+                .lastUpdate(user.getLastUpdate())
+                .rentalIds(rentalIds)
+                .customerPaymentIds(customerPaymentIds)
+                .staffPaymentIds(staffPaymentIds)
+                .build();
     }
 
     @Override
@@ -101,6 +130,45 @@ public class UserServiceImpl implements IUserService {
                 .map(userMapper::toResponseItemDTO)
                 .toList();
         return new UserPageResponse(userDtos, userPage.getTotalElements());
+    }
+
+    @Override
+    public UserResponseWithAddressDTO updateUserAccount(Integer id, UserAccountUpdateRequestDTO userRequestDTO) {
+        User existentUser = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+        existentUser.setAccountNonExpired(userRequestDTO.isAccountNonExpired());
+        existentUser.setAccountNonLocked(userRequestDTO.isAccountNonLocked());
+        existentUser.setCredentialsNonExpired(userRequestDTO.isCredentialsNonExpired());
+        existentUser.setEnabled(userRequestDTO.isEnabled());
+
+        userRepository.save(existentUser);
+
+        UserWithAddressProjection user = userRepository.findUserWithAddressById(existentUser.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + existentUser.getId()));
+
+        List<Integer> rentalIds = userRepository.findRentalIdsByUserId(user.getId());
+        List<Integer> customerPaymentIds = userRepository.findCustomerPaymentIdsByUserId(user.getId());
+        List<Integer> staffPaymentIds = userRepository.findStaffPaymentIdsByUserId(user.getId());
+
+        return UserResponseWithAddressDTO.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .address(addressMapper.projectionToResponseDto(user.getAddress()))
+                .storeId(user.getStore().getId())
+                .picture(user.getPicture())
+                .accountNonExpired(user.isAccountNonExpired())
+                .accountNonLocked(user.isAccountNonLocked())
+                .credentialsNonExpired(user.isCredentialsNonExpired())
+                .enabled(user.isEnabled())
+                .createAt(user.getCreateAt())
+                .lastUpdate(user.getLastUpdate())
+                .rentalIds(rentalIds)
+                .customerPaymentIds(customerPaymentIds)
+                .staffPaymentIds(staffPaymentIds)
+                .build();
     }
 
     private Sort parseOrderBy(String orderBy) {

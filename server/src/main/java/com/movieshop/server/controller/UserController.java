@@ -40,8 +40,8 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Integer id) {
-        UserResponseDTO user = userService.getUserById(id);
+    public ResponseEntity<UserResponseWithAddressDTO> getUserById(@PathVariable Integer id) {
+        UserResponseWithAddressDTO user = userService.getUserById(id);
         return ResponseEntity.ok(user);
     }
 
@@ -54,6 +54,12 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Integer id, @RequestBody UserUpdateRequestDTO userRequestDTO) {
         UserResponseDTO updatedUser = userService.updateUser(id, userRequestDTO);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    @PutMapping("/account/{id}")
+    public ResponseEntity<UserResponseWithAddressDTO> updateUser(@PathVariable Integer id, @RequestBody UserAccountUpdateRequestDTO userRequestDTO) {
+        UserResponseWithAddressDTO updatedUser = userService.updateUserAccount(id, userRequestDTO);
         return ResponseEntity.ok(updatedUser);
     }
 

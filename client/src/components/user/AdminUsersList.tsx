@@ -27,10 +27,10 @@ const AdminUsersList: React.FC<Props> = ({
   const loaderRef = useInfiniteScroll(loadMore, hasMore);
 
   return (
-    <>
+    <div className="flex flex-col justify-around align-middle text-center px-4">
       <div className="w-full h-full text-red-500 dark:text-charcoal-800 py-4 flex flex-col items-center">
         <h1 className="bg-charcoal-800 dark:bg-red-500 text-base lg:text-lg text-center p-2 rounded-2xl w-50">
-          Edit Users
+          Users List
         </h1>
       </div>
       <UserListFiltersBlock userFilters={userFilters} />
@@ -42,35 +42,35 @@ const AdminUsersList: React.FC<Props> = ({
         <>
           {isMobile ? (
             <div className="grid grid-cols-7 items-center text-center h-12 w-full text-charcoal-800 text-xs font-bold bg-gray-200 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-200 cursor-pointer my-0.25">
-              <p className="border-e-charcoal-800 border">ID</p>
-              <p className="border-e-charcoal-800 border col-span-2">Email</p>
-              <p className="border-e-charcoal-800 border">Role</p>
-              <p className="border-e-charcoal-800 border">First Name</p>
-              <p className="border-e-charcoal-800 border">Last Name</p>
-              <p className="border-e-charcoal-800 border">Action</p>
+              <p>ID</p>
+              <p className="col-span-2">Email</p>
+              <p>Role</p>
+              <p>First Name</p>
+              <p>Last Name</p>
+              <p>Action</p>
             </div>
           ) : (
             <div className="grid grid-cols-12 items-center text-center h-12 w-full text-charcoal-800 text-xs font-bold bg-gray-200 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-200 cursor-pointer my-0.25">
-              <p className="border-e-charcoal-800 border">ID</p>
-              <p className="border-e-charcoal-800 border col-span-2">Email</p>
-              <p className="border-e-charcoal-800 border">Role</p>
-              <p className="border-e-charcoal-800 border">First Name</p>
-              <p className="border-e-charcoal-800 border">Last Name</p>
-              <p className="border-e-charcoal-800 border">
+              <p>ID</p>
+              <p className="col-span-2">Email</p>
+              <p>Role</p>
+              <p>First Name</p>
+              <p>Last Name</p>
+              <p>
                 Account Non Expired
               </p>
-              <p className="border-e-charcoal-800 border">
+              <p>
                 Account Non Locked
               </p>
-              <p className="border-e-charcoal-800 border">
+              <p>
                 Credentials Non Expired
               </p>
-              <p className="border-e-charcoal-800 border">Enabled</p>
-              <p className="border-e-charcoal-800 border">
+              <p>Enabled</p>
+              <p>
                 Created At /<br />
                 Last Update
               </p>
-              <p className="border-e-charcoal-800 border">Action</p>
+              <p>Action</p>
             </div>
           )}
 
@@ -131,7 +131,7 @@ const AdminUsersList: React.FC<Props> = ({
           )}
         </>
       )}
-    </>
+    </div>
   );
 };
 

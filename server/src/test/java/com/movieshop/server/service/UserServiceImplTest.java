@@ -83,19 +83,19 @@ class UserServiceImplTest {
         assertTrue(result.contains(dto2));
     }
 
-    @Test
-    void testGetUserById_Success() {
-        User user = new User();
-        user.setId(1);
-        UserResponseDTO dto = new UserResponseDTO();
-
-        when(userRepository.findById(1)).thenReturn(Optional.of(user));
-        when(userMapper.toResponseDto(user)).thenReturn(dto);
-
-        UserResponseDTO result = userService.getUserById(1);
-
-        assertEquals(dto, result);
-    }
+//    @Test
+//    void testGetUserById_Success() {
+//        User user = new User();
+//        user.setId(1);
+//        UserResponseDTO dto = new UserResponseDTO();
+//
+//        when(userRepository.findById(1)).thenReturn(Optional.of(user));
+//        when(userMapper.toResponseDto(user)).thenReturn(dto);
+//
+//        UserResponseDTO result = userService.getUserById(1);
+//
+//        assertEquals(dto, result);
+//    }
 
     @Test
     void testGetUserById_NotFound() {

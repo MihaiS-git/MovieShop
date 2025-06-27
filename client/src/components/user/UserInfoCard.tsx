@@ -21,7 +21,7 @@ const UserInfoCard = ({ user }: Props) => {
       <ul className="flex flex-col justify-left items-baseline px-4 my-1 bg-gray-300 text-charcoal-800 rounded-sm gap-2 p-2">
         <li>User ID: #{user?.id}</li>
         <li>Role: {user?.role}</li>
-        <li>Store ID: #{user?.store?.id || "N/A"}</li>
+        <li>Store ID: #{user?.storeId || "N/A"}</li>
         <li>Account Non Expired: {String(user?.accountNonExpired)}</li>
         <li>Account Non Locked: {String(user?.accountNonLocked)}</li>
         <li>Credentials Non Expired: {String(user?.credentialsNonExpired)}</li>

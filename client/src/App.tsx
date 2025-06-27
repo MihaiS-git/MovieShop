@@ -12,12 +12,9 @@ import RegisterPage from "./pages/RegisterPage";
 import MovieListPage from "./pages/movies/MovieListPage";
 import MovieDetailsPage from "./pages/movies/MovieDetailsPage";
 import AdminLayout from "./pages/admin/AdminLayout";
-import AdminDashboard from "./pages/admin/dashboard/AdminDashboard";
 import AdminUsersListPage from "./pages/admin/users/AdminUsersListPage";
 import AdminMoviesListPage from "./pages/admin/movies/AdminMoviesListPage";
 import AddMovie from "./pages/admin/movies/AddMovie";
-import EditReviews from "./pages/admin/reviews/EditReviews";
-import AddReview from "./pages/admin/reviews/AddReview";
 import EditMoviePage from "./pages/admin/movies/EditMoviePage";
 import UserAccountPage from "./pages/account/UserAccountPage";
 import RequireNoAuth from "./components/auth/RequireNoAuth";
@@ -25,6 +22,7 @@ import RequireAuth from "./components/auth/RequireAuth";
 import RequireAdmin from "./components/auth/RequireAdmin";
 import AdminStoresListPage from "./pages/admin/stores/AdminStoresListPage";
 import AdminStorePage from "./pages/admin/stores/AdminStorePage";
+import AdminUserPage from "./pages/admin/users/AdminUserPage";
 
 const router = createBrowserRouter([
   {
@@ -66,9 +64,9 @@ const router = createBrowserRouter([
       {
         path: "admin",
         element: (
-            <RequireAdmin>
-              <AdminLayout />
-            </RequireAdmin>
+          <RequireAdmin>
+            <AdminLayout />
+          </RequireAdmin>
         ),
         children: [
           {
@@ -77,25 +75,25 @@ const router = createBrowserRouter([
               {
                 path: "edit",
                 element: (
-                    <RequireAdmin>
-                      <AdminMoviesListPage />
-                    </RequireAdmin>
+                  <RequireAdmin>
+                    <AdminMoviesListPage />
+                  </RequireAdmin>
                 ),
               },
               {
                 path: "edit/:id",
                 element: (
-                    <RequireAdmin>
-                      <EditMoviePage />
-                    </RequireAdmin>
+                  <RequireAdmin>
+                    <EditMoviePage />
+                  </RequireAdmin>
                 ),
               },
               {
                 path: "add",
                 element: (
-                    <RequireAdmin>
-                      <AddMovie />
-                    </RequireAdmin>
+                  <RequireAdmin>
+                    <AddMovie />
+                  </RequireAdmin>
                 ),
               },
             ],
@@ -104,11 +102,19 @@ const router = createBrowserRouter([
             path: "users",
             children: [
               {
-                path: "edit",
+                path: "",
                 element: (
-                    <RequireAdmin>
-                      <AdminUsersListPage />
-                    </RequireAdmin>
+                  <RequireAdmin>
+                    <AdminUsersListPage />
+                  </RequireAdmin>
+                ),
+              },
+              {
+                path: ":id",
+                element: (
+                  <RequireAdmin>
+                    <AdminUserPage />
+                  </RequireAdmin>
                 ),
               },
             ],
@@ -119,49 +125,20 @@ const router = createBrowserRouter([
               {
                 path: "",
                 element: (
-                    <RequireAdmin>
-                      <AdminStoresListPage />
-                    </RequireAdmin>
+                  <RequireAdmin>
+                    <AdminStoresListPage />
+                  </RequireAdmin>
                 ),
               },
               {
                 path: ":id",
                 element: (
                   <RequireAdmin>
-                    <AdminStorePage/>
+                    <AdminStorePage />
                   </RequireAdmin>
                 ),
               },
             ],
-          },
-          {
-            path: "reviews",
-            children: [
-              {
-                path: "edit",
-                element: (
-                    <RequireAdmin>
-                      <EditReviews />
-                    </RequireAdmin>
-                ),
-              },
-              {
-                path: "add",
-                element: (
-                    <RequireAdmin>
-                      <AddReview />
-                    </RequireAdmin>
-                ),
-              },
-            ],
-          },
-          {
-            path: "dashboard",
-            element: (
-                <RequireAdmin>
-                  <AdminDashboard />
-                </RequireAdmin>
-            ),
           },
         ],
       },
